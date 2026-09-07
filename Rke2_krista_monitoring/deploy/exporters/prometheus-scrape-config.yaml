@@ -1,0 +1,27 @@
+# Add these scrape jobs to your Prometheus configuration
+# For Helm-based Prometheus: add under extraScrapeConfigs in values.yaml
+# For configmap-based: append to scrape_configs section
+
+# Blackbox ICMP probing of all cluster nodes
+- job_name: 'blackbox-icmp'
+  metrics_path: /probe
+  params:
+    module: [icmp]
+  static_configs:
+    - targets:
+      # Replace with your node IPs
+      - 10.35.0.42  # carmine
+      - 10.35.0.38  # cesar
+      - 10.35.0.37  # cicis
+      - 10.35.0.26  # fratelli
+      - 10.35.0.40  # grimaldi
+      - 10.35.0.36  # pane
+      - 10.35.0.39  # papaj
+      - 10.35.0.41  # rosso
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: blackbox-exporter.devops-stack:9115

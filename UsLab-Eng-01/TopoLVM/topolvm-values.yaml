@@ -1,0 +1,108 @@
+# =============================================================================
+# TopoLVM Helm values — UsLab-Eng-01   [THICK, PER-NODE VG NAMES — Lumens-style]
+# Chart: topolvm/topolvm   (https://github.com/topolvm/topolvm)
+#
+# Storage model (matches the Lumens cluster exactly):
+#   * THICK LVM — no thin pools. Each PVC is a plain linear LV reserved up front.
+#     -> lowest, flattest latency (raw-NVMe behaviour, no CoW/alloc spikes)
+#     -> NO CSI snapshots (VolSync runs in copyMethod: Direct — see VolSync/)
+#   * NODE-LOCAL, RWO. A PVC binds to one node; the pod is pinned there.
+#   * PER-NODE VG named after the node so it is self-identifying on the host:
+#         cheese  -> vg-topolvm-cheese   (NVMe Lexar NM790 @ /dev/nvme0n1)
+#         dough    -> vg-topolvm-dough      (NVMe Lexar NM790 @ /dev/nvme0n1)
+#         nicks    -> vg-topolvm-nicks      (NVMe Lexar NQ780 @ /dev/nvme0n1)
+#         rosatini  -> vg-topolvm-rosatini    (NVMe Lexar NQ780 @ /dev/nvme0n1)
+#   Because the VG name differs per node, each node needs its OWN lvmd config.
+#   `lvmd.additionalConfigs` gives one lvmd DaemonSet per node, aimed by the
+#   built-in `kubernetes.io/hostname` label (no custom per-node label needed).
+#
+#   The 2 driveless nodes (roso master, poco invoker) are EXCLUDED: they are not
+#   labeled topolvm.io/storage=true, so lvmd + topolvm-node never schedule there.
+#
+# Two labels — keep them straight:
+#   * topolvm.io/storage=true   -> on EVERY storage node. Controls the CSI `node`
+#                                  plugin DaemonSet (mounts volumes).
+#   * kubernetes.io/hostname    -> built-in. Aims each lvmd config at one node.
+#                                  You do NOT set it; it already exists.
+#
+# Device class is `ssd` everywhere (all four drives are NVMe). Only the VG under
+# it is per-node. A single device-class name keeps the StorageClasses uniform.
+#
+# Install:
+#   helm repo add topolvm https://topolvm.github.io/topolvm && helm repo update
+#   kubectl create namespace topolvm-system
+#   kubectl label ns topolvm-system topolvm.io/webhook=ignore --overwrite
+#   kubectl label ns kube-system    topolvm.io/webhook=ignore --overwrite
+#   helm upgrade --install topolvm topolvm/topolvm -n topolvm-system \
+#     -f UsLab-Eng-01/TopoLVM/topolvm-values.yaml
+# =============================================================================
+
+lvmd:
+  # managed: true => the chart deploys lvmd as DaemonSet(s) on the targeted nodes.
+  managed: true
+
+  # ---- Primary lvmd: cheese ----
+  # Aimed at cheese via the built-in hostname label; runs ONLY on cheese and
+  # looks ONLY for vg-topolvm-cheese. THICK: no thin-pool block, spare-gb keeps
+  # a little VG headroom free.
+  nodeSelector:
+    kubernetes.io/hostname: cheese
+  deviceClasses:
+    - name: ssd                          # device-class name is shared cluster-wide;
+      volume-group: vg-topolvm-cheese   # only the VG underneath is per-node.
+      default: true
+      spare-gb: 5
+
+  # ---- Additional nodes: one independent lvmd per node, each with its own VG ----
+  # Each is aimed at exactly one node via kubernetes.io/hostname, so VG names
+  # never clash. An lvmd whose VG doesn't exist yet stays not-ready until the VG
+  # is created — so run `vgcreate vg-topolvm-<node>` on the node first (README §3).
+  additionalConfigs:
+    - nodeSelector:
+        kubernetes.io/hostname: dough
+      deviceClasses:
+        - { name: ssd, volume-group: vg-topolvm-dough, default: true, spare-gb: 5 }
+    - nodeSelector:
+        kubernetes.io/hostname: nicks
+      deviceClasses:
+        - { name: ssd, volume-group: vg-topolvm-nicks, default: true, spare-gb: 5 }
+    - nodeSelector:
+        kubernetes.io/hostname: rosatini
+      deviceClasses:
+        - { name: ssd, volume-group: vg-topolvm-rosatini, default: true, spare-gb: 5 }
+
+node:
+  # CSI node plugin runs on EVERY storage node — common label, not per-node.
+  nodeSelector:
+    topolvm.io/storage: "true"
+  # RKE2's kubelet root is /var/lib/kubelet — chart default. Do NOT override
+  # csiKubeletRootDir or CSI socket registration silently fails.
+
+controller:
+  # 4 storage nodes -> 2 replicas for HA so the controller survives one app-node
+  # reboot. Controller pods schedule on any node, independent of storage labels.
+  replicaCount: 2
+
+# Capacity-aware scheduling via the standard CSIStorageCapacity API (the modern,
+# scheduler-extender-free mode). The stock kube-scheduler reads CSIStorageCapacity
+# objects to place PVCs on a node that has room. This is the ONLY scheduling
+# mechanism we use — matches the Lumens cluster.
+storageCapacityTracking:
+  enabled: true
+
+# IMPORTANT: do NOT enable the POD mutating webhook. It injects a
+# `topolvm.io/capacity` extended-resource request onto pods, which only the
+# (separate, NOT deployed) topolvm-scheduler extender can satisfy. With
+# storageCapacityTracking above, that webhook makes every PVC-mounting pod
+# permanently Unschedulable ("Insufficient topolvm.io/capacity"). Keep it off.
+webhook:
+  podMutatingWebhook:
+    enabled: false
+
+# Disable the chart's built-in `topolvm-provisioner` StorageClass. We manage all
+# StorageClasses ourselves in storageclasses.yaml (per-node pinning + Retain, no
+# default), so the chart-created one (no node pinning, reclaimPolicy: Delete) is
+# unwanted.
+storageClasses: []
+
+priorityClassName: system-cluster-critical

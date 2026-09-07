@@ -1,0 +1,58 @@
+# =============================================================================
+# eng-01 proxy Ingress — UsLab equivalent of Pune's punelab-01-proxy.
+# Namespace uslab-eng-01, backend service `proxy:8080`, Traefik + Let's Encrypt.
+# Hostnames: eng-01.krista.app (+ studio. / extension.).
+#
+#   kubectl apply -f 11-eng-01-proxy-ingress.yaml
+#
+# Cert issues once DNS for these hosts points at the Traefik VIP 10.35.0.61
+# (HTTP-01 challenge). Until then the cert stays pending (harmless).
+# =============================================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: eng-01-proxy
+  namespace: uslab-eng-01
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - eng-01.krista.app
+        - studio.eng-01.krista.app
+        - extension.eng-01.krista.app
+      secretName: eng-01-proxy-tls
+  rules:
+    - host: eng-01.krista.app
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: proxy
+                port:
+                  number: 8080
+    - host: studio.eng-01.krista.app
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: proxy
+                port:
+                  number: 8080
+    - host: extension.eng-01.krista.app
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: proxy
+                port:
+                  number: 8080

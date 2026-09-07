@@ -1,0 +1,54 @@
+# =============================================================================
+# CoreDNS split-horizon — resolve the ingress hostnames to the Traefik VIP .61
+# from INSIDE the cluster.
+#
+# WHY: public DNS points these hosts at the edge IP 209.245.232.1. cert-manager's
+# HTTP-01 self-check (and in-cluster clients) then try to reach the public IP and
+# time out (hairpin). Mapping them to 10.35.0.61 in CoreDNS makes the self-check
+# hit Traefik directly → certs issue. Let's Encrypt still validates EXTERNALLY
+# via the public IP→.61 DNAT (unchanged).
+#
+# Mechanism: HelmChartConfig over the bundled rke2-coredns. The `servers:` block
+# REPLICATES the current Corefile EXACTLY and ADDS one `hosts` plugin. Adding a
+# host = add it to the hosts line. CoreDNS rolls 1-at-a-time (2 replicas), so a
+# bad config leaves the old pod serving; rollback = delete this HelmChartConfig.
+#
+#   kubectl apply -f 08-coredns-split-horizon.yaml
+#   kubectl -n kube-system rollout status deploy/rke2-coredns-rke2-coredns
+# =============================================================================
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-coredns
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    servers:
+      - zones:
+          - zone: .
+        port: 53
+        plugins:
+          - name: errors
+          - name: health
+            configBlock: |-
+              lameduck 10s
+          - name: ready
+          - name: kubernetes
+            parameters: cluster.local cluster.local in-addr.arpa ip6.arpa
+            configBlock: |-
+              pods insecure
+              fallthrough in-addr.arpa ip6.arpa
+              ttl 30
+          - name: hosts
+            configBlock: |-
+              10.35.0.61 grafana.eng.antbrains.com monitor.eng.antbrains.com rancher-uslab.eng.antbrains.com eng-01.krista.app studio.eng-01.krista.app extension.eng-01.krista.app
+              fallthrough
+          - name: prometheus
+            parameters: 0.0.0.0:9153
+          - name: forward
+            parameters: . /etc/resolv.conf
+          - name: cache
+            parameters: "30"
+          - name: loop
+          - name: reload
+          - name: loadbalance

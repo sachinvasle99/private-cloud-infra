@@ -1,0 +1,42 @@
+# VolSync (restic, Direct, root mover) for the remaining uslab-eng-01 FILE PVCs.
+# Scope: accesspoint volumes only. (redis + activemq: excluded by request.
+# elasticsearch: handled via native snapshot — see README "Elasticsearch".
+# infinispan: skipped — cache.)
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: node1-accesspoint3-backup
+  namespace: uslab-eng-01
+spec:
+  sourcePVC: node1-accesspoint3-pvc
+  trigger:
+    schedule: "30 17 * * *"          # 23:00 IST daily
+  restic:
+    repository: restic-accesspoint-node1
+    copyMethod: Direct
+    pruneIntervalDays: 14
+    cacheCapacity: 1Gi
+    cacheStorageClassName: local-ssd-rosatini
+    moverSecurityContext: { runAsUser: 0, runAsGroup: 0, fsGroup: 0, runAsNonRoot: false }
+    customCA: { configMapName: minio-ca, key: ca.crt }
+    retain: { daily: 7, weekly: 4, monthly: 3 }
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: node2-accesspoint3-backup
+  namespace: uslab-eng-01
+spec:
+  sourcePVC: node2-accesspoint3-pvc
+  trigger:
+    schedule: "30 17 * * *"          # 23:00 IST daily
+  restic:
+    repository: restic-accesspoint-node2
+    copyMethod: Direct
+    pruneIntervalDays: 14
+    cacheCapacity: 1Gi
+    cacheStorageClassName: local-ssd-rosatini
+    moverSecurityContext: { runAsUser: 0, runAsGroup: 0, fsGroup: 0, runAsNonRoot: false }
+    customCA: { configMapName: minio-ca, key: ca.crt }
+    retain: { daily: 7, weekly: 4, monthly: 3 }

@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ARCHITECTURE_GUIDE</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown.min.css" />
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#us-lab-on-premises-kubernetes-cluster-architecture-guide"
+id="toc-us-lab-on-premises-kubernetes-cluster-architecture-guide">US Lab
+On-Premises Kubernetes Cluster Architecture Guide</a>
+<ul>
+<li><a href="#table-of-contents" id="toc-table-of-contents">Table of
+Contents</a></li>
+<li><a href="#executive-summary" id="toc-executive-summary">Executive
+Summary</a></li>
+<li><a href="#architecture-overview"
+id="toc-architecture-overview">Architecture Overview</a></li>
+<li><a href="#infrastructure-components"
+id="toc-infrastructure-components">Infrastructure Components</a></li>
+<li><a href="#rke2-architecture" id="toc-rke2-architecture">RKE2
+Architecture</a></li>
+<li><a href="#ceph-storage-architecture"
+id="toc-ceph-storage-architecture">Ceph Storage Architecture</a></li>
+<li><a href="#network-architecture"
+id="toc-network-architecture">Network Architecture</a></li>
+<li><a href="#high-availability-design"
+id="toc-high-availability-design">High Availability Design</a></li>
+<li><a href="#data-flow-diagrams" id="toc-data-flow-diagrams">Data Flow
+Diagrams</a></li>
+<li><a href="#scaling-and-performance"
+id="toc-scaling-and-performance">Scaling and Performance</a></li>
+<li><a href="#security-architecture"
+id="toc-security-architecture">Security Architecture</a></li>
+<li><a href="#conclusion" id="toc-conclusion">Conclusion</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="us-lab-on-premises-kubernetes-cluster-architecture-guide">US Lab
+On-Premises Kubernetes Cluster Architecture Guide</h1>
+<p><strong>Document Version:</strong> 1.0 <strong>Date:</strong> January
+2026 <strong>Cluster Name:</strong> uslab-cluster
+<strong>Location:</strong> US Lab - Rack2</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol type="1">
+<li><a href="#executive-summary">Executive Summary</a></li>
+<li><a href="#architecture-overview">Architecture Overview</a></li>
+<li><a href="#infrastructure-components">Infrastructure
+Components</a></li>
+<li><a href="#rke2-architecture">RKE2 Architecture</a></li>
+<li><a href="#ceph-storage-architecture">Ceph Storage
+Architecture</a></li>
+<li><a href="#network-architecture">Network Architecture</a></li>
+<li><a href="#high-availability-design">High Availability
+Design</a></li>
+<li><a href="#data-flow-diagrams">Data Flow Diagrams</a></li>
+<li><a href="#scaling-and-performance">Scaling and Performance</a></li>
+<li><a href="#security-architecture">Security Architecture</a></li>
+</ol>
+<hr />
+<h2 id="executive-summary">Executive Summary</h2>
+<h3 id="cluster-overview">Cluster Overview</h3>
+<p>The US Lab Kubernetes cluster is a production-grade, on-premises
+Kubernetes deployment built on RKE2 (Rancher Kubernetes Engine 2) with
+Rook-Ceph distributed storage. The cluster provides a robust, scalable
+platform for running containerized applications with enterprise-level
+features.</p>
+<p><strong>Key Specifications:</strong> - <strong>Total Nodes:</strong>
+7 (1 control plane + 6 workers) - <strong>Total Compute:</strong> ~360
+CPU cores, ~1.5TB RAM - <strong>Kubernetes Version:</strong>
+v1.33.1+rke2r1 - <strong>Storage System:</strong> Rook-Ceph v19.2.2
+(Squid) - <strong>Network Plugin:</strong> Calico CNI with VXLAN -
+<strong>Management Platform:</strong> Rancher v2.11.2</p>
+<p><strong>Design Principles:</strong> - <strong>High
+Availability:</strong> Redundant components and automatic failover -
+<strong>Scalability:</strong> Horizontal scaling for compute and storage
+- <strong>Security:</strong> RBAC, network policies, TLS encryption -
+<strong>Observability:</strong> Comprehensive monitoring and logging -
+<strong>Automation:</strong> Self-healing and automatic recovery</p>
+<hr />
+<h2 id="architecture-overview">Architecture Overview</h2>
+<h3 id="high-level-architecture-diagram">High-Level Architecture
+Diagram</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                          External Network (10.0.1.0/24)                      │
+│                                                                               │
+│  ┌──────────────┐                                                            │
+│  │   Clients    │                                                            │
+│  │  (Users/Apps)│                                                            │
+│  └──────┬───────┘                                                            │
+│         │                                                                     │
+│         ▼                                                                     │
+│  ┌──────────────────────────────────────────────────────────────────┐       │
+│  │              Virtual IP: 10.0.1.100                               │       │
+│  │         (k8s-api.antbrains.com, rancher-uslab.antbrains.com)     │       │
+│  └──────────────────────────────────────────────────────────────────┘       │
+│         │                                                                     │
+│         ▼                                                                     │
+│  ┌──────────────────────────────────────────────────────────────────┐       │
+│  │                    HAProxy + Keepalived                           │       │
+│  │                    (Load Balancer on fratelli)                    │       │
+│  │  - API Server Load Balancing (6443 → 6444)                       │       │
+│  │  - HTTP/HTTPS Load Balancing (80/443)                            │       │
+│  └──────────────────────────────────────────────────────────────────┘       │
+│         │                                                                     │
+└─────────┼─────────────────────────────────────────────────────────────────────┘
+          │
+          ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        Kubernetes Cluster (RKE2)                             │
+│                                                                               │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                    Control Plane (fratelli)                            │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                │  │
+│  │  │  API Server  │  │  Scheduler   │  │  Controller  │                │  │
+│  │  │   (6443)     │  │              │  │   Manager    │                │  │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘                │  │
+│  │  ┌──────────────────────────────────────────────────┐                │  │
+│  │  │              etcd (Cluster State)                 │                │  │
+│  │  └──────────────────────────────────────────────────┘                │  │
+│  │  IP: 10.0.1.30 | 40 CPU | 128GB RAM                                  │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+│                                                                               │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                         Worker Nodes                                   │  │
+│  │                                                                         │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
+│  │  │    pane     │  │    cicis    │  │    cesar    │  │    papaj    │  │  │
+│  │  │ 10.0.1.25   │  │ 10.0.1.35   │  │ 10.0.1.40   │  │ 10.0.1.45   │  │  │
+│  │  │ 40C/128GB   │  │ 40C/128GB   │  │ 40C/128GB   │  │ 40C/128GB   │  │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  │  │
+│  │                                                                         │  │
+│  │  ┌─────────────┐  ┌─────────────┐                                     │  │
+│  │  │  grimaldi   │  │    rosso    │                                     │  │
+│  │  │ 10.0.1.50   │  │ 10.0.1.60   │                                     │  │
+│  │  │ 80C/640GB   │  │ 40C/128GB   │                                     │  │
+│  │  │ (High Cap)  │  │             │                                     │  │
+│  │  └─────────────┘  └─────────────┘                                     │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+│                                                                               │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                    Distributed Storage (Ceph)                          │  │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐              │  │
+│  │  │ OSD (pane)│  │OSD(cicis)│  │OSD(cesar)│  │OSD(papaj)│              │  │
+│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘              │  │
+│  │  ┌──────────┐  ┌──────────┐                                           │  │
+│  │  │OSD(grima)│  │OSD(rosso)│                                           │  │
+│  │  └──────────┘  └──────────┘                                           │  │
+│  │                                                                         │  │
+│  │  Storage Classes: ceph-block, ceph-filesystem, ceph-bucket            │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="component-stack">Component Stack</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 42%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Components</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Management</strong></td>
+<td>Rancher UI</td>
+<td>Multi-cluster management, RBAC, monitoring</td>
+</tr>
+<tr>
+<td><strong>Application</strong></td>
+<td>Pods, Deployments, Services</td>
+<td>Application workloads</td>
+</tr>
+<tr>
+<td><strong>Orchestration</strong></td>
+<td>RKE2 (Kubernetes)</td>
+<td>Container orchestration and scheduling</td>
+</tr>
+<tr>
+<td><strong>Networking</strong></td>
+<td>Calico CNI, MetalLB, Nginx Ingress</td>
+<td>Pod networking, load balancing, ingress</td>
+</tr>
+<tr>
+<td><strong>Storage</strong></td>
+<td>Rook-Ceph</td>
+<td>Distributed persistent storage</td>
+</tr>
+<tr>
+<td><strong>Compute</strong></td>
+<td>containerd</td>
+<td>Container runtime</td>
+</tr>
+<tr>
+<td><strong>Infrastructure</strong></td>
+<td>Ubuntu 22.04/24.04</td>
+<td>Operating system</td>
+</tr>
+<tr>
+<td><strong>Hardware</strong></td>
+<td>Physical servers</td>
+<td>Compute, memory, storage</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="infrastructure-components">Infrastructure Components</h2>
+<h3 id="node-inventory">Node Inventory</h3>
+<h4 id="control-plane-node">Control Plane Node</h4>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 21%" />
+<col style="width: 10%" />
+<col style="width: 9%" />
+<col style="width: 14%" />
+<col style="width: 16%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr>
+<th>Hostname</th>
+<th>IP Address</th>
+<th>Role</th>
+<th>CPU</th>
+<th>Memory</th>
+<th>Storage</th>
+<th>OS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fratelli</td>
+<td>10.0.1.30</td>
+<td>Control Plane, etcd, Master</td>
+<td>40 cores</td>
+<td>128GB</td>
+<td>Multiple disks</td>
+<td>Ubuntu 24.04.2 LTS</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Responsibilities:</strong> - Kubernetes API Server (port
+6443) - etcd cluster state database - Scheduler (assigns pods to nodes)
+- Controller Manager (manages cluster state) - HAProxy load balancer -
+Keepalived (VIP management)</p>
+<h4 id="worker-nodes">Worker Nodes</h4>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 18%" />
+<col style="width: 7%" />
+<col style="width: 12%" />
+<col style="width: 14%" />
+<col style="width: 7%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr>
+<th>Hostname</th>
+<th>IP Address</th>
+<th>CPU</th>
+<th>Memory</th>
+<th>Storage</th>
+<th>OS</th>
+<th>Special Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pane</td>
+<td>10.0.1.25</td>
+<td>40 cores</td>
+<td>128GB</td>
+<td>Multiple disks</td>
+<td>Ubuntu 24.04.3 LTS</td>
+<td>Standard worker</td>
+</tr>
+<tr>
+<td>cicis</td>
+<td>10.0.1.35</td>
+<td>40 cores</td>
+<td>128GB</td>
+<td>Multiple disks</td>
+<td>Ubuntu 24.04.3 LTS</td>
+<td>Standard worker</td>
+</tr>
+<tr>
+<td>cesar</td>
+<td>10.0.1.40</td>
+<td>40 cores</td>
+<td>128GB</td>
+<td>Multiple disks</td>
+<td>Ubuntu 24.04.2 LTS</td>
+<td>Standard worker</td>
+</tr>
+<tr>
+<td>papaj</td>
+<td>10.0.1.45</td>
+<td>40 cores</td>
+<td>128GB</td>
+<td>Multiple disks</td>
+<td>Ubuntu 24.04.2 LTS</td>
+<td>Standard worker</td>
+</tr>
+<tr>
+<td>grimaldi</td>
+<td>10.0.1.50</td>
+<td>80 cores</td>
+<td>640GB</td>
+<td>Multiple disks</td>
+<td>Ubuntu 24.04.2 LTS</td>
+<td><strong>High capacity node</strong></td>
+</tr>
+<tr>
+<td>rosso</td>
+<td>10.0.1.60</td>
+<td>40 cores</td>
+<td>128GB</td>
+<td>Multiple disks</td>
+<td>Ubuntu 22.04.5 LTS</td>
+<td>Newer addition</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total Cluster Resources:</strong> - <strong>Total
+CPU:</strong> ~360 cores - <strong>Total Memory:</strong> ~1.5TB RAM -
+<strong>Total Nodes:</strong> 7 (1 control plane + 6 workers)</p>
+<p><strong>Worker Node Responsibilities:</strong> - Run application pods
+- Provide Ceph OSD storage - Run CNI networking components - Run
+monitoring and logging agents</p>
+<h3 id="network-configuration">Network Configuration</h3>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 25%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Component</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Network Subnet</strong></td>
+<td>10.0.1.0/24</td>
+<td>Physical network for all nodes</td>
+</tr>
+<tr>
+<td><strong>Virtual IP (VIP)</strong></td>
+<td>10.0.1.100</td>
+<td>Kubernetes API and Rancher access</td>
+</tr>
+<tr>
+<td><strong>Pod CIDR</strong></td>
+<td>10.48.0.0/16</td>
+<td>IP range for pods (65,536 IPs)</td>
+</tr>
+<tr>
+<td><strong>Service CIDR</strong></td>
+<td>10.49.0.0/16</td>
+<td>IP range for services (65,536 IPs)</td>
+</tr>
+<tr>
+<td><strong>MetalLB Pool</strong></td>
+<td>10.0.1.101-200</td>
+<td>External IPs for LoadBalancer services</td>
+</tr>
+<tr>
+<td><strong>DNS Domain</strong></td>
+<td>antbrains.com</td>
+<td>External DNS domain</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-services-and-urls">Key Services and URLs</h3>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 17%" />
+<col style="width: 20%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>URL</th>
+<th>Port</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Kubernetes API</strong></td>
+<td>https://k8s-api.antbrains.com:6443</td>
+<td>6443</td>
+<td>Cluster API access</td>
+</tr>
+<tr>
+<td><strong>Rancher UI</strong></td>
+<td>https://rancher-uslab.antbrains.com</td>
+<td>443</td>
+<td>Cluster management interface</td>
+</tr>
+<tr>
+<td><strong>Ceph Dashboard</strong></td>
+<td>https://ceph-uslab.antbrains.com:8443</td>
+<td>8443</td>
+<td>Storage monitoring</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="rke2-architecture">RKE2 Architecture</h2>
+<h3 id="what-is-rke2">What is RKE2?</h3>
+<p><strong>RKE2 (Rancher Kubernetes Engine 2)</strong> is Rancher’s
+next-generation Kubernetes distribution, designed for security and
+compliance in the U.S. Federal Government sector. It combines the best
+of RKE1 and K3s.</p>
+<h3 id="why-rke2-for-this-cluster">Why RKE2 for This Cluster?</h3>
+<p><strong>Key Benefits:</strong></p>
+<ol type="1">
+<li><strong>Security Hardened</strong>
+<ul>
+<li>CIS Kubernetes Benchmark compliance out-of-the-box</li>
+<li>FIPS 140-2 compliant cryptography</li>
+<li>SELinux support</li>
+<li>Pod Security Standards enabled by default</li>
+</ul></li>
+<li><strong>Production Ready</strong>
+<ul>
+<li>Stable, well-tested Kubernetes distribution</li>
+<li>Enterprise support available from SUSE/Rancher</li>
+<li>Regular security updates and patches</li>
+</ul></li>
+<li><strong>Simple Installation</strong>
+<ul>
+<li>Single binary installation</li>
+<li>Minimal dependencies</li>
+<li>Easy to upgrade and maintain</li>
+</ul></li>
+<li><strong>Embedded Components</strong>
+<ul>
+<li>containerd (container runtime)</li>
+<li>Calico CNI (networking)</li>
+<li>CoreDNS (DNS)</li>
+<li>Nginx Ingress Controller</li>
+<li>Metrics Server</li>
+</ul></li>
+</ol>
+<h3 id="rke2-architecture-components">RKE2 Architecture Components</h3>
+<h4 id="control-plane-components-on-fratelli">Control Plane Components
+(on fratelli)</h4>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                    Control Plane (fratelli)                     │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                   kube-apiserver                         │  │
+│  │  - REST API for all cluster operations                  │  │
+│  │  - Authentication and authorization                      │  │
+│  │  - Admission control                                     │  │
+│  │  - Validates and configures API objects                 │  │
+│  │  - Port: 6443 (secured with TLS)                        │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                            ▲                                    │
+│                            │                                    │
+│  ┌─────────────────────────┴────────────────────────────────┐  │
+│  │                        etcd                              │  │
+│  │  - Distributed key-value store                          │  │
+│  │  - Stores all cluster state and configuration           │  │
+│  │  - Consistent and highly-available                      │  │
+│  │  - Raft consensus algorithm                             │  │
+│  │  - Automatic snapshots for backup                       │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                  kube-scheduler                          │  │
+│  │  - Watches for newly created pods                       │  │
+│  │  - Selects optimal node for pod placement               │  │
+│  │  - Considers: resources, affinity, taints/tolerations   │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              kube-controller-manager                     │  │
+│  │  - Node Controller: monitors node health                │  │
+│  │  - Replication Controller: maintains pod count          │  │
+│  │  - Endpoints Controller: populates endpoints            │  │
+│  │  - Service Account Controller: creates default accounts │  │
+│  │  - And many more controllers...                         │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                  cloud-controller-manager                │  │
+│  │  - Manages cloud-specific control logic                 │  │
+│  │  - In our case: minimal (on-prem cluster)               │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+<h4 id="worker-node-components-on-all-nodes-including-fratelli">Worker
+Node Components (on all nodes including fratelli)</h4>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                      Worker Node                                │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                      kubelet                             │  │
+│  │  - Primary node agent                                    │  │
+│  │  - Registers node with API server                       │  │
+│  │  - Manages pods and containers                          │  │
+│  │  - Reports node and pod status                          │  │
+│  │  - Executes liveness/readiness probes                   │  │
+│  │  - Mounts volumes                                        │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                            │                                    │
+│                            ▼                                    │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                    containerd                            │  │
+│  │  - Container runtime (CRI implementation)                │  │
+│  │  - Manages container lifecycle                          │  │
+│  │  - Image pulling and storage                            │  │
+│  │  - Container execution                                   │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                    kube-proxy                            │  │
+│  │  - Network proxy on each node                           │  │
+│  │  - Implements Kubernetes Service concept                │  │
+│  │  - Maintains network rules (iptables/IPVS)              │  │
+│  │  - Enables service load balancing                       │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                   Calico CNI                             │  │
+│  │  - Pod networking                                        │  │
+│  │  - Network policy enforcement                           │  │
+│  │  - VXLAN overlay network                                │  │
+│  │  - IP address management (IPAM)                         │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="how-rke2-works-request-flow">How RKE2 Works: Request Flow</h3>
+<p><strong>Example: User creates a deployment</strong></p>
+<pre><code>1. User → kubectl → API Server (fratelli:6443)
+   └─ Authentication (TLS certificates)
+   └─ Authorization (RBAC)
+   └─ Admission Controllers (validation, mutation)
+
+2. API Server → etcd
+   └─ Stores deployment object in etcd
+
+3. Deployment Controller (in controller-manager) → API Server
+   └─ Watches for new deployments
+   └─ Creates ReplicaSet object
+
+4. ReplicaSet Controller → API Server
+   └─ Watches for new ReplicaSets
+   └─ Creates Pod objects
+
+5. Scheduler → API Server
+   └─ Watches for unscheduled pods
+   └─ Selects best node based on:
+      - Resource availability (CPU, memory)
+      - Node affinity/anti-affinity
+      - Taints and tolerations
+      - Pod topology spread
+   └─ Updates pod with node assignment
+
+6. Kubelet (on selected worker node) → API Server
+   └─ Watches for pods assigned to its node
+   └─ Pulls container image
+   └─ Creates container via containerd
+   └─ Configures networking via Calico
+   └─ Mounts volumes (from Ceph if needed)
+   └─ Starts container
+   └─ Reports status back to API server
+
+7. kube-proxy (on all nodes)
+   └─ Watches for new services
+   └─ Updates iptables/IPVS rules
+   └─ Enables service load balancing</code></pre>
+<h3 id="rke2-vs-standard-kubernetes">RKE2 vs Standard Kubernetes</h3>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 55%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Standard Kubernetes</th>
+<th>RKE2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Installation</strong></td>
+<td>Complex (kubeadm, manual)</td>
+<td>Simple (single script)</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>Manual hardening required</td>
+<td>CIS hardened by default</td>
+</tr>
+<tr>
+<td><strong>Container Runtime</strong></td>
+<td>Choose your own</td>
+<td>containerd embedded</td>
+</tr>
+<tr>
+<td><strong>CNI</strong></td>
+<td>Choose your own</td>
+<td>Calico embedded</td>
+</tr>
+<tr>
+<td><strong>Ingress</strong></td>
+<td>Manual installation</td>
+<td>Nginx embedded</td>
+</tr>
+<tr>
+<td><strong>Updates</strong></td>
+<td>Manual process</td>
+<td>Simplified upgrade path</td>
+</tr>
+<tr>
+<td><strong>FIPS Compliance</strong></td>
+<td>Manual configuration</td>
+<td>Built-in support</td>
+</tr>
+<tr>
+<td><strong>SELinux</strong></td>
+<td>Manual configuration</td>
+<td>Pre-configured policies</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="ceph-storage-architecture">Ceph Storage Architecture</h2>
+<h3 id="what-is-ceph">What is Ceph?</h3>
+<p><strong>Ceph</strong> is a unified, distributed storage system
+designed for excellent performance, reliability, and scalability. It
+provides three types of storage in one platform:</p>
+<ol type="1">
+<li><strong>Block Storage (RBD)</strong> - Like virtual hard drives for
+VMs/containers</li>
+<li><strong>File Storage (CephFS)</strong> - Shared filesystem for
+multiple clients</li>
+<li><strong>Object Storage (RGW)</strong> - S3-compatible object
+storage</li>
+</ol>
+<h3 id="why-ceph-for-this-cluster">Why Ceph for This Cluster?</h3>
+<p><strong>Key Benefits:</strong></p>
+<ol type="1">
+<li><strong>Distributed and Scalable</strong>
+<ul>
+<li>Data distributed across all nodes</li>
+<li>Add nodes to increase capacity and performance</li>
+<li>No single point of failure</li>
+</ul></li>
+<li><strong>Self-Healing</strong>
+<ul>
+<li>Automatic data replication</li>
+<li>Automatic recovery from failures</li>
+<li>Continuous data scrubbing for integrity</li>
+</ul></li>
+<li><strong>Flexible</strong>
+<ul>
+<li>Multiple storage types from one system</li>
+<li>Dynamic provisioning via Kubernetes</li>
+<li>Thin provisioning support</li>
+</ul></li>
+<li><strong>Production Ready</strong>
+<ul>
+<li>Battle-tested in large deployments</li>
+<li>Active community and enterprise support</li>
+<li>Integrated with Kubernetes via Rook</li>
+</ul></li>
+</ol>
+<h3 id="ceph-architecture-components">Ceph Architecture Components</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                          Ceph Cluster Architecture                          │
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │                        Client Layer                                   │ │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                │ │
+│  │  │ RBD Clients  │  │CephFS Clients│  │ RGW Clients  │                │ │
+│  │  │ (Block)      │  │ (File)       │  │ (Object/S3)  │                │ │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘                │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                  │                                          │
+│                                  ▼                                          │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │                      RADOS (Reliable Autonomic                        │ │
+│  │                   Distributed Object Store)                           │ │
+│  │                                                                       │ │
+│  │  ┌─────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                    MON (Monitors)                               │ │ │
+│  │  │  - Maintain cluster map (OSD map, MON map, PG map, CRUSH map)  │ │ │
+│  │  │  - Provide consensus for distributed decision-making           │ │ │
+│  │  │  - Track cluster health and state                              │ │ │
+│  │  │  - Quorum-based (need majority for decisions)                  │ │ │
+│  │  │  - Deployed on: pane, cicis, cesar (3 monitors)                │ │ │
+│  │  └─────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                       │ │
+│  │  ┌─────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                    MGR (Managers)                               │ │ │
+│  │  │  - Provide monitoring and metrics                              │ │ │
+│  │  │  - Host Ceph dashboard (web UI)                                │ │ │
+│  │  │  - Expose Prometheus metrics                                   │ │ │
+│  │  │  - Manage plugins and modules                                  │ │ │
+│  │  │  - Active/standby configuration                                │ │ │
+│  │  └─────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                       │ │
+│  │  ┌─────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                    MDS (Metadata Servers)                       │ │ │
+│  │  │  - Required ONLY for CephFS                                    │ │ │
+│  │  │  - Manage filesystem metadata (directories, permissions)       │ │ │
+│  │  │  - Not needed for RBD or RGW                                   │ │ │
+│  │  │  - Active/standby configuration                                │ │ │
+│  │  └─────────────────────────────────────────────────────────────────┘ │ │
+│  │                                                                       │ │
+│  │  ┌─────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                 OSD (Object Storage Daemons)                    │ │ │
+│  │  │  - Store actual data on disks                                  │ │ │
+│  │  │  - Handle data replication                                     │ │ │
+│  │  │  - Handle data recovery and rebalancing                        │ │ │
+│  │  │  - Perform data scrubbing and integrity checks                 │ │ │
+│  │  │  - One OSD per disk/device                                     │ │ │
+│  │  │                                                                 │ │ │
+│  │  │  Deployed on all worker nodes:                                 │ │ │
+│  │  │  ┌──────────┬──────────┬──────────┬──────────┬──────────┬─────┐│ │ │
+│  │  │  │OSD (pane)│OSD(cicis)│OSD(cesar)│OSD(papaj)│OSD(grima)│OSD  ││ │ │
+│  │  │  │          │          │          │          │  ldi)    │(ros)││ │ │
+│  │  │  └──────────┴──────────┴──────────┴──────────┴──────────┴─────┘│ │ │
+│  │  └─────────────────────────────────────────────────────────────────┘ │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="ceph-data-storage-how-it-works">Ceph Data Storage: How It
+Works</h3>
+<h4 id="data-placement-with-crush-algorithm">1. Data Placement with
+CRUSH Algorithm</h4>
+<p><strong>CRUSH (Controlled Replication Under Scalable
+Hashing)</strong> is Ceph’s data placement algorithm.</p>
+<p><strong>How CRUSH works:</strong></p>
+<pre><code>Object → Hash Function → Placement Group (PG) → CRUSH → OSD Set</code></pre>
+<p><strong>Step-by-step:</strong></p>
+<ol type="1">
+<li><strong>Object Creation</strong>
+<ul>
+<li>Application writes data (e.g., Kubernetes PVC)</li>
+<li>Data is split into objects (typically 4MB each)</li>
+<li>Each object gets a unique name</li>
+</ul></li>
+<li><strong>Hash to Placement Group</strong>
+<ul>
+<li>Object name is hashed</li>
+<li>Hash determines which Placement Group (PG) owns the object</li>
+<li>PGs are logical groupings of objects (typically 128-256 PGs per
+OSD)</li>
+</ul></li>
+<li><strong>CRUSH Maps PG to OSDs</strong>
+<ul>
+<li>CRUSH algorithm calculates which OSDs should store the PG</li>
+<li>Considers: replication factor, failure domains, weights</li>
+<li>Deterministic: same input always gives same output</li>
+<li>No central lookup table needed!</li>
+</ul></li>
+<li><strong>Data Written to OSDs</strong>
+<ul>
+<li>Primary OSD receives write</li>
+<li>Primary OSD replicates to secondary OSDs</li>
+<li>Write acknowledged when all replicas are written</li>
+</ul></li>
+</ol>
+<p><strong>Example:</strong></p>
+<pre><code>User creates 100MB PVC
+  ↓
+Ceph splits into 25 objects (4MB each)
+  ↓
+Object &quot;obj1&quot; → Hash → PG 1.3a
+  ↓
+CRUSH: PG 1.3a → [OSD.0 (pane), OSD.2 (cesar), OSD.4 (grimaldi)]
+  ↓
+Data written to 3 OSDs (if replication = 3)</code></pre>
+<h4 id="ceph-replication-how-data-is-protected">2. Ceph Replication: How
+Data is Protected</h4>
+<p><strong>THIS IS THE MOST IMPORTANT SECTION FOR UNDERSTANDING CEPH
+RELIABILITY</strong></p>
+<h5 id="replication-factor-pool-size">Replication Factor (Pool
+Size)</h5>
+<p><strong>Current Configuration:</strong>
+<code>osd_pool_default_size = 1</code> (from cluster-values.yaml)</p>
+<p>This means <strong>NO REPLICATION</strong> - each piece of data
+exists in only ONE location.</p>
+<p><strong>⚠️ IMPORTANT: This is NOT recommended for
+production!</strong></p>
+<h5 id="how-replication-works-when-properly-configured">How Replication
+Works (When Properly Configured)</h5>
+<p><strong>Recommended Production Configuration:</strong>
+<code>size = 3, min_size = 2</code></p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                    Ceph Replication Mechanism                               │
+│                                                                             │
+│  Step 1: Client Writes Data                                                │
+│  ┌──────────┐                                                               │
+│  │  Client  │  &quot;Write 100MB file&quot;                                           │
+│  │  (Pod)   │                                                               │
+│  └─────┬────┘                                                               │
+│        │                                                                     │
+│        ▼                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Ceph splits file into objects (25 objects × 4MB each)             │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│        │                                                                     │
+│        ▼                                                                     │
+│  Step 2: CRUSH Determines Placement (for each object)                      │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Object &quot;obj1&quot; → CRUSH → [OSD.0, OSD.3, OSD.5]                     │   │
+│  │                          Primary  Replica1  Replica2                │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│        │                                                                     │
+│        ▼                                                                     │
+│  Step 3: Primary OSD Receives Write                                        │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  OSD.0 (pane) - PRIMARY                                              │  │
+│  │  ┌────────────────────────────────────────────────────────────────┐  │  │
+│  │  │ 1. Receives write request from client                          │  │  │
+│  │  │ 2. Writes data to local disk (journal first, then data)        │  │  │
+│  │  │ 3. Simultaneously sends data to replica OSDs                   │  │  │
+│  │  └────────────────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│        │                                                                     │
+│        ├──────────────────────┬──────────────────────────────────────┐      │
+│        ▼                      ▼                                      ▼      │
+│  ┌──────────────┐       ┌──────────────┐                    ┌──────────────┐│
+│  │ OSD.0 (pane) │       │ OSD.3 (papaj)│                    │OSD.5(grimaldi││
+│  │   PRIMARY    │       │   REPLICA 1  │                    │   REPLICA 2  ││
+│  │              │       │              │                    │              ││
+│  │ [DATA COPY 1]│       │ [DATA COPY 2]│                    │ [DATA COPY 3]││
+│  │              │       │              │                    │              ││
+│  │ Disk: /dev/  │       │ Disk: /dev/  │                    │ Disk: /dev/  ││
+│  │   sdb        │       │   sdb        │                    │   sdb        ││
+│  └──────┬───────┘       └──────┬───────┘                    └──────┬───────┘│
+│         │                      │                                   │        │
+│         └──────────────────────┴───────────────────────────────────┘        │
+│                                │                                            │
+│                                ▼                                            │
+│  Step 4: Acknowledgment                                                    │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  All replicas confirm write → Primary OSD → Client                 │   │
+│  │  &quot;Write successful&quot; (only after ALL replicas are written)          │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<h5 id="replication-configuration-parameters">Replication Configuration
+Parameters</h5>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Current Value</th>
+<th>Recommended</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>size</strong></td>
+<td>1</td>
+<td>3</td>
+<td>Total number of copies of data</td>
+</tr>
+<tr>
+<td><strong>min_size</strong></td>
+<td>1</td>
+<td>2</td>
+<td>Minimum replicas required for I/O</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What these mean:</strong></p>
+<ul>
+<li><strong>size = 3</strong>: Ceph maintains 3 copies of every piece of
+data
+<ul>
+<li>1 primary copy</li>
+<li>2 replica copies</li>
+<li>Distributed across different nodes (failure domains)</li>
+</ul></li>
+<li><strong>min_size = 2</strong>: Cluster accepts writes if at least 2
+copies can be written
+<ul>
+<li>Allows operation even if 1 OSD is down</li>
+<li>Prevents data loss during single-node failure</li>
+<li>If only 1 OSD available, cluster goes read-only (protects data)</li>
+</ul></li>
+</ul>
+<h5 id="failure-scenarios-with-different-replication-levels">Failure
+Scenarios with Different Replication Levels</h5>
+<p><strong>Scenario 1: Current Configuration (size=1,
+min_size=1)</strong></p>
+<pre><code>Normal Operation:
+┌─────────────┐
+│ OSD.0 (pane)│
+│  [DATA]     │  ← Only copy
+└─────────────┘
+
+If pane node fails:
+┌─────────────┐
+│ OSD.0 (pane)│
+│  [OFFLINE]  │  ← DATA LOST! ❌
+└─────────────┘
+
+Result: PERMANENT DATA LOSS</code></pre>
+<p><strong>Scenario 2: Production Configuration (size=3,
+min_size=2)</strong></p>
+<pre><code>Normal Operation:
+┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+│ OSD.0 (pane)│  │OSD.3 (papaj)│  │OSD.5(grimal)│
+│  [DATA]     │  │  [DATA]     │  │  [DATA]     │
+└─────────────┘  └─────────────┘  └─────────────┘
+   Primary         Replica 1        Replica 2
+
+If pane node fails:
+┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+│ OSD.0 (pane)│  │OSD.3 (papaj)│  │OSD.5(grimal)│
+│  [OFFLINE]  │  │  [DATA] ✓   │  │  [DATA] ✓   │
+└─────────────┘  └─────────────┘  └─────────────┘
+                   New Primary      Replica
+
+Result:
+1. OSD.3 becomes new primary (automatic failover)
+2. Data still accessible (2 copies remain)
+3. Ceph starts recovery process
+4. New replica created on another OSD
+5. Back to 3 copies within minutes
+
+If BOTH pane AND papaj fail:
+┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+│ OSD.0 (pane)│  │OSD.3 (papaj)│  │OSD.5(grimal)│
+│  [OFFLINE]  │  │  [OFFLINE]  │  │  [DATA] ✓   │
+└─────────────┘  └─────────────┘  └─────────────┘
+
+Result:
+1. Only 1 copy remains (&lt; min_size=2)
+2. Cluster goes READ-ONLY for this data
+3. Prevents further data loss
+4. When nodes return, cluster recovers</code></pre>
+<h5 id="how-ceph-recovers-from-failures">How Ceph Recovers from
+Failures</h5>
+<p><strong>Automatic Recovery Process:</strong></p>
+<pre><code>1. OSD Failure Detected
+   ├─ Monitors detect OSD is down (heartbeat timeout)
+   ├─ Wait grace period (default: 5 minutes)
+   └─ Mark OSD as &quot;out&quot; if still down
+
+2. Recovery Planning
+   ├─ Identify all PGs with insufficient replicas
+   ├─ Calculate new OSD placements using CRUSH
+   └─ Prioritize recovery based on data risk
+
+3. Data Recovery
+   ├─ Copy data from surviving replicas
+   ├─ Create new replicas on healthy OSDs
+   ├─ Verify data integrity (checksums)
+   └─ Update cluster map
+
+4. Rebalancing
+   ├─ Distribute data evenly across OSDs
+   ├─ Respect CRUSH rules (failure domains)
+   └─ Throttle to avoid performance impact
+
+5. Completion
+   ├─ All PGs back to desired replica count
+   ├─ Cluster health returns to HEALTH_OK
+   └─ Ready for next failure</code></pre>
+<p><strong>Recovery Timeline Example:</strong></p>
+<pre><code>Time    Event
+------  --------------------------------------------------------
+00:00   Node &quot;pane&quot; crashes (power failure)
+00:01   Monitors detect OSD.0 is down
+00:05   Grace period expires, OSD.0 marked &quot;out&quot;
+00:06   Recovery begins (copying data from replicas)
+00:15   50% of data recovered
+00:25   100% of data recovered
+00:30   Cluster health: HEALTH_OK
+
+If pane returns:
+01:00   Node &quot;pane&quot; comes back online
+01:01   OSD.0 starts, marked &quot;in&quot;
+01:02   Ceph compares data on OSD.0 with current data
+01:05   Incremental recovery (only changed data)
+01:10   Rebalancing complete
+01:15   Cluster fully recovered</code></pre>
+<h5 id="changing-replication-factor">Changing Replication Factor</h5>
+<p><strong>To change from size=1 to size=3 (RECOMMENDED):</strong></p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to Ceph toolbox</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> rook-ceph exec <span class="at">-it</span> deploy/rook-ceph-tools <span class="at">--</span> bash</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check current pool configuration</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> osd pool ls detail</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Set replication for existing pools</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> osd pool set ceph-blockpool size 3</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> osd pool set ceph-blockpool min_size 2</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Set default for new pools</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> config set global osd_pool_default_size 3</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> config set global osd_pool_default_min_size 2</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> osd pool get ceph-blockpool size</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> osd pool get ceph-blockpool min_size</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Monitor rebalancing (will take time to create replicas)</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> status</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> <span class="at">-w</span>  <span class="co"># Watch in real-time</span></span></code></pre></div>
+<p><strong>Impact of changing to size=3:</strong> - <strong>Storage
+Usage:</strong> 3x increase (100GB becomes 300GB used) - <strong>Write
+Performance:</strong> Slightly slower (must write to 3 locations) -
+<strong>Read Performance:</strong> Faster (can read from any replica) -
+<strong>Reliability:</strong> Can survive 2 simultaneous node failures -
+<strong>Recovery Time:</strong> Faster (more replicas to recover
+from)</p>
+<hr />
+<h2 id="network-architecture">Network Architecture</h2>
+<h3 id="network-layers">Network Layers</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                         Network Architecture                                │
+│                                                                             │
+│  Layer 1: External Network (10.0.1.0/24)                                   │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │  - Physical network connecting all nodes                              │ │
+│  │  - 1Gbps or 10Gbps Ethernet                                           │ │
+│  │  │  - Node-to-node communication                                       │ │
+│  │  - Managed switch with VLAN support                                   │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                  │                                          │
+│                                  ▼                                          │
+│  Layer 2: Kubernetes Service Network (10.49.0.0/16)                       │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │  - Virtual IPs for Kubernetes services                                │ │
+│  │  - Managed by kube-proxy (IPVS mode)                                  │ │
+│  │  - Load balancing across pod endpoints                                │ │
+│  │  - ClusterIP, NodePort, LoadBalancer types                            │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                  │                                          │
+│                                  ▼                                          │
+│  Layer 3: Pod Network (10.48.0.0/16) - Calico CNI                         │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │  - VXLAN overlay network                                              │ │
+│  │  - Each pod gets unique IP from this range                            │ │
+│  │  - Cross-node pod communication                                       │ │
+│  │  - Network policy enforcement                                         │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                  │                                          │
+│                                  ▼                                          │
+│  Layer 4: Storage Network (Same as External: 10.0.1.0/24)                 │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │  - Ceph OSD communication                                             │ │
+│  │  - Data replication traffic                                           │ │
+│  │  - Recovery and rebalancing traffic                                   │ │
+│  │  - In production, often separate network for performance             │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="network-components">Network Components</h3>
+<h4 id="calico-cni-container-network-interface">1. Calico CNI (Container
+Network Interface)</h4>
+<p><strong>Purpose:</strong> Provides networking and network policy for
+pods</p>
+<p><strong>How it works:</strong></p>
+<pre><code>Pod A (node1) wants to talk to Pod B (node2)
+  ↓
+Pod A sends packet to 10.48.2.15 (Pod B&#39;s IP)
+  ↓
+Calico on node1 intercepts packet
+  ↓
+Encapsulates in VXLAN tunnel
+  ↓
+Sends to node2&#39;s physical IP (10.0.1.35)
+  ↓
+Calico on node2 decapsulates packet
+  ↓
+Delivers to Pod B</code></pre>
+<p><strong>Components:</strong> - <strong>calico-node:</strong>
+DaemonSet running on every node -
+<strong>calico-kube-controllers:</strong> Manages Calico resources -
+<strong>calico-typha:</strong> Scalability component for large
+clusters</p>
+<p><strong>Configuration:</strong> - <strong>Mode:</strong> VXLAN
+(overlay network) - <strong>IPAM:</strong> Calico’s built-in IP address
+management - <strong>MTU:</strong> 1450 (to account for VXLAN
+overhead)</p>
+<h4 id="metallb-load-balancer">2. MetalLB (Load Balancer)</h4>
+<p><strong>Purpose:</strong> Provides LoadBalancer service type for
+bare-metal</p>
+<p><strong>Mode:</strong> Layer 2 (ARP-based)</p>
+<p><strong>How it works:</strong></p>
+<pre><code>Service created with type: LoadBalancer
+  ↓
+MetalLB controller assigns IP from pool (10.0.1.101-200)
+  ↓
+MetalLB speaker pods announce IP via ARP
+  ↓
+One speaker becomes leader for this IP (leader election)
+  ↓
+External clients send traffic to this IP
+  ↓
+Leader node receives traffic
+  ↓
+kube-proxy forwards to service endpoints (pods)</code></pre>
+<h4 id="nginx-ingress-controller">3. Nginx Ingress Controller</h4>
+<p><strong>Purpose:</strong> HTTP/HTTPS routing and SSL termination</p>
+<p><strong>How it works:</strong></p>
+<pre><code>External HTTP request → https://app.antbrains.com
+  ↓
+DNS resolves to VIP (10.0.1.100) or MetalLB IP
+  ↓
+HAProxy forwards to Ingress Controller pod
+  ↓
+Nginx Ingress Controller:
+  - Terminates TLS (if configured)
+  - Matches host header to Ingress rules
+  - Routes to appropriate service
+  ↓
+Service forwards to pod endpoints</code></pre>
+<hr />
+<h2 id="high-availability-design">High Availability Design</h2>
+<h3 id="control-plane-ha">Control Plane HA</h3>
+<p><strong>Current Setup:</strong> Single control plane node
+(fratelli)</p>
+<p><strong>⚠️ Single Point of Failure:</strong> If fratelli fails,
+cluster management is unavailable</p>
+<p><strong>Recommended Production Setup:</strong> 3 control plane
+nodes</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│              Recommended HA Control Plane (3 nodes)                         │
+│                                                                             │
+│  ┌──────────────┐      ┌──────────────┐      ┌──────────────┐             │
+│  │  fratelli    │      │    pane      │      │    cicis     │             │
+│  │  (Master 1)  │      │  (Master 2)  │      │  (Master 3)  │             │
+│  │              │      │              │      │              │             │
+│  │ API Server   │      │ API Server   │      │ API Server   │             │
+│  │ Scheduler    │      │ Scheduler    │      │ Scheduler    │             │
+│  │ Controller   │      │ Controller   │      │ Controller   │             │
+│  │ etcd Member  │      │ etcd Member  │      │ etcd Member  │             │
+│  └──────────────┘      └──────────────┘      └──────────────┘             │
+│         │                     │                     │                      │
+│         └─────────────────────┴─────────────────────┘                      │
+│                               │                                            │
+│                               ▼                                            │
+│                    ┌─────────────────────┐                                 │
+│                    │  etcd Cluster       │                                 │
+│                    │  (Raft Consensus)   │                                 │
+│                    │  - Quorum: 2 of 3   │                                 │
+│                    │  - Can lose 1 node  │                                 │
+│                    └─────────────────────┘                                 │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<p><strong>Benefits of 3 control planes:</strong> - Can survive 1
+control plane failure - etcd maintains quorum with 2/3 nodes - API
+server load balanced across 3 nodes - Zero downtime upgrades
+possible</p>
+<h3 id="storage-ha-ceph">Storage HA (Ceph)</h3>
+<p><strong>Current Setup:</strong> 6 OSDs across 6 worker nodes,
+replication size=1</p>
+<p><strong>HA Characteristics:</strong> - ✅ Distributed across multiple
+nodes - ✅ No single point of failure for storage capacity - ❌ No data
+replication (size=1) - ❌ Node failure = data loss</p>
+<p><strong>With size=3 replication:</strong> - ✅ Can survive 2
+simultaneous node failures - ✅ Automatic failover and recovery - ✅ No
+data loss on node failure - ✅ Continuous availability during
+failures</p>
+<h3 id="network-ha">Network HA</h3>
+<p><strong>Load Balancer HA:</strong> - HAProxy + Keepalived on fratelli
+- Virtual IP (10.0.1.100) managed by Keepalived - <strong>Current
+limitation:</strong> Single node (fratelli) -
+<strong>Recommended:</strong> Deploy HAProxy + Keepalived on all 3
+control planes</p>
+<p><strong>Ingress HA:</strong> - Nginx Ingress Controller runs as
+DaemonSet or Deployment with replicas - Multiple ingress pods across
+nodes - Load balanced via MetalLB or NodePort</p>
+<hr />
+<h2 id="data-flow-diagrams">Data Flow Diagrams</h2>
+<h3 id="complete-request-flow-external-user-to-application-pod">Complete
+Request Flow: External User to Application Pod</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                    Complete Request Flow Example                            │
+│                                                                             │
+│  User accesses: https://myapp.antbrains.com                                │
+│                                                                             │
+│  Step 1: DNS Resolution                                                    │
+│  ┌──────────┐                                                               │
+│  │  User&#39;s  │  DNS query: myapp.antbrains.com                              │
+│  │  Browser │  ──────────────────────────────────────────────────────────▶ │
+│  └──────────┘                                                               │
+│       │                                                                     │
+│       │  DNS response: 10.0.1.100 (VIP)                                    │
+│       ◀──────────────────────────────────────────────────────────────────  │
+│       │                                                                     │
+│  Step 2: HTTPS Request to VIP                                              │
+│       │                                                                     │
+│       ▼                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Virtual IP: 10.0.1.100 (Keepalived on fratelli)                   │   │
+│  │  - Managed by Keepalived                                            │   │
+│  │  - Responds to ARP requests                                         │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│       │                                                                     │
+│       ▼                                                                     │
+│  Step 3: HAProxy Load Balancer                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  HAProxy (on fratelli)                                              │   │
+│  │  - Receives HTTPS request on port 443                               │   │
+│  │  - Forwards to Nginx Ingress Controller pods                        │   │
+│  │  - Load balances across multiple ingress pods                       │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│       │                                                                     │
+│       ▼                                                                     │
+│  Step 4: Nginx Ingress Controller                                          │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Nginx Ingress Controller Pod (e.g., on pane)                      │   │
+│  │  - Terminates TLS (decrypts HTTPS)                                  │   │
+│  │  - Reads Host header: myapp.antbrains.com                           │   │
+│  │  - Matches to Ingress rule                                          │   │
+│  │  - Routes to Service: myapp-service                                 │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│       │                                                                     │
+│       ▼                                                                     │
+│  Step 5: Kubernetes Service                                                │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Service: myapp-service (ClusterIP: 10.49.15.20)                    │   │
+│  │  - Virtual IP managed by kube-proxy                                 │   │
+│  │  - Endpoints: [10.48.2.10, 10.48.3.15, 10.48.4.20]                 │   │
+│  │  - kube-proxy load balances to one endpoint                         │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│       │                                                                     │
+│       ▼                                                                     │
+│  Step 6: Pod Network (Calico)                                              │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  kube-proxy selects endpoint: 10.48.3.15 (pod on cicis)            │   │
+│  │  - Packet sent to pod IP                                            │   │
+│  │  - Calico CNI routes packet:                                        │   │
+│  │    * Encapsulates in VXLAN                                          │   │
+│  │    * Sends to cicis node (10.0.1.35)                                │   │
+│  │    * Decapsulates and delivers to pod                               │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│       │                                                                     │
+│       ▼                                                                     │
+│  Step 7: Application Pod                                                   │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  myapp-pod-xyz (on cicis node)                                      │   │
+│  │  - Container receives HTTP request                                  │   │
+│  │  - Application processes request                                    │   │
+│  │  - May access storage (Ceph PVC)                                    │   │
+│  │  - Returns response                                                 │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│       │                                                                     │
+│       ▼                                                                     │
+│  Step 8: Response Path (reverse of above)                                  │
+│  Pod → Calico → Service → Ingress → HAProxy → VIP → User                  │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="storage-request-flow-pod-writes-to-ceph">Storage Request Flow:
+Pod Writes to Ceph</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                    Storage Write Flow (with replication=3)                  │
+│                                                                             │
+│  Step 1: Application Writes Data                                           │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  Application Pod (e.g., database)                                    │  │
+│  │  - Writes 100MB file to mounted PVC                                  │  │
+│  │  - PVC backed by Ceph RBD                                            │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│       │                                                                     │
+│       ▼                                                                     │
+│  Step 2: Kernel and CSI Driver                                             │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  - Kernel filesystem layer                                           │  │
+│  │  - Ceph CSI driver (rbd.csi.ceph.com)                                │  │
+│  │  - Translates filesystem operations to Ceph RBD operations           │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│       │                                                                     │
+│       ▼                                                                     │
+│  Step 3: Ceph Client Library                                               │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  - librbd (Ceph RBD client library)                                  │  │
+│  │  - Splits 100MB into 25 objects (4MB each)                           │  │
+│  │  - For each object:                                                  │  │
+│  │    * Hash object name → Placement Group (PG)                         │  │
+│  │    * CRUSH algorithm → OSD set [primary, replica1, replica2]        │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│       │                                                                     │
+│       ▼                                                                     │
+│  Step 4: Write to Primary OSD                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  Primary OSD (e.g., OSD.0 on pane)                                   │  │
+│  │  - Receives write request                                            │  │
+│  │  - Writes to journal (fast, sequential write)                        │  │
+│  │  - Simultaneously sends to replica OSDs                              │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│       │                                                                     │
+│       ├──────────────────────┬────────────────────────────────────────┐    │
+│       ▼                      ▼                                        ▼    │
+│  ┌──────────┐          ┌──────────┐                            ┌──────────┐│
+│  │OSD.0     │          │OSD.3     │                            │OSD.5     ││
+│  │(pane)    │          │(papaj)   │                            │(grimaldi)││
+│  │PRIMARY   │          │REPLICA 1 │                            │REPLICA 2 ││
+│  │          │          │          │                            │          ││
+│  │Writes to │          │Writes to │                            │Writes to ││
+│  │disk      │          │disk      │                            │disk      ││
+│  └────┬─────┘          └────┬─────┘                            └────┬─────┘│
+│       │                     │                                       │      │
+│       │  ACK                │  ACK                                  │  ACK │
+│       └─────────────────────┴───────────────────────────────────────┘      │
+│                             │                                              │
+│                             ▼                                              │
+│  Step 5: Acknowledgment to Client                                          │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  Primary OSD → Ceph client → Application                            │  │
+│  │  &quot;Write successful&quot; (only after all 3 replicas confirm)             │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│  Step 6: Background Operations                                             │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │  - Journal data flushed to main storage                              │  │
+│  │  - Data scrubbing (periodic integrity checks)                        │  │
+│  │  - Rebalancing (if cluster topology changes)                         │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<hr />
+<h2 id="scaling-and-performance">Scaling and Performance</h2>
+<h3 id="horizontal-scaling">Horizontal Scaling</h3>
+<h4 id="adding-worker-nodes">Adding Worker Nodes</h4>
+<p><strong>Process:</strong> 1. Prepare new server (same as Phase 1 in
+setup guide) 2. Install RKE2 agent 3. Join to cluster using node token
+4. Ceph automatically detects new OSDs 5. Data rebalances across new
+OSDs</p>
+<p><strong>Benefits:</strong> - More compute capacity for pods - More
+storage capacity - Better fault tolerance - Improved performance (more
+parallel processing)</p>
+<p><strong>Example: Adding node “poco”</strong></p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># On new node (poco)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RKE2_TOKEN</span><span class="op">=</span><span class="st">&quot;&lt;token-from-fratelli&gt;&quot;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RKE2_URL</span><span class="op">=</span><span class="st">&quot;https://10.0.1.100:9345&quot;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-sfL</span> https://get.rke2.io <span class="kw">|</span> <span class="va">INSTALL_RKE2_TYPE</span><span class="op">=</span><span class="st">&quot;agent&quot;</span> <span class="fu">sh</span> <span class="at">-</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> enable rke2-agent</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> start rke2-agent</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify on fratelli</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get nodes</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Should show poco in Ready state</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Ceph automatically discovers new OSDs</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> rook-ceph exec <span class="at">-it</span> deploy/rook-ceph-tools <span class="at">--</span> ceph osd tree</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Should show new OSD from poco</span></span></code></pre></div>
+<h4 id="scaling-applications">Scaling Applications</h4>
+<p><strong>Horizontal Pod Autoscaler (HPA):</strong></p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> autoscaling/v2</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> HorizontalPodAutoscaler</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> myapp-hpa</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">scaleTargetRef</span><span class="kw">:</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> apps/v1</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">kind</span><span class="kw">:</span><span class="at"> Deployment</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> myapp</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">minReplicas</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">maxReplicas</span><span class="kw">:</span><span class="at"> </span><span class="dv">10</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">metrics</span><span class="kw">:</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">type</span><span class="kw">:</span><span class="at"> Resource</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">resource</span><span class="kw">:</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> cpu</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">target</span><span class="kw">:</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">type</span><span class="kw">:</span><span class="at"> Utilization</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">averageUtilization</span><span class="kw">:</span><span class="at"> </span><span class="dv">70</span></span></code></pre></div>
+<p><strong>How it works:</strong> - Monitors CPU/memory usage -
+Automatically adds/removes pods - Distributes pods across nodes -
+Integrates with cluster autoscaler</p>
+<h3 id="vertical-scaling">Vertical Scaling</h3>
+<h4 id="increasing-node-resources">Increasing Node Resources</h4>
+<p><strong>Options:</strong> 1. <strong>Add RAM:</strong> Increase
+memory capacity 2. <strong>Add CPU:</strong> Add more cores 3.
+<strong>Add Disks:</strong> Add more OSDs for storage</p>
+<p><strong>For Ceph:</strong> - Adding disks to existing nodes increases
+capacity - Each disk becomes a new OSD - Automatic rebalancing
+distributes data</p>
+<h3 id="performance-optimization">Performance Optimization</h3>
+<h4 id="ceph-performance">Ceph Performance</h4>
+<p><strong>Factors affecting performance:</strong></p>
+<ol type="1">
+<li><strong>Disk Type:</strong>
+<ul>
+<li><strong>HDD:</strong> 100-200 IOPS, good for capacity</li>
+<li><strong>SSD:</strong> 10,000+ IOPS, good for performance</li>
+<li><strong>NVMe:</strong> 100,000+ IOPS, best performance</li>
+</ul></li>
+<li><strong>Network:</strong>
+<ul>
+<li><strong>1Gbps:</strong> Sufficient for small clusters</li>
+<li><strong>10Gbps:</strong> Recommended for production</li>
+<li><strong>Separate storage network:</strong> Isolates storage
+traffic</li>
+</ul></li>
+<li><strong>Replication:</strong>
+<ul>
+<li><strong>size=1:</strong> Fastest writes, no redundancy</li>
+<li><strong>size=3:</strong> Slower writes (3x network traffic), high
+redundancy</li>
+</ul></li>
+<li><strong>Journal/WAL:</strong>
+<ul>
+<li><strong>Separate SSD for journal:</strong> Improves write
+performance</li>
+<li><strong>Co-located journal:</strong> Simpler, slower</li>
+</ul></li>
+</ol>
+<p><strong>Optimization tips:</strong></p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable fast read from replicas</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> osd pool set <span class="op">&lt;</span>pool-name<span class="op">&gt;</span> fast_read true</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjust PG count for better distribution</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> osd pool set <span class="op">&lt;</span>pool-name<span class="op">&gt;</span> pg_num 128</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> osd pool set <span class="op">&lt;</span>pool-name<span class="op">&gt;</span> pgp_num 128</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable compression (saves space, uses CPU)</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="ex">ceph</span> osd pool set <span class="op">&lt;</span>pool-name<span class="op">&gt;</span> compression_mode aggressive</span></code></pre></div>
+<h4 id="kubernetes-performance">Kubernetes Performance</h4>
+<p><strong>Resource Requests and Limits:</strong></p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resources</span><span class="kw">:</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">requests</span><span class="kw">:</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">cpu</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;500m&quot;</span><span class="co">      # Guaranteed CPU</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">memory</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;512Mi&quot;</span><span class="co">  # Guaranteed memory</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">limits</span><span class="kw">:</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">cpu</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;2000m&quot;</span><span class="co">     # Maximum CPU</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">memory</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;2Gi&quot;</span><span class="co">    # Maximum memory</span></span></code></pre></div>
+<p><strong>Pod Priority:</strong></p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> scheduling.k8s.io/v1</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> PriorityClass</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> high-priority</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">value</span><span class="kw">:</span><span class="at"> </span><span class="dv">1000</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">globalDefault</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;High priority for critical apps&quot;</span></span></code></pre></div>
+<hr />
+<h2 id="security-architecture">Security Architecture</h2>
+<h3 id="network-security">Network Security</h3>
+<h4 id="network-policies">Network Policies</h4>
+<p><strong>Example: Restrict pod communication</strong></p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> networking.k8s.io/v1</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> NetworkPolicy</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> deny-all-ingress</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">namespace</span><span class="kw">:</span><span class="at"> production</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">podSelector</span><span class="kw">:</span><span class="at"> </span><span class="kw">{}</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">policyTypes</span><span class="kw">:</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Ingress</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">  # No ingress rules = deny all</span></span></code></pre></div>
+<p><strong>Allow specific traffic:</strong></p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> networking.k8s.io/v1</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> NetworkPolicy</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> allow-frontend-to-backend</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">namespace</span><span class="kw">:</span><span class="at"> production</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">podSelector</span><span class="kw">:</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">matchLabels</span><span class="kw">:</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">app</span><span class="kw">:</span><span class="at"> backend</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">policyTypes</span><span class="kw">:</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Ingress</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ingress</span><span class="kw">:</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">from</span><span class="kw">:</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">podSelector</span><span class="kw">:</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">matchLabels</span><span class="kw">:</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">app</span><span class="kw">:</span><span class="at"> frontend</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">protocol</span><span class="kw">:</span><span class="at"> TCP</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">port</span><span class="kw">:</span><span class="at"> </span><span class="dv">8080</span></span></code></pre></div>
+<h3 id="authentication-and-authorization">Authentication and
+Authorization</h3>
+<h4 id="rbac-role-based-access-control">RBAC (Role-Based Access
+Control)</h4>
+<p><strong>Cluster-wide admin:</strong></p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> rbac.authorization.k8s.io/v1</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> ClusterRoleBinding</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> admin-user</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">roleRef</span><span class="kw">:</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">apiGroup</span><span class="kw">:</span><span class="at"> rbac.authorization.k8s.io</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">kind</span><span class="kw">:</span><span class="at"> ClusterRole</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> cluster-admin</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="fu">subjects</span><span class="kw">:</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">kind</span><span class="kw">:</span><span class="at"> User</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> admin@antbrains.com</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">apiGroup</span><span class="kw">:</span><span class="at"> rbac.authorization.k8s.io</span></span></code></pre></div>
+<p><strong>Namespace-specific access:</strong></p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> rbac.authorization.k8s.io/v1</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> RoleBinding</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> developer-binding</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">namespace</span><span class="kw">:</span><span class="at"> development</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">roleRef</span><span class="kw">:</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">apiGroup</span><span class="kw">:</span><span class="at"> rbac.authorization.k8s.io</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">kind</span><span class="kw">:</span><span class="at"> Role</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> developer</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="fu">subjects</span><span class="kw">:</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">kind</span><span class="kw">:</span><span class="at"> User</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> dev@antbrains.com</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">apiGroup</span><span class="kw">:</span><span class="at"> rbac.authorization.k8s.io</span></span></code></pre></div>
+<h3 id="data-security">Data Security</h3>
+<h4 id="encryption-at-rest">Encryption at Rest</h4>
+<p><strong>Ceph encryption:</strong></p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> ceph.rook.io/v1</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> CephBlockPool</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> encrypted-pool</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">namespace</span><span class="kw">:</span><span class="at"> rook-ceph</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">replicated</span><span class="kw">:</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">size</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">parameters</span><span class="kw">:</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">encryption</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;true&quot;</span></span></code></pre></div>
+<h4 id="secrets-management">Secrets Management</h4>
+<p><strong>Kubernetes Secrets:</strong></p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create secret</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> create secret generic db-password <span class="dt">\</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--from-literal</span><span class="op">=</span>password=<span class="st">&#39;super-secret-password&#39;</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Use in pod</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="ex">env:</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="ex">-</span> name: DB_PASSWORD</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="ex">valueFrom:</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="ex">secretKeyRef:</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>      <span class="ex">name:</span> db-password</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>      <span class="ex">key:</span> password</span></code></pre></div>
+<h3 id="tlsssl">TLS/SSL</h3>
+<p><strong>Certificate Management with cert-manager:</strong></p>
+<ul>
+<li>Automatic certificate issuance from Let’s Encrypt</li>
+<li>Automatic renewal before expiry</li>
+<li>TLS termination at ingress</li>
+<li>mTLS for service-to-service communication</li>
+</ul>
+<hr />
+<h2 id="conclusion">Conclusion</h2>
+<p>This architecture provides a robust, scalable, and secure platform
+for running containerized applications. Key takeaways:</p>
+<p><strong>Strengths:</strong> - ✅ Distributed storage with Ceph - ✅
+Scalable compute with Kubernetes - ✅ Automated management with Rancher
+- ✅ Flexible networking with Calico - ✅ Production-grade with RKE2</p>
+<p><strong>Recommendations for Production:</strong> - ⚠️
+<strong>Increase Ceph replication to size=3</strong> (currently size=1)
+- ⚠️ <strong>Add 2 more control plane nodes</strong> (currently single
+master) - ⚠️ <strong>Implement regular backups</strong> (Velero for
+Kubernetes, Ceph snapshots) - ⚠️ <strong>Set up monitoring</strong>
+(Prometheus + Grafana) - ⚠️ <strong>Configure alerting</strong>
+(AlertManager) - ⚠️ <strong>Document disaster recovery
+procedures</strong></p>
+<p><strong>Next Steps:</strong> 1. Review and implement production
+recommendations 2. Set up monitoring and alerting 3. Establish backup
+and disaster recovery procedures 4. Conduct regular security audits 5.
+Plan for capacity growth</p>
+<hr />
+<p><strong>Document Information:</strong> - <strong>Version:</strong>
+1.0 - <strong>Last Updated:</strong> January 2026 - <strong>Maintained
+By:</strong> Infrastructure Team - <strong>Contact:</strong>
+admin@antbrains.com</p>
+</body>
+</html>

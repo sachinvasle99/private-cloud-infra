@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtualenv
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# App data — never commit DB, snapshots, or generated reports
+data/
+reports/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Backups / migration artifacts
+pre-migration-*
+*.bak
+
+# Secrets / local config
+*.kubeconfig
+*-kubeconfig.yaml
+.env
+.env.*
+!.env.example

@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>UsLab-Eng-01 Master Plan</title>
+  <style>
+
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">@page { size: A4; margin: 18mm 16mm; }
+body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; color: #1a1a1a; max-width: 100%; }
+h1 { font-size: 20pt; color: #0b3d5c; border-bottom: 3px solid #0b3d5c; padding-bottom: 6px; margin-top: 0; }
+h2 { font-size: 14pt; color: #0b3d5c; border-bottom: 1px solid #c9d6df; padding-bottom: 3px; margin-top: 22px; page-break-after: avoid; }
+h3 { font-size: 11.5pt; color: #14506e; page-break-after: avoid; }
+code { background: #f0f3f6; padding: 1px 4px; border-radius: 3px; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 8.8pt; color: #b3144b; }
+pre { background: #0f1620; color: #d6e2ee; padding: 10px 12px; border-radius: 6px; font-size: 8.2pt; line-height: 1.4; overflow-x: auto; page-break-inside: avoid; }
+pre code { background: none; color: inherit; padding: 0; }
+table { border-collapse: collapse; width: 100%; font-size: 9pt; margin: 8px 0; page-break-inside: avoid; }
+th, td { border: 1px solid #cdd6de; padding: 4px 7px; text-align: left; vertical-align: top; }
+th { background: #0b3d5c; color: #fff; font-weight: 600; }
+tr:nth-child(even) td { background: #f5f8fa; }
+blockquote { border-left: 4px solid #f0a020; background: #fff8ec; margin: 10px 0; padding: 6px 12px; color: #5a4a1a; }
+a { color: #14506e; text-decoration: none; }
+hr { border: none; border-top: 1px solid #d0d8df; margin: 16px 0; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">UsLab-Eng-01 Master Plan</h1>
+</header>
+<h1 id="rke2--topolvm--metallb--nginx-proxy-manager--uslab-eng-01-master-build-plan">RKE2
++ TopoLVM + MetalLB + Nginx Proxy Manager — UsLab-Eng-01 Master Build
+Plan</h1>
+<p><strong>Cluster:</strong> <code>UsLab-Eng-01</code>
+<strong>Distribution:</strong> RKE2 v1.33.x (Calico CNI)
+<strong>Storage:</strong> TopoLVM — <strong>thick</strong> node-local
+LVM on NVMe, <strong>one VG + StorageClass per node</strong>
+(Lumens-style) <strong>Edge (initial stage):</strong>
+<strong>MetalLB</strong> (L2) + <strong>Nginx Proxy Manager</strong>
+(reverse proxy + Let&#39;s Encrypt). <strong>No ingress controller.</strong>
+<strong>Async replication (optional):</strong> VolSync,
+<code>copyMethod: Direct</code> (thick has no snapshots)
+<strong>Topology:</strong> 1 master + invoker (<code>roso</code>) · 4
+app/storage workers · 1 invoker worker (<code>poco</code>)</p>
+<blockquote>
+<p><strong>Why no ingress yet?</strong> The initial stage keeps the edge
+simple: MetalLB hands a LAN IP to Nginx Proxy Manager (NPM), which
+proxies <code>*.antbrains.com</code> and manages TLS in a UI. The
+Traefik v3 + cert-manager ingress design is <strong>deferred to Phase
+2</strong> (a few months out) and parked under
+<code>Traefik.phase2/</code>.</p>
+<p><strong>No Ceph.</strong> This cluster is pure node-local NVMe via
+TopoLVM — the move off Ceph is to kill the network-hop latency. See
+<code>storage-performance.html</code>.</p>
+</blockquote>
+<hr />
+<h2 id="0-parameters-to-confirm-before-install">0. Parameters to confirm
+before install</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Value</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node subnet</td>
+<td><code>10.35.0.0/24</code></td>
+<td>matches old uslab cluster</td>
+</tr>
+<tr>
+<td>API VIP</td>
+<td><code>10.35.0.60</code></td>
+<td>kube-API endpoint / TLS-SAN (keepalived, optional with single
+master)</td>
+</tr>
+<tr>
+<td>MetalLB pool</td>
+<td><code>10.35.0.61-10.35.0.99</code></td>
+<td>LoadBalancer IPs for apps; <strong>NPM took
+<code>10.35.0.61</code></strong>. Above the VIP, outside DHCP, no
+overlap with node IPs</td>
+</tr>
+<tr>
+<td>Master IP (roso)</td>
+<td><code>10.35.0.30</code></td>
+<td>master + invoker worker</td>
+</tr>
+<tr>
+<td>Worker IPs</td>
+<td>cheese <code>10.35.0.51</code> · dough <code>10.35.0.52</code> ·
+rosatini <code>10.35.0.53</code> · nicks <code>10.35.0.54</code> · poco
+<code>&lt;IP_poco&gt;</code></td>
+<td>static, in <code>10.35.0.x</code> (see §1.5)</td>
+</tr>
+<tr>
+<td>Cluster name</td>
+<td><code>uslab-eng-01</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Domain</td>
+<td><code>antbrains.com</code></td>
+<td>external DNS zone</td>
+</tr>
+<tr>
+<td>Pod CIDR</td>
+<td><code>10.50.0.0/16</code></td>
+<td>non-overlapping with old uslab (10.48/49) and punelab
+(172.30/31)</td>
+</tr>
+<tr>
+<td>Service CIDR</td>
+<td><code>10.51.0.0/16</code></td>
+<td>cluster DNS <code>10.51.0.10</code></td>
+</tr>
+<tr>
+<td>RKE2 version</td>
+<td><code>v1.33.1+rke2r1</code></td>
+<td>pin a current v1.33 patch before install</td>
+</tr>
+<tr>
+<td>TopoLVM chart</td>
+<td><code>topolvm/topolvm</code> v15.x</td>
+<td>latest stable</td>
+</tr>
+<tr>
+<td>MetalLB chart</td>
+<td><code>metallb/metallb</code> latest</td>
+<td>L2 mode</td>
+</tr>
+<tr>
+<td>NPM image</td>
+<td><code>jc21/nginx-proxy-manager</code></td>
+<td>pin a tag/digest for production</td>
+</tr>
+<tr>
+<td>VolSync chart</td>
+<td><code>backube/volsync</code> latest</td>
+<td>optional; Direct mode</td>
+</tr>
+<tr>
+<td>cert-manager chart</td>
+<td><code>jetstack/cert-manager</code> v1.18</td>
+<td>required by the TopoLVM webhook</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Hostnames are lowercase RFC1123:</strong> <code>roso</code>,
+<code>cheese</code>, <code>dough</code>, <code>nicks</code>,
+<code>rosatini</code>, <code>poco</code>.</p>
+</blockquote>
+<hr />
+<h2 id="1-architecture">1. Architecture</h2>
+<h3 id="11-logical-topology">1.1 Logical topology</h3>
+<pre><code>                                  Internet / Office LAN
+                                          │
+                              DNS: *.antbrains.com → &lt;NPM MetalLB IP&gt;
+                                          │
+                                  ┌───────▼─────────────────┐
+                                  │  Nginx Proxy Manager     │  Service type=LoadBalancer
+                                  │  MetalLB IP (10.35.0.2xx)│  (one IP from 10.35.0.61-10.35.0.99)
+                                  │  :80 :443 (+ :81 admin)  │  TLS terminate (Let&#39;s Encrypt)
+                                  └───────┬──────────────────┘
+                                          │ proxies to ClusterIP services
+        ┌─────────────── kube-API HA (separate path) ───────────────┐
+        │  keepalived VIP 10.35.0.60 + HAProxy on roso :6444 → roso:6443  │
+        └────────────────────────────────────────────────────────────┘
+                                          │
+   ┌─────────────────────── CONTROL PLANE ─────────────────────────┐
+   │  roso  10.35.0.30   E5-2689 32c · 125Gi                         │
+   │  RKE2-server · etcd · kube-API · scheduler · cm               │
+   │  HAProxy · keepalived (API VIP 10.35.0.60)                    │
+   │  role=invoker · NO TAINT (would deadlock CNI bootstrap §6.1)  │
+   │  invoker-only via nodeSelector + CP reservations             │
+   │  NO TopoLVM (label topolvm.io/storage NOT set)                │
+   └───────────────────────────────────────────────────────────────┘
+                                          │
+   ┌────────────────────────────  WORKERS  (RKE2-agent)  ──────────────────────────────┐
+   │   APP + LOCAL STORAGE (untainted, role=app, topolvm.io/storage=true)              │
+   │   ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐             │
+   │   │  cheese     │ │  dough       │ │  nicks       │ │  rosatini     │             │
+   │   │  Gold 6138   │ │  Gold 6138   │ │  Gold 6138   │ │  Gold 6138   │             │
+   │   │  256Gi       │ │  256Gi       │ │  256Gi       │ │  256Gi       │             │
+   │   │  NVMe NM790  │ │  NVMe NM790  │ │  NVMe NQ780  │ │  NVMe NQ780  │             │
+   │   │ vg-topolvm-  │ │ vg-topolvm-  │ │ vg-topolvm-  │ │ vg-topolvm-  │             │
+   │   │   cheese    │ │   dough      │ │   nicks      │ │   rosatini    │             │
+   │   │ THICK LV     │ │ THICK LV     │ │ THICK LV     │ │ THICK LV     │             │
+   │   │ topolvm node │ │ topolvm node │ │ topolvm node │ │ topolvm node │             │
+   │   │  + lvmd      │ │  + lvmd      │ │  + lvmd      │ │  + lvmd      │             │
+   │   │ SC: local-   │ │ SC: local-   │ │ SC: local-   │ │ SC: local-   │             │
+   │   │  ssd-cheese │ │  ssd-dough   │ │  ssd-nicks   │ │  ssd-rosatini │             │
+   │   └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘             │
+   │      device-class `ssd` on every node; only the VG underneath differs             │
+   │                                                                                   │
+   │   INVOKER-ONLY (taint dedicated=invoker:NoSchedule, role=invoker)                 │
+   │   ┌──────────────┐                                                                │
+   │   │  poco        │   no drive, no TopoLVM, no app pods                            │
+   │   │  E5-2698 v4  │   tolerates invoker taint only                                 │
+   │   │  630Gi       │                                                                │
+   │   └──────────────┘                                                                │
+   └───────────────────────────────────────────────────────────────────────────────────┘
+
+   CNI: Calico VXLAN  ·  Pod 10.50.0.0/16  ·  Svc 10.51.0.0/16  ·  clusterDNS 10.51.0.10
+   No cluster-default StorageClass — every PVC sets storageClassName explicitly.</code></pre>
+<h3 id="12-request-flow--external-https-initial-stage">1.2 Request flow
+— external HTTPS (initial stage)</h3>
+<pre><code>  user-agent
+     │ HTTPS https://app.antbrains.com
+     ▼ DNS *.antbrains.com → NPM&#39;s MetalLB IP
+     ▼ MetalLB L2 (one node ARPs the VIP) → Service npm-proxy (LoadBalancer)
+     ▼ Nginx Proxy Manager pod  — TLS terminate (Let&#39;s Encrypt cert in NPM)
+     ▼ proxy_pass → ClusterIP service (svc.ns.svc.cluster.local)
+     ▼ Pod</code></pre>
+<h3 id="13-storage-flow--pvc-thick-per-node">1.3 Storage flow — PVC
+(thick, per node)</h3>
+<pre><code>  workload pod  (PVC: storageClassName = local-ssd-&lt;node&gt;, explicit)
+     ▼ WaitForFirstConsumer — bind waits until the pod schedules
+     ▼ allowedTopologies pins the PVC to that ONE node
+     ▼ topolvm-controller creates a LogicalVolume CR
+     ▼ lvmd on that node carves a THICK linear LV from vg-topolvm-&lt;node&gt;
+     ▼ topolvm-node mounts the LV (xfs) into the pod
+     ▼ pod gets raw NVMe speed; the pod is now pinned to that node</code></pre>
+<h3 id="14-async-replication-flow--volsync-direct-optional">1.4 Async
+replication flow — VolSync (Direct, optional)</h3>
+<pre><code>  source-ns/data (PVC, local-ssd-cheese)
+     │ scheduled trigger (e.g. hourly)
+     ▼ mover co-mounts the LIVE PVC (same node, RWO) — NO snapshot (thick)
+     ▼ rsync-over-TLS push ──→ target-ns/data-dest (PVC, local-ssd-dough)
+  For consistent DB copies: quiesce the writer, or replicate an app-level dump.
+  RPO = schedule interval.</code></pre>
+<h3 id="15-node-inventory">1.5 Node inventory</h3>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>IP</th>
+<th>Role</th>
+<th>OS</th>
+<th>CPU</th>
+<th>RAM</th>
+<th>Root SSD</th>
+<th>NVMe (LVM PV)</th>
+<th>LVM VG</th>
+<th>k8s labels</th>
+<th>k8s taints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>roso</td>
+<td><code>10.35.0.30</code></td>
+<td>master + invoker</td>
+<td>Ubuntu 24.04.1</td>
+<td>Xeon E5-2689 32c</td>
+<td>125Gi</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td><code>role=invoker</code></td>
+<td><strong>none</strong> (untainted — see §6.1)</td>
+</tr>
+<tr>
+<td>cheese</td>
+<td><code>10.35.0.51</code></td>
+<td>app + storage</td>
+<td>24.04.4</td>
+<td>Xeon Gold 6138 80c</td>
+<td>256Gi</td>
+<td>931.5G BX500</td>
+<td>3.7TiB Lexar NM790</td>
+<td><code>vg-topolvm-cheese</code></td>
+<td><code>role=app, topolvm.io/storage=true</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>dough</td>
+<td><code>10.35.0.52</code></td>
+<td>app + storage</td>
+<td>24.04.4</td>
+<td>Xeon Gold 6138 80c</td>
+<td>256Gi</td>
+<td>931.5G BX500</td>
+<td>3.7TiB Lexar NM790</td>
+<td><code>vg-topolvm-dough</code></td>
+<td><code>role=app, topolvm.io/storage=true</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>rosatini</td>
+<td><code>10.35.0.53</code></td>
+<td>app + storage</td>
+<td>24.04.4</td>
+<td>Xeon Gold 6138 80c</td>
+<td>256Gi</td>
+<td>931.5G BX500</td>
+<td>3.7TiB Lexar NQ780</td>
+<td><code>vg-topolvm-rosatini</code></td>
+<td><code>role=app, topolvm.io/storage=true</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>nicks</td>
+<td><code>10.35.0.54</code></td>
+<td>app + storage</td>
+<td>24.04.4</td>
+<td>Xeon Gold 6138 80c</td>
+<td>256Gi</td>
+<td>931.5G BX500</td>
+<td>3.7TiB Lexar NQ780</td>
+<td><code>vg-topolvm-nicks</code></td>
+<td><code>role=app, topolvm.io/storage=true</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>poco</td>
+<td><code>&lt;IP_poco&gt;</code></td>
+<td>invoker</td>
+<td>24.04.1</td>
+<td>Xeon E5-2698 v4 80c</td>
+<td>630Gi</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td><code>role=invoker</code></td>
+<td><code>dedicated=invoker:NoSchedule</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Role split</strong></p>
+<ul>
+<li>App + storage: <code>cheese</code>, <code>dough</code>,
+<code>nicks</code>, <code>rosatini</code> (untainted,
+<code>topolvm.io/storage=true</code>).</li>
+<li>Invoker workloads land on <code>roso</code> (master, also a worker)
+and <code>poco</code> (no storage label → no TopoLVM there).</li>
+<li><strong><code>roso</code> is UNtainted; <code>poco</code> keeps the
+<code>dedicated=invoker:NoSchedule</code> taint.</strong> This split is
+deliberate — see §6.1.</li>
+</ul>
+<p><strong><code>roso</code> is master AND worker.</strong> It runs the
+full control plane (etcd, kube-API, scheduler, controller-manager)
+<strong>and</strong> schedules invoker pods. It is <strong>not
+tainted</strong>: RKE2&#39;s core add-on installer Jobs (Calico, CoreDNS, …)
+are pinned to the control-plane node, and a taint there deadlocks the
+whole CNI bootstrap (we hit this — §6.1). Instead, app pods are kept off
+<code>roso</code> via <code>nodeSelector</code> (they target
+<code>role=app</code> / per-node storage classes), and the control plane
+is protected by fixed CPU/RAM reservations (<code>system-reserved</code>
+/ <code>kube-reserved</code>, §6.1). <code>poco</code> is a pure invoker
+worker and safely keeps the taint.</p>
+<blockquote>
+<p><strong>poco IP not yet provided — fill <code>&lt;IP_poco&gt;</code>
+before install.</strong></p>
+</blockquote>
+<hr />
+<h2 id="2-network">2. Network</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node subnet</td>
+<td><code>10.35.0.0/24</code></td>
+</tr>
+<tr>
+<td>API VIP (keepalived)</td>
+<td><code>10.35.0.60</code></td>
+</tr>
+<tr>
+<td>MetalLB pool</td>
+<td><code>10.35.0.61-10.35.0.99</code></td>
+</tr>
+<tr>
+<td>Pod CIDR</td>
+<td><code>10.50.0.0/16</code></td>
+</tr>
+<tr>
+<td>Service CIDR</td>
+<td><code>10.51.0.0/16</code></td>
+</tr>
+<tr>
+<td>Cluster DNS</td>
+<td><code>10.51.0.10</code></td>
+</tr>
+<tr>
+<td>External domain</td>
+<td><code>antbrains.com</code></td>
+</tr>
+<tr>
+<td>DNS records</td>
+<td><code>*.antbrains.com</code> → NPM&#39;s MetalLB IP;
+<code>k8s-api</code> → <code>10.35.0.60</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ports to open</strong> (firewall):</p>
+<table>
+<thead>
+<tr>
+<th>Port</th>
+<th>Proto</th>
+<th>Where</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>22</td>
+<td>TCP</td>
+<td>all</td>
+<td>SSH</td>
+</tr>
+<tr>
+<td>6443</td>
+<td>TCP</td>
+<td>roso</td>
+<td>kube API</td>
+</tr>
+<tr>
+<td>6444</td>
+<td>TCP</td>
+<td>roso</td>
+<td>HAProxy API frontend</td>
+</tr>
+<tr>
+<td>9345</td>
+<td>TCP</td>
+<td>roso</td>
+<td>RKE2 supervisor (node join)</td>
+</tr>
+<tr>
+<td>2379-2380</td>
+<td>TCP</td>
+<td>roso</td>
+<td>etcd</td>
+</tr>
+<tr>
+<td>10250</td>
+<td>TCP</td>
+<td>all</td>
+<td>kubelet</td>
+</tr>
+<tr>
+<td>80, 443</td>
+<td>TCP</td>
+<td>app nodes</td>
+<td>NPM (MetalLB L2 targets the app nodes)</td>
+</tr>
+<tr>
+<td>81</td>
+<td>TCP</td>
+<td>internal only</td>
+<td>NPM admin UI — do NOT expose publicly</td>
+</tr>
+<tr>
+<td>30000-32767</td>
+<td>TCP</td>
+<td>all</td>
+<td>NodePort range</td>
+</tr>
+<tr>
+<td>8472</td>
+<td>UDP</td>
+<td>all</td>
+<td>Calico VXLAN</td>
+</tr>
+<tr>
+<td>7946</td>
+<td>TCP+UDP</td>
+<td>all</td>
+<td>MetalLB speaker memberlist</td>
+</tr>
+</tbody>
+</table>
+<p>VolSync rsync-over-TLS stays inside the cluster (ClusterIP) — no
+external ports.</p>
+<hr />
+<h2 id="3-storage-design--topolvm-thick-one-vg--storageclass-per-node">3.
+Storage Design — TopoLVM, thick, one VG + StorageClass per node</h2>
+<p>TopoLVM gives each PVC a Logical Volume on the <strong>node where the
+pod runs</strong> — raw NVMe speed, no network hops, no Ceph daemons.
+This cluster uses the <strong>Lumens pattern</strong>:
+<strong>thick</strong> LVM (no thin pools, no CSI snapshots), a
+<strong>per-node VG</strong> named after the node, and a
+<strong>per-node StorageClass</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Drive</th>
+<th>VG</th>
+<th>Device class</th>
+<th>StorageClass</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cheese</td>
+<td>Lexar NM790 4TB</td>
+<td><code>vg-topolvm-cheese</code></td>
+<td><code>ssd</code></td>
+<td><code>local-ssd-cheese</code></td>
+</tr>
+<tr>
+<td>dough</td>
+<td>Lexar NM790 4TB</td>
+<td><code>vg-topolvm-dough</code></td>
+<td><code>ssd</code></td>
+<td><code>local-ssd-dough</code></td>
+</tr>
+<tr>
+<td>nicks</td>
+<td>Lexar NQ780 4TB</td>
+<td><code>vg-topolvm-nicks</code></td>
+<td><code>ssd</code></td>
+<td><code>local-ssd-nicks</code></td>
+</tr>
+<tr>
+<td>rosatini</td>
+<td>Lexar NQ780 4TB</td>
+<td><code>vg-topolvm-rosatini</code></td>
+<td><code>ssd</code></td>
+<td><code>local-ssd-rosatini</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why thick (and what it costs).</strong> Thick reserves each
+PVC&#39;s space up front and maps straight to physical extents
+(<code>dm-linear</code>) — the lowest, flattest latency and nothing to
+monitor (a full VG just makes new PVCs Pending; it never blocks live
+writes). The trade-off is <strong>no CSI snapshots</strong>, so VolSync
+runs in Direct mode (§8.6). This matches the Lumens cluster exactly.
+(Thin pools would buy snapshots + overprovisioning at the cost of
+pool-fill risk and monitoring — see
+<code>thin-vs-thick-implementation.html</code>.)</p>
+<p><strong>Constraints of local storage</strong></p>
+<ul>
+<li><strong>RWO, node-local.</strong> A PVC binds to one node; the pod
+is pinned there.</li>
+<li><strong>No default StorageClass.</strong> Every PVC MUST set
+<code>storageClassName</code> or it stays Pending.</li>
+<li><strong>Node down → its PVCs unreachable</strong> (data intact, just
+unreachable). VolSync/app backups cover DR.</li>
+<li><strong>Per-node capacity = that one drive</strong> (~3.7 TiB).
+<code>vgextend</code> to grow.</li>
+<li><strong>reclaimPolicy: Retain</strong> — deleting a PVC leaves the
+PV + LV (data not erased).</li>
+</ul>
+<hr />
+<h2 id="4-server-preparation-all-6-nodes">4. Server Preparation (ALL 6
+nodes)</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># packages — lvm2 is critical for TopoLVM (no thin-provisioning-tools needed: thick)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update <span class="kw">&amp;&amp;</span> <span class="fu">sudo</span> apt upgrade <span class="at">-y</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> curl wget git vim htop net-tools <span class="dt">\</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  software-properties-common apt-transport-https ca-certificates gnupg <span class="dt">\</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  lsb-release nfs-common open-iscsi lvm2 cryptsetup chrony xfsprogs</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># time sync (etcd-critical)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable <span class="at">--now</span> chronyd</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="ex">timedatectl</span> status <span class="kw">|</span> <span class="fu">grep</span> synchronized      <span class="co"># must read: yes</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># hostname — LOWERCASE, run per node</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> hostnamectl set-hostname <span class="op">&lt;</span>THIS_NODE<span class="op">&gt;</span>   <span class="co"># roso | cheese | dough | nicks | rosatini | poco</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># /etc/hosts (all nodes)</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; &#39;EOF&#39;</span> <span class="kw">|</span> <span class="fu">sudo</span> tee <span class="at">-a</span> /etc/hosts</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="st">10.35.0.30     roso</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="st">10.35.0.51     cheese</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="st">10.35.0.52     dough</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="st">10.35.0.53     rosatini</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="st">10.35.0.54     nicks</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;IP_poco&gt;      poco</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="st">10.35.0.60          k8s-api.antbrains.com</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co"># swap off</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> swapoff <span class="at">-a</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> sed <span class="at">-i</span> <span class="st">&#39;/ swap / s/^/#/&#39;</span> /etc/fstab</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co"># kernel modules  (THICK: no dm_thin_pool needed)</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; &#39;EOF&#39;</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/modules-load.d/k8s.conf</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="st">overlay</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="st">br_netfilter</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="st">ip_vs</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="st">ip_vs_rr</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="st">ip_vs_wrr</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="st">ip_vs_sh</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="st">nf_conntrack</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> modprobe overlay br_netfilter ip_vs ip_vs_rr ip_vs_wrr ip_vs_sh nf_conntrack</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co"># sysctl</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; &#39;EOF&#39;</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/sysctl.d/99-kubernetes.conf</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="st">net.ipv4.ip_forward = 1</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="st">net.bridge.bridge-nf-call-iptables = 1</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="st">net.bridge.bridge-nf-call-ip6tables = 1</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="st">net.netfilter.nf_conntrack_max = 1000000</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="st">fs.inotify.max_user_instances = 8192</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="st">fs.inotify.max_user_watches = 524288</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="st">fs.file-max = 2097152</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="st">vm.max_map_count = 524288</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="st">net.core.somaxconn = 32768</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> sysctl <span class="at">--system</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="co"># ulimits + containerd limits</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; &#39;EOF&#39;</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/security/limits.d/kubernetes.conf</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="st">* soft nofile 1048576</span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="st">* hard nofile 1048576</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="st">* soft nproc 1048576</span></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="st">* hard nproc 1048576</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="st">* soft memlock unlimited</span></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="st">* hard memlock unlimited</span></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir <span class="at">-p</span> /etc/systemd/system/containerd.service.d</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; &#39;EOF&#39;</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/systemd/system/containerd.service.d/limits.conf</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="st">[Service]</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="st">LimitNOFILE=1048576</span></span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a><span class="st">LimitNPROC=1048576</span></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="st">LimitMEMLOCK=infinity</span></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl daemon-reload</span></code></pre></div>
+<h3 id="41-nvme-wipe--lvm-setup--cheese-dough-nicks-rosatini-only">4.1
+NVMe wipe + LVM setup — cheese, dough, nicks, rosatini ONLY</h3>
+<p>Never touch the 931.5G Crucial root SSD. Confirm the NVMe first.
+THICK = PV + VG only (no thin pool). The VG is <strong>named after the
+node</strong>.</p>
+<blockquote>
+<p>⚠️ <strong>These boxes ship with the NVMe already carrying an old OS
+layout</strong> — an EFI + boot + LVM (<code>ubuntu-vg</code>) partition
+set — even though the running root is on the SATA SSD (<code>sda</code>,
+VG <code>ubuntu-vg-1</code>). LVM holds that disk <strong>busy</strong>,
+so a plain <code>wipefs</code>/<code>pvcreate</code> fails with
+<code>Device or resource busy</code> /
+<code>device has a signature</code>. You must tear the old LVM +
+partitions down first.</p>
+</blockquote>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="va">DEV</span><span class="op">=</span>/dev/nvme0n1</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lsblk</span> <span class="at">-dno</span> NAME,SIZE,MODEL <span class="va">$DEV</span>          <span class="co"># confirm it is the 3.7T Lexar, NOT root</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># --- SAFETY: confirm the running root is on sda, and which VG sits on the NVMe ---</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">findmnt</span> <span class="at">-no</span> SOURCE /                     <span class="co"># must be .../ubuntu--vg--1-... on sda3 (NOT nvme)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pvs                                 <span class="co"># note the VG on /dev/nvme0n1p3 (e.g. &quot;ubuntu-vg&quot;)</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">lsblk</span> <span class="st">&quot;</span><span class="va">$DEV</span><span class="st">&quot;</span>                             <span class="co"># see the existing partitions/LVM</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Tear down the OLD LVM on the NVMe (the VG that is NOT the root VG) ---</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="va">OLDVG</span><span class="op">=</span>ubuntu-vg                          <span class="co"># &lt;-- the NVMe VG from `pvs`, NOT ubuntu-vg-1 (root)</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> vgchange <span class="at">-an</span> <span class="st">&quot;</span><span class="va">$OLDVG</span><span class="st">&quot;</span>               <span class="co"># deactivate (releases the busy device)</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> vgremove <span class="at">-f</span> <span class="st">&quot;</span><span class="va">$OLDVG</span><span class="st">&quot;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pvremove <span class="at">-ff</span> <span class="st">&quot;</span><span class="va">${DEV}</span><span class="st">p3&quot;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Wipe partitions + clear the kernel&#39;s stale table ---</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> wipefs <span class="at">-a</span> <span class="st">&quot;</span><span class="va">${DEV}</span><span class="st">p1&quot;</span> <span class="st">&quot;</span><span class="va">${DEV}</span><span class="st">p2&quot;</span> <span class="st">&quot;</span><span class="va">${DEV}</span><span class="st">p3&quot;</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> sgdisk <span class="at">--zap-all</span> <span class="st">&quot;</span><span class="va">$DEV</span><span class="st">&quot;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> wipefs <span class="at">-a</span> <span class="st">&quot;</span><span class="va">$DEV</span><span class="st">&quot;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> partprobe <span class="st">&quot;</span><span class="va">$DEV</span><span class="st">&quot;</span> <span class="kw">||</span> <span class="fu">sudo</span> reboot     <span class="co"># if still busy, reboot then continue</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="ex">lsblk</span> <span class="st">&quot;</span><span class="va">$DEV</span><span class="st">&quot;</span>                             <span class="co"># should now show NO partitions</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Create the thick per-node VG ---</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> blkdiscard <span class="st">&quot;</span><span class="va">$DEV</span><span class="st">&quot;</span>                    <span class="co"># optional fast TRIM</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pvcreate <span class="st">&quot;</span><span class="va">$DEV</span><span class="st">&quot;</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> vgcreate vg-topolvm-cheese <span class="st">&quot;</span><span class="va">$DEV</span><span class="st">&quot;</span>   <span class="co"># per node:</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>                                         <span class="co">#   dough    -&gt; vg-topolvm-dough</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>                                         <span class="co">#   nicks    -&gt; vg-topolvm-nicks</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>                                         <span class="co">#   rosatini -&gt; vg-topolvm-rosatini</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pvs <span class="kw">&amp;&amp;</span> <span class="fu">sudo</span> vgs                      <span class="co"># confirm VG size ≈ 3.73 TiB, all free</span></span></code></pre></div>
+<p>Skip this whole step on <code>roso</code> and <code>poco</code>. If a
+node&#39;s NVMe is already blank, the teardown block is a no-op — go
+straight to <code>pvcreate</code>/<code>vgcreate</code>.</p>
+<hr />
+<h2 id="5-load-balancer-for-kube-api-haproxy--keepalived-on-roso">5.
+Load Balancer for kube-API (HAProxy + keepalived on
+<code>roso</code>)</h2>
+<p>This is the <strong>control-plane HA path only</strong> — application
+traffic goes through MetalLB + NPM (§9), not this. (Single master today,
+so this is a thin shim that also gives a stable API endpoint and room to
+add control-plane nodes later.)</p>
+<p><code>/etc/haproxy/haproxy.cfg</code>:</p>
+<pre class="haproxy"><code>global
+    log stdout local0
+    maxconn 4000
+defaults
+    mode tcp
+    log global
+    option tcplog
+    timeout connect 10s
+    timeout client 1m
+    timeout server 1m
+    retries 3
+
+frontend k8s-api-frontend
+    bind *:6444
+    default_backend k8s-api-backend
+backend k8s-api-backend
+    option tcp-check
+    balance roundrobin
+    server roso 10.35.0.30:6443 check fall 3 rise 2
+
+listen stats
+    bind *:8404
+    mode http
+    stats enable
+    stats uri /stats
+    stats refresh 30s
+    stats auth admin:&lt;STATS_PW&gt;</code></pre>
+<p><code>/etc/keepalived/keepalived.conf</code>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode conf"><code class="sourceCode toml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">vrrp_script</span> <span class="dt">chk_haproxy</span> <span class="er">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">script</span> <span class="dt">&quot;/bin/curl -f http://localhost:8404/stats || exit 1&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">interval</span> <span class="dt">2</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">weight</span> <span class="dt">-2</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">fall</span> <span class="dt">3</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">rise</span> <span class="dt">2</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="dt">vrrp_instance</span> <span class="dt">VI_1</span> <span class="er">{</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">state</span> <span class="dt">MASTER</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">interface</span> <span class="er">&lt;</span><span class="dt">IFACE</span><span class="er">&gt;</span>           <span class="co"># ip -br addr | grep 10.35.0</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">virtual_router_id</span> <span class="dt">61</span>        <span class="co"># unique on this L2 segment; MUST differ from MetalLB</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">priority</span> <span class="dt">110</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">advert_int</span> <span class="dt">1</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">authentication</span> <span class="er">{</span> <span class="dt">auth_type</span> <span class="dt">PASS</span><span class="er">;</span> <span class="dt">auth_pass</span> <span class="er">&lt;</span><span class="dt">VRRP_PW</span><span class="er">&gt;</span> <span class="er">}</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">virtual_ipaddress</span> <span class="er">{</span> <span class="dt">10.35.0.60</span><span class="er">/</span><span class="dt">24</span> <span class="er">}</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">track_script</span> <span class="er">{</span> <span class="dt">chk_haproxy</span> <span class="er">}</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> haproxy keepalived</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> haproxy <span class="at">-c</span> <span class="at">-f</span> /etc/haproxy/haproxy.cfg</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> keepalived <span class="at">-t</span> <span class="at">-f</span> /etc/keepalived/keepalived.conf</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable <span class="at">--now</span> haproxy keepalived</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ip</span> <span class="at">-br</span> addr <span class="kw">|</span> <span class="fu">grep</span> 10.35.0.60        <span class="co"># VIP must be on roso</span></span></code></pre></div>
+<blockquote>
+<p><strong>Keep keepalived (VRRP) and MetalLB L2 separate.</strong>
+keepalived owns <code>10.35.0.60</code> (API). MetalLB owns
+<code>10.35.0.61-10.35.0.99</code> (apps). Different IPs, and the
+keepalived <code>virtual_router_id</code> must not collide with anything
+else on the segment.</p>
+</blockquote>
+<hr />
+<h2 id="6-control-plane--rke2-server-on-roso">6. Control Plane — RKE2
+Server on <code>roso</code></h2>
+<p><code>roso</code> is the master AND hosts invoker pods (tainted
+<code>dedicated=invoker</code>). RKE2 disables <code>rke2-canal</code>
+(using Calico), and both bundled ingresses — we use <strong>no ingress
+controller</strong> in the initial stage.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir <span class="at">-p</span> /etc/rancher/rke2</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; &#39;EOF&#39;</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/rancher/rke2/config.yaml</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">tls-san:</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">  - k8s-api.antbrains.com</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="st">  - 10.35.0.60</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="st">  - 10.35.0.30</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="st">  - roso</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="st">cluster-name: &quot;uslab-eng-01&quot;</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="st">cluster-cidr: 10.50.0.0/16</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="st">service-cidr: 10.51.0.0/16</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="st">cluster-dns: 10.51.0.10</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="st">cluster-domain: cluster.local</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="st">cluster-init: true</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="st">write-kubeconfig-mode: &quot;0644&quot;</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="st">disable:</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="st">  - rke2-canal</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="st">  - rke2-ingress-nginx</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="st">  - rke2-traefik</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="st">cni:</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="st">  - calico</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="st">node-ip: 10.35.0.30</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="st">advertise-address: 10.35.0.30</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="st">etcd-expose-metrics: true</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="st">node-name: roso</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="st"># NO node-taint on roso. A taint here blocks RKE2&#39;s core add-on installer Jobs</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="st"># (rke2-calico, rke2-coredns, …) which are pinned to the control-plane node, and</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="st"># the whole CNI bootstrap deadlocks (FailedScheduling: untolerated taint). We hit</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="st"># exactly this. App pods are kept off roso via nodeSelector instead (§6.1, §10).</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="st">node-label:</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;node.antbrains.com/role=invoker&quot;</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="st"># Reservations so the control plane (etcd/apiserver/scheduler/cm) stays healthy</span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="st"># while roso ALSO runs invoker pods. See §6.1 for the rationale.</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="st">#   system-reserved -&gt; OS, sshd, containerd, kubelet host daemons</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="st">#   kube-reserved   -&gt; headroom for the RKE2 control-plane pods + kubelet</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="st">#   eviction-hard   -&gt; kubelet starts evicting before the box is truly out</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="st"># 32c / 125Gi: ~6 vCPU + ~16Gi held back; ~26 vCPU / ~105Gi left for invoker pods.</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="st">kubelet-arg:</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;max-pods=150&quot;</span></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;system-reserved=cpu=2,memory=4Gi&quot;</span></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;kube-reserved=cpu=4,memory=12Gi&quot;</span></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;eviction-hard=memory.available&lt;8%,nodefs.available&lt;10%,imagefs.available&lt;10%&quot;</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;kube-reserved-cgroup=/podruntime.slice&quot;</span></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;system-reserved-cgroup=/system.slice&quot;</span></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-sfL</span> https://get.rke2.io <span class="kw">|</span> <span class="fu">sudo</span> INSTALL_RKE2_VERSION=<span class="st">&quot;v1.33.1+rke2r1&quot;</span> sh <span class="at">-</span></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable <span class="at">--now</span> rke2-server.service</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> journalctl <span class="at">-u</span> rke2-server <span class="at">-f</span>      <span class="co"># wait until ready</span></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a><span class="co"># kubectl</span></span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> cp /var/lib/rancher/rke2/bin/kubectl /usr/local/bin/</span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/.kube <span class="kw">&amp;&amp;</span> <span class="fu">sudo</span> cp /etc/rancher/rke2/rke2.yaml ~/.kube/config</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chown <span class="va">$(</span><span class="fu">id</span> <span class="at">-u</span><span class="va">)</span>:<span class="va">$(</span><span class="fu">id</span> <span class="at">-g</span><span class="va">)</span> ~/.kube/config</span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&#39;export PATH=$PATH:/var/lib/rancher/rke2/bin&#39;</span> <span class="op">&gt;&gt;</span> ~/.bashrc</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get nodes</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> cat /var/lib/rancher/rke2/server/node-token   <span class="co"># for joining workers</span></span></code></pre></div>
+<h3 id="61-roso-reservation-strategy-master--invoker-worker">6.1
+<code>roso</code> reservation strategy (master + invoker worker)</h3>
+<p><code>roso</code> wears two hats: it is the <strong>only
+control-plane node</strong> (etcd, kube-API, scheduler,
+controller-manager) <strong>and</strong> an invoker worker. Without
+guardrails a burst of invoker pods could starve etcd/apiserver and take
+the whole cluster down.</p>
+<blockquote>
+<p>⚠️ <strong>DO NOT taint <code>roso</code>.</strong> We originally
+tainted it <code>dedicated=invoker:NoSchedule</code> and the cluster
+never came up: RKE2&#39;s core add-on installer Jobs
+(<code>helm-install-rke2-calico</code>, <code>-coredns</code>, …) are
+<strong>pinned to the control-plane node</strong> via node affinity. The
+custom taint on the only control-plane node left them
+<code>Pending</code>
+(<code>FailedScheduling: untolerated taint {dedicated: invoker}</code>),
+so the CNI never installed and every worker stayed
+<code>NotReady</code>. Removing the taint let the bootstrap complete. A
+taint on the sole control-plane node fights RKE2 — use the nodeSelector
+approach below instead. (<code>poco</code> has no control plane, so it
+safely keeps the taint.)</p>
+</blockquote>
+<p>Three mechanisms keep the control plane safe on the untainted
+<code>roso</code>:</p>
+<ol type="1">
+<li><p><strong><code>nodeSelector</code> instead of a taint.</strong>
+App pods target <code>role=app</code> (and their per-node TopoLVM
+StorageClasses only bind on storage nodes — <code>roso</code> has none),
+so app workloads don&#39;t land on <code>roso</code>. Invoker pods target
+<code>role=invoker</code> (§10).</p></li>
+<li><p><strong><code>system-reserved</code> +
+<code>kube-reserved</code></strong> carve fixed CPU/RAM out of the
+node&#39;s allocatable pool for the OS and the control plane, so pods can
+never consume the whole box:</p>
+<table>
+<thead>
+<tr>
+<th>Bucket</th>
+<th>CPU</th>
+<th>Memory</th>
+<th>Protects</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>system-reserved</code></td>
+<td>2</td>
+<td>4Gi</td>
+<td>OS, sshd, containerd, kubelet</td>
+</tr>
+<tr>
+<td><code>kube-reserved</code></td>
+<td>4</td>
+<td>12Gi</td>
+<td>RKE2 control-plane pods + kubelet headroom</td>
+</tr>
+<tr>
+<td><code>eviction-hard</code></td>
+<td>—</td>
+<td>8%</td>
+<td>kubelet evicts before true OOM</td>
+</tr>
+<tr>
+<td><strong>Left for invoker pods (Allocatable)</strong></td>
+<td><strong>~26</strong></td>
+<td><strong>~105Gi</strong></td>
+<td>of 32c / 125Gi</td>
+</tr>
+</tbody>
+</table></li>
+<li><p><strong>Priority.</strong> The control-plane pods run at
+<code>system-node-critical</code> / <code>system-cluster-critical</code>
+(RKE2 default), so under pressure the scheduler <strong>preempts invoker
+pods</strong> to keep etcd/apiserver alive. Therefore give invoker
+workloads a <strong>normal (default) PriorityClass</strong> — do NOT
+mark them system-critical, or they&#39;d compete with the control
+plane.</p></li>
+</ol>
+<blockquote>
+<p>Tune the numbers to real load: watch
+<code>kubectl top node roso</code> and
+<code>kubectl -n kube-system top pod</code>. If etcd ever shows disk/CPU
+pressure, raise <code>kube-reserved</code> (and put heavy invoker load
+on <code>poco</code>). The single master has no HA — protecting it is
+the priority. If you ever add a 2nd/3rd control-plane node, you
+<em>can</em> taint roso then (add-on Jobs will have another CP node to
+run on).</p>
+</blockquote>
+<hr />
+<h2 id="7-workers--cert-manager">7. Workers + cert-manager</h2>
+<h3 id="71-app--storage-workers--cheese-dough-nicks-rosatini">7.1 App +
+storage workers — cheese, dough, nicks, rosatini</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir <span class="at">-p</span> /etc/rancher/rke2</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; &#39;EOF&#39;</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/rancher/rke2/config.yaml</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">server: https://10.35.0.30:9345</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="st">token: &lt;NODE_TOKEN&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="st">node-name: &lt;THIS_NODE&gt;                 # cheese | dough | nicks | rosatini</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="st">node-ip: &lt;THIS_NODE_IP&gt;               # cheese 10.35.0.51 · dough 10.35.0.52 · rosatini 10.35.0.53 · nicks 10.35.0.54</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">kubelet-arg:</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;max-pods=250&quot;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;system-reserved=cpu=4,memory=16Gi&quot;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;kube-reserved=cpu=2,memory=8Gi&quot;</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;eviction-hard=memory.available&lt;5%,nodefs.available&lt;10%&quot;</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="st">node-label:</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;node.antbrains.com/role=app&quot;</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-sfL</span> https://get.rke2.io <span class="kw">|</span> <span class="fu">sudo</span> INSTALL_RKE2_VERSION=<span class="st">&quot;v1.33.1+rke2r1&quot;</span> INSTALL_RKE2_TYPE=<span class="st">&quot;agent&quot;</span> sh <span class="at">-</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable <span class="at">--now</span> rke2-agent.service</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> journalctl <span class="at">-u</span> rke2-agent <span class="at">-f</span></span></code></pre></div>
+<h3 id="72-invoker-worker--poco">7.2 Invoker worker — poco</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir <span class="at">-p</span> /etc/rancher/rke2</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; &#39;EOF&#39;</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/rancher/rke2/config.yaml</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="st">server: https://10.35.0.30:9345</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="st">token: &lt;NODE_TOKEN&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="st">node-name: poco</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="st">node-ip: &lt;IP_poco&gt;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="st">node-taint:</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;dedicated=invoker:NoSchedule&quot;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="st">node-label:</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;node.antbrains.com/role=invoker&quot;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="st">kubelet-arg:</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;max-pods=200&quot;</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;system-reserved=cpu=4,memory=16Gi&quot;</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;kube-reserved=cpu=2,memory=8Gi&quot;</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="st">  - &quot;eviction-hard=memory.available&lt;5%,nodefs.available&lt;10%&quot;</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-sfL</span> https://get.rke2.io <span class="kw">|</span> <span class="fu">sudo</span> INSTALL_RKE2_VERSION=<span class="st">&quot;v1.33.1+rke2r1&quot;</span> INSTALL_RKE2_TYPE=<span class="st">&quot;agent&quot;</span> sh <span class="at">-</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl enable <span class="at">--now</span> rke2-agent.service</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> journalctl <span class="at">-u</span> rke2-agent <span class="at">-f</span></span></code></pre></div>
+<h3 id="73-verify">7.3 Verify</h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get nodes <span class="at">-o</span> wide                       <span class="co"># 6 Ready</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> describe node roso <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-A2</span> Taints    <span class="co"># dedicated=invoker:NoSchedule</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> describe node poco <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-A2</span> Taints    <span class="co"># dedicated=invoker:NoSchedule</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get nodes <span class="at">-L</span> node.antbrains.com/role</span></code></pre></div>
+<h3 id="74-cert-manager-required-by-the-topolvm-webhook">7.4
+cert-manager (required by the TopoLVM webhook)</h3>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> repo add jetstack https://charts.jetstack.io <span class="kw">&amp;&amp;</span> <span class="ex">helm</span> repo update</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> create namespace cert-manager</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> install cert-manager jetstack/cert-manager <span class="at">-n</span> cert-manager <span class="dt">\</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--version</span> v1.18.0 <span class="at">--set</span> crds.enabled=true</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> cert-manager rollout status deploy/cert-manager</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> cert-manager rollout status deploy/cert-manager-webhook</span></code></pre></div>
+<hr />
+<h2 id="8-storage--topolvm-thick-per-node--volsync">8. Storage — TopoLVM
+(thick, per node) + VolSync</h2>
+<h3 id="81-label-storage-nodes">8.1 Label storage nodes</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> cheese dough nicks rosatini<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">kubectl</span> label node <span class="va">$n</span> topolvm.io/storage=true <span class="at">--overwrite</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get nodes <span class="at">-L</span> topolvm.io/storage     <span class="co"># roso, poco must NOT be set</span></span></code></pre></div>
+<h3 id="82-install-topolvm">8.2 Install TopoLVM</h3>
+<p>Values live at <code>TopoLVM/topolvm-values.yaml</code> (one lvmd per
+node via <code>kubernetes.io/hostname</code>, each pointing at its own
+<code>vg-topolvm-&lt;node&gt;</code>, device class <code>ssd</code>,
+thick, <code>storageClasses: []</code>).</p>
+<blockquote>
+<p>⚠️ <strong><code>webhook.podMutatingWebhook.enabled: false</code> is
+REQUIRED here</strong> (set in the values file). We use capacity-aware
+scheduling via <strong>CSIStorageCapacity</strong>
+(<code>storageCapacityTracking.enabled: true</code>) with the
+<strong>stock scheduler — no topolvm-scheduler extender</strong>. The
+pod mutating webhook stamps a <code>topolvm.io/capacity</code>
+extended-resource request onto every PVC-mounting pod that <em>only</em>
+the (not-deployed) extender could satisfy → pods stick at
+<code>0/N nodes available: Insufficient topolvm.io/capacity</code>
+forever. We hit exactly this with NPM. Leaving the pod webhook
+<strong>off</strong> is what makes scheduling work.</p>
+</blockquote>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> repo add topolvm https://topolvm.github.io/topolvm <span class="kw">&amp;&amp;</span> <span class="ex">helm</span> repo update</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> create namespace topolvm-system</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> label ns topolvm-system topolvm.io/webhook=ignore <span class="at">--overwrite</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> label ns kube-system    topolvm.io/webhook=ignore <span class="at">--overwrite</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> upgrade <span class="at">--install</span> topolvm topolvm/topolvm <span class="at">-n</span> topolvm-system <span class="dt">\</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> TopoLVM/topolvm-values.yaml</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> topolvm-system rollout status deploy/topolvm-controller</span></code></pre></div>
+<h3 id="83-storageclasses-per-node-no-default-retain">8.3 StorageClasses
+(per node, no default, Retain)</h3>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> apply <span class="at">-f</span> TopoLVM/storageclasses.yaml</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get sc                              <span class="co"># 4 local-ssd-* classes, NO default</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get nodes <span class="at">-L</span> topology.topolvm.io/node</span></code></pre></div>
+<h3 id="84-verify--smoke-test">8.4 Verify + smoke test</h3>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> topolvm-system get pod <span class="at">-o</span> wide   <span class="co"># lvmd + node on the 4 storage nodes only</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get csidrivers <span class="kw">|</span> <span class="fu">grep</span> topolvm.io</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get csistoragecapacities <span class="at">-A</span> <span class="at">-o</span> wide</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> create ns demo</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> apply <span class="at">-f</span> TopoLVM/pvc.yaml           <span class="co"># local-ssd-cheese; online resize works</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> demo get pvc,pod <span class="at">-o</span> wide</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> delete ns demo</span></code></pre></div>
+<h3 id="85-install-volsync-optional-direct-mode">8.5 Install VolSync
+(optional, Direct mode)</h3>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> repo add backube https://backube.github.io/helm-charts <span class="kw">&amp;&amp;</span> <span class="ex">helm</span> repo update</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> install volsync backube/volsync <span class="at">-n</span> volsync-system <span class="at">--create-namespace</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> volsync-system rollout status deploy/volsync</span></code></pre></div>
+<p>Templates in <code>VolSync/</code> use
+<code>copyMethod: Direct</code> (thick has no snapshots). Put the
+destination on a <strong>different node&#39;s</strong> class than the
+source. For consistent database copies, quiesce the writer or replicate
+an app-level dump — see <code>VolSync/README.md</code>.</p>
+<hr />
+<h2 id="9-edge-initial-stage--metallb--nginx-proxy-manager">9. Edge
+(initial stage) — MetalLB + Nginx Proxy Manager</h2>
+<p>No ingress controller. MetalLB hands a LAN IP to NPM, which proxies
+and does TLS.</p>
+<h3 id="91-metallb-l2">9.1 MetalLB (L2)</h3>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> repo add metallb https://metallb.github.io/metallb <span class="kw">&amp;&amp;</span> <span class="ex">helm</span> repo update</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> create namespace metallb-system</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> install metallb metallb/metallb <span class="at">-n</span> metallb-system</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> metallb-system rollout status deploy/metallb-controller</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># edit 10.35.0.61-10.35.0.99 first, then:</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> apply <span class="at">-f</span> /Users/kiranmane/Documents/Repository/krista_private_cloud/UsLab-Eng-01/MetalLB/metallb-pools.yaml</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> metallb-system get ipaddresspool,l2advertisement</span></code></pre></div>
+<h3 id="92-nginx-proxy-manager">9.2 Nginx Proxy Manager</h3>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> apply <span class="at">-f</span> /Users/kiranmane/Documents/Repository/krista_private_cloud/UsLab-Eng-01/NginxProxyManager/npm.yaml</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> npm get pvc,pod,svc <span class="at">-o</span> wide</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> npm get svc npm-proxy <span class="at">-o</span> jsonpath=<span class="st">&#39;{.status.loadBalancer.ingress[0].ip}&#39;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   ^ point *.antbrains.com DNS at this IP</span></span></code></pre></div>
+<p>Admin UI (port 81) stays ClusterIP — reach it with
+<code>kubectl -n npm port-forward svc/npm-admin 8181:81</code>. First
+login <code>admin@example.com / changeme</code> → <strong>change
+immediately</strong>. Add a Proxy Host per app (forward to
+<code>svc.ns.svc.cluster.local</code>), request a Let&#39;s Encrypt cert in
+the UI. Details in <code>NginxProxyManager/README.md</code>.</p>
+<h3 id="93-verify">9.3 Verify</h3>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get svc <span class="at">-A</span> <span class="kw">|</span> <span class="fu">grep</span> LoadBalancer       <span class="co"># npm-proxy has an EXTERNAL-IP</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-kI</span> https://app.antbrains.com           <span class="co"># after DNS + a proxy host + cert</span></span></code></pre></div>
+<hr />
+<h2 id="10-scheduling-invoker-workloads-roso--poco">10. Scheduling
+Invoker Workloads (roso + poco)</h2>
+<p>Invoker pods select the invoker nodes via <code>nodeSelector</code>
+and tolerate <code>poco</code>&#39;s taint. App pods (no
+<code>role=invoker</code> selector) target <code>role=app</code> /
+per-node storage classes, so they don&#39;t land on
+<code>roso</code>/<code>poco</code>. Invoker workloads should not use
+TopoLVM (those nodes have no storage and the per-node classes won&#39;t bind
+there).</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">nodeSelector</span><span class="kw">:</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">node.antbrains.com/role</span><span class="kw">:</span><span class="at"> invoker</span><span class="co">          # roso + poco</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">tolerations</span><span class="kw">:</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">key</span><span class="kw">:</span><span class="at"> dedicated</span><span class="co">                          # needed to land on poco (tainted);</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">operator</span><span class="kw">:</span><span class="at"> Equal</span><span class="co">                         # harmless on roso (untainted)</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">value</span><span class="kw">:</span><span class="at"> invoker</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">effect</span><span class="kw">:</span><span class="at"> NoSchedule</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">  # Leave priorityClassName unset (default/normal). Do NOT set system-*-critical:</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">  # on roso the control-plane pods are system-critical and must be able to</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">  # preempt invoker pods under pressure (see §6.1). Set resource requests/limits</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co">  # on invoker pods so the scheduler honours roso&#39;s reservations.</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co">  # priorityClassName: &quot;&quot;   # normal</span></span></code></pre></div>
+<blockquote>
+<p><strong>Prefer <code>poco</code> for heavy invoker load.</strong>
+<code>poco</code> (630Gi, 80c) has no control plane, so put the bulk of
+invoker workloads there; keep <code>roso</code>&#39;s share light so
+etcd/apiserver always have headroom. <code>roso</code> is untainted and
+<code>poco</code> is tainted, so a pod with the spec above can land on
+either — add a stronger <code>nodeAffinity</code> toward
+<code>poco</code> if you want to bias scheduling.</p>
+</blockquote>
+<hr />
+<h2 id="11-rancher-optional-management-ui">11. Rancher (optional
+management UI)</h2>
+<p>Rancher is exposed via NPM (proxy host →
+<code>rancher.cattle-system.svc</code>), TLS in NPM.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> repo add rancher-stable https://releases.rancher.com/server-charts/stable</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> repo update</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> create namespace cattle-system</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> install rancher rancher-stable/rancher <span class="at">-n</span> cattle-system <span class="dt">\</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--set</span> hostname=rancher-uslab.eng.antbrains.com <span class="dt">\</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--set</span> bootstrapPassword=admin <span class="dt">\</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--set</span> ingress.enabled=false <span class="dt">\</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--set</span> tls=external</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> cattle-system rollout status deploy/rancher</span></code></pre></div>
+<p>Then add the NPM Proxy Host. <strong>The forward MUST be HTTPS:443,
+not HTTP:80</strong> — Rancher 302-redirects HTTP→HTTPS, and proxying
+HTTPS to its plaintext :80 throws
+<code>SSL ... wrong version number</code> → <code>502</code> (we hit
+both). Working config:</p>
+<table>
+<thead>
+<tr>
+<th>NPM Proxy Host field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Domain</td>
+<td><code>rancher-uslab.eng.antbrains.com</code></td>
+</tr>
+<tr>
+<td>Scheme</td>
+<td><strong><code>https</code></strong></td>
+</tr>
+<tr>
+<td>Forward Hostname</td>
+<td><code>rancher.cattle-system.svc.cluster.local</code></td>
+</tr>
+<tr>
+<td>Forward Port</td>
+<td><strong><code>443</code></strong></td>
+</tr>
+<tr>
+<td>Websockets Support</td>
+<td><strong>ON</strong> (Rancher UI needs it for live logs / shell)</td>
+</tr>
+<tr>
+<td>SSL</td>
+<td>request a cert, <strong>Force SSL</strong>, HTTP/2</td>
+</tr>
+</tbody>
+</table>
+<p>Reach it over <strong><code>https://</code></strong> (not http). On
+first load Rancher sets its <code>server-url</code>; set it explicitly
+if you want it deterministic:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> patch settings.management.cattle.io server-url <span class="at">--type</span> merge <span class="dt">\</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-p</span> <span class="st">&#39;{&quot;value&quot;:&quot;https://rancher-uslab.eng.antbrains.com&quot;}&#39;</span></span></code></pre></div>
+<blockquote>
+<p>🔒 <strong>Lock this down.</strong> Rancher is full cluster-admin. If
+its hostname resolves to a public IP (ours does), restrict the NPM Proxy
+Host with an <strong>Access List</strong> (IP allowlist / basic-auth) or
+keep it LAN/VPN-only. See <code>ACCESS-STRATEGY.md</code>.</p>
+</blockquote>
+<hr />
+<h2 id="12-observability-optional-first-pass">12. Observability
+(optional first pass)</h2>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> repo add prometheus-community https://prometheus-community.github.io/helm-charts</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">helm</span> install kps prometheus-community/kube-prometheus-stack <span class="dt">\</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-n</span> monitoring <span class="at">--create-namespace</span></span></code></pre></div>
+<p>Scrape: TopoLVM (controller/lvmd metrics), VolSync
+(<code>volsync-system</code>), MetalLB (controller/speaker),
+node-exporter LVM/VG free space. Thick = alert on <strong>VG free
+space</strong> (not thin-pool Data%/Meta%).</p>
+<hr />
+<h2 id="13-build-order">13. Build Order</h2>
+<ol type="1">
+<li><strong>§0</strong> — fix VIP, MetalLB pool, IPs, domain,
+passwords.</li>
+<li><strong>§4</strong> on all 6 nodes. <strong>§4.1</strong> disk + VG
+(thick) on the 4 app nodes only.</li>
+<li><strong>§5</strong> — HAProxy + keepalived (API VIP) on
+<code>roso</code>.</li>
+<li><strong>§6</strong> — RKE2 server on <code>roso</code>.</li>
+<li><strong>§7.1</strong> join app workers · <strong>§7.2</strong> join
+<code>poco</code> · <strong>§7.3</strong> verify · <strong>§7.4</strong>
+cert-manager.</li>
+<li><strong>§8.1–8.4</strong> — label, install TopoLVM, StorageClasses,
+smoke-test.</li>
+<li><strong>§8.5</strong> — VolSync (optional).</li>
+<li><strong>§9.1</strong> — MetalLB · <strong>§9.2</strong> — NPM ·
+<strong>§9.3</strong> verify.</li>
+<li><strong>§11</strong> — Rancher (optional) · <strong>§12</strong> —
+observability (optional).</li>
+</ol>
+<blockquote>
+<p><strong>Phase 2 (a few months out):</strong> migrate the edge to
+Traefik v3 + cert-manager (<code>Traefik.phase2/</code>); optionally
+switch storage to thin pools if zero-downtime snapshot replication
+becomes a hard requirement.</p>
+</blockquote>
+<hr />
+<h2 id="14-health-checks">14. Health Checks</h2>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Nodes &amp; scheduling</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get nodes <span class="at">-o</span> wide</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get pods <span class="at">-A</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-vE</span> <span class="st">&#39;Running|Completed|^NAMESPACE&#39;</span>      <span class="co"># should be empty</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># TopoLVM</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> topolvm-system get pod <span class="at">-o</span> wide</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get csidrivers <span class="kw">|</span> <span class="fu">grep</span> topolvm.io</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get csistoragecapacities <span class="at">-A</span> <span class="at">-o</span> wide</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get sc                                                     <span class="co"># no default class</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co"># On each storage node — VG free space (thick: simple)</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> cheese <span class="st">&#39;sudo vgs vg-topolvm-cheese&#39;</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> dough   <span class="st">&#39;sudo vgs vg-topolvm-dough&#39;</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> nicks   <span class="st">&#39;sudo vgs vg-topolvm-nicks&#39;</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> rosatini <span class="st">&#39;sudo vgs vg-topolvm-rosatini&#39;</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="co"># VolSync</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> volsync-system get pod</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get replicationsource,replicationdestination <span class="at">-A</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="co"># MetalLB + NPM</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> metallb-system get pod,ipaddresspool,l2advertisement</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> <span class="at">-n</span> npm get pod,svc <span class="at">-o</span> wide</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a><span class="ex">kubectl</span> get svc <span class="at">-A</span> <span class="kw">|</span> <span class="fu">grep</span> LoadBalancer</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a><span class="co"># kube-API LB</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a><span class="ex">ip</span> <span class="at">-br</span> addr <span class="kw">|</span> <span class="fu">grep</span> 10.35.0.60                        <span class="co"># on roso</span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-fsS</span> http://10.35.0.60:8404/stats <span class="at">-u</span> admin:<span class="op">&lt;</span>STATS_PW<span class="op">&gt;</span> -o /dev/null <span class="kw">&amp;&amp;</span> <span class="bu">echo</span> OK</span></code></pre></div>
+<hr />
+<h2 id="15-reference--migration-notes">15. Reference &amp; migration
+notes</h2>
+<ul>
+<li><strong>Why TopoLVM over Ceph here?</strong> Raw NVMe latency — Ceph
+routed every I/O over the network through OSD/RADOS daemons; even at
+<code>size:1</code> that hop dominated. TopoLVM keeps I/O on-node
+(~10–40× lower latency). See <code>storage-performance.html</code>.</li>
+<li><strong>Why thick over thin?</strong> Lowest, flattest latency,
+nothing to monitor, and it matches the Lumens cluster. Cost: no CSI
+snapshots → VolSync runs Direct. Comparison:
+<code>thin-vs-thick.html</code>,
+<code>thin-vs-thick-implementation.html</code>.</li>
+<li><strong>Why no ingress yet?</strong> Initial stage favours
+simplicity: MetalLB + NPM cover edge + TLS via a UI. Traefik v3 +
+cert-manager are parked in <code>Traefik.phase2/</code>.</li>
+<li><strong>Old uslab cluster</strong> (<code>10.48/10.49</code>) used
+<code>node-ip</code>/<code>advertise-address</code> to pin RKE2 to the
+right NIC — reused in §6.</li>
+<li><strong>CIDR layout</strong> (<code>10.50</code>/<code>10.51</code>)
+deliberately does not overlap old punelab or uslab clusters, so the
+three can peer if needed.</li>
+<li><strong>Access strategy</strong> for developers/users is a separate
+doc: <code>ACCESS-STRATEGY.md</code>.</li>
+</ul>
+<hr />
+<h2 id="16-as-built-status--gotchas-hit-during-bring-up-2026-06-19">16.
+As-built status &amp; gotchas hit during bring-up (2026-06-19)</h2>
+<p>What&#39;s deployed and the issues we resolved — read this before
+touching the cluster.</p>
+<p><strong>Deployed &amp; healthy</strong></p>
+<ul>
+<li>4 nodes joined: <code>roso</code> (control-plane),
+<code>cheese</code>, <code>dough</code>, <code>rosatini</code>.
+<code>nicks</code> and <code>poco</code> <strong>not yet joined</strong>
+(fill <code>nicks</code>/<code>poco</code> config +
+<code>&lt;IP_poco&gt;</code>).</li>
+<li>TopoLVM thick, per-node VGs created on
+<code>cheese</code>/<code>dough</code>/<code>rosatini</code> (~3.73 TiB
+each), classes <code>local-ssd-*</code> applied, capacity reported via
+CSIStorageCapacity.</li>
+<li>MetalLB pool <code>10.35.0.61-10.35.0.99</code>;
+<strong>NPM</strong> Running on <code>cheese</code>, LB IP
+<code>10.35.0.61</code>. <strong>Rancher</strong> Running (3 replicas),
+reachable through NPM at
+<code>https://rancher-uslab.eng.antbrains.com/</code>.</li>
+</ul>
+<p><strong>Four gotchas we hit (now baked into the plan)</strong></p>
+<ol type="1">
+<li><strong>roso taint deadlocked the CNI bootstrap.</strong>
+<code>dedicated=invoker:NoSchedule</code> on the only control-plane node
+left <code>helm-install-rke2-calico/-coredns</code> Jobs
+<code>Pending</code> → workers <code>NotReady</code>. <strong>Fix: roso
+untainted</strong> (§6/§6.1).</li>
+<li><strong>TopoLVM
+<code>Insufficient topolvm.io/capacity</code>.</strong> The pod mutating
+webhook injected an extended-resource request no node advertised (no
+scheduler extender). <strong>Fix:
+<code>webhook.podMutatingWebhook.enabled: false</code></strong>
+(§8.2).</li>
+<li><strong>NVMe <code>Device or resource busy</code>.</strong> Disks
+shipped with an old <code>ubuntu-vg</code> LVM layout. <strong>Fix: tear
+down old LVM/partitions first</strong> (§4.1).</li>
+<li><strong>Rancher <code>502</code> behind NPM.</strong> Forwarding to
+HTTP:80 (Rancher redirects to HTTPS) / HTTPS→:80 (wrong version).
+<strong>Fix: NPM forward = HTTPS:443 + websockets</strong> (§11).</li>
+</ol>
+<hr />
+<h2 id="17-npm-availability--ha">17. NPM availability &amp; HA</h2>
+<p><strong>Current:</strong> NPM is <code>replicas: 1</code>,
+<code>Recreate</code>, pinned to <code>cheese</code> by its RWO
+node-local PVCs (<code>local-ssd-cheese</code>). It survives
+<strong>process/pod crashes</strong> (kubelet restarts it) but
+<strong>NOT a <code>cheese</code> node failure</strong> — the RWO PVC is
+stuck on the dead node, so the pod can&#39;t reschedule. NPM is the single
+front door for all apps, so treat this as a known SPOF.</p>
+<p>NPM can&#39;t be made cleanly HA (single SQLite DB + local cert files;
+not built for active-active). Options, worst→best for HA:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Survives node failure</th>
+<th>Effort</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Single + off-node backup</strong></td>
+<td>❌ (fast manual restore)</td>
+<td>Low</td>
+<td>Add a <code>PodDisruptionBudget</code>; back up <code>/data</code> +
+<code>/etc/letsencrypt</code> off-node (VolSync Direct or a CronJob →
+PVC on <code>dough</code>); keep a restore runbook. Removes data-loss
+risk, not downtime.</td>
+</tr>
+<tr>
+<td><strong>2. Replicated storage (Longhorn)</strong></td>
+<td>✅ auto</td>
+<td>Medium</td>
+<td>NPM stays single-replica but its volume is mirrored across nodes;
+pod reschedules + reattaches on another node if <code>cheese</code>
+dies. Adds a 2nd storage system.</td>
+</tr>
+<tr>
+<td><strong>3. Traefik v3 + cert-manager</strong> ⭐</td>
+<td>✅ true HA</td>
+<td>Medium</td>
+<td>Stateless ingress: config from API, certs in Secrets (etcd). Run 2–3
+replicas (anti-affinity) behind MetalLB — any node can die. No
+node-local PVC. This is the <strong>Phase-2</strong> edge
+(<code>Traefik.phase2/</code>).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation:</strong> for the initial stage do
+<strong>Option 1</strong> (cheap, kills data-loss risk). For genuine HA
+edge, bring <strong>Phase 2 (Option 3)</strong> forward — don&#39;t try to
+bolt HA onto NPM.</p>
+</body>
+</html>

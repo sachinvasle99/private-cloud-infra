@@ -1,0 +1,62 @@
+# =============================================================================
+# Traefik dashboard — IngressRoute with basic-auth + Let's Encrypt cert.
+# OPTIONAL. Keep it on the LAN/VPN side; do not expose publicly.
+#
+# 1. Generate the htpasswd line (replace <DASH_PW>):
+#      htpasswd -nb admin '<DASH_PW>' | base64 -w0
+#    Paste the result into .data.users below.
+# 2. Set the dashboard hostname (default traefik.eng.antbrains.com).
+#
+#   kubectl apply -f 05-traefik-dashboard.yaml
+# =============================================================================
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: traefik-dashboard-auth
+  namespace: kube-system
+type: Opaque
+data:
+  users: <BASE64_HTPASSWD>
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: dashboard-auth
+  namespace: kube-system
+spec:
+  basicAuth:
+    secret: traefik-dashboard-auth
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: traefik-dashboard-tls
+  namespace: kube-system
+spec:
+  secretName: traefik-dashboard-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - traefik.eng.antbrains.com
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-dashboard
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: traefik   # required: CRD provider runs with ingressClass=traefik
+spec:
+  entryPoints: [websecure]
+  routes:
+    - match: Host(`traefik.eng.antbrains.com`)
+      kind: Rule
+      services:
+        - name: api@internal
+          kind: TraefikService
+      middlewares:
+        - name: dashboard-auth
+  tls:
+    secretName: traefik-dashboard-tls

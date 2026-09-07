@@ -1,0 +1,35 @@
+# VolSync ReplicationSource — UsLab-Eng-01 example  [DIRECT mode — thick TopoLVM]
+#
+# Run in the SOURCE namespace. Pushes the source PVC to the destination on a
+# schedule using rsync-over-TLS.
+#
+# THICK TopoLVM has NO CSI snapshots, so copyMethod MUST be `Direct`: VolSync
+# mounts the LIVE source PVC and rsyncs from it. Consequences:
+#   * The mover pod co-mounts the source PVC, so it lands on the SAME node (RWO).
+#   * The copy is NOT point-in-time. For a consistent copy of a database, QUIESCE
+#     the writer for the sync window (scale the workload to 0, or use the app's
+#     own dump — see README). For plain/append files it's usually fine live.
+#
+# Before applying, fill in from the destination object's status:
+#   <dest-address>     status.rsyncTLS.address
+#   <key-secret-name>  status.rsyncTLS.keySecret
+#
+# Apply:
+#   kubectl apply -f replicationsource.example.yaml
+#   kubectl -n source-ns get replicationsource data-src \
+#     -o jsonpath='{.status.lastSyncTime}{"\n"}'
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: data-src
+  namespace: source-ns
+spec:
+  sourcePVC: data                              # the PVC you want to replicate
+  trigger:
+    schedule: "0 * * * *"                      # hourly; RPO = this interval
+  rsyncTLS:
+    copyMethod: Direct                         # thick = no snapshots; reads live PVC
+    # Filled in from the destination object's status:
+    address: <dest-address>
+    keySecret: <key-secret-name>

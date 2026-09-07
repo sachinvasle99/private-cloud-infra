@@ -1,0 +1,93 @@
+{
+  "title": "TopoLVM Storage",
+  "uid": "uslab-topolvm",
+  "tags": ["uslab-eng-01", "storage", "topolvm"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "templating": { "list": [] },
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "CSI pods ready (topolvm-system)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "fieldConfig": { "defaults": { "thresholds": { "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 1 } ] } } },
+      "targets": [ { "refId": "A", "expr": "sum(kube_pod_status_ready{namespace=\"topolvm-system\",condition=\"true\"})" } ]
+    },
+    {
+      "id": 2, "type": "stat", "title": "PVCs Bound",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [ { "refId": "A", "expr": "count(kube_persistentvolumeclaim_status_phase{phase=\"Bound\"} == 1) or vector(0)" } ]
+    },
+    {
+      "id": 3, "type": "stat", "title": "Volume Groups",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [ { "refId": "A", "expr": "count(topolvm_volumegroup_size_bytes{device_class=\"ssd\"})" } ]
+    },
+    {
+      "id": 4, "type": "stat", "title": "Max VG Used %",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "percent", "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 80 }, { "color": "red", "value": 90 } ] } } },
+      "targets": [ { "refId": "A", "expr": "max((1 - topolvm_volumegroup_available_bytes{device_class=\"ssd\"} / topolvm_volumegroup_size_bytes{device_class=\"ssd\"}) * 100)" } ]
+    },
+    {
+      "id": 5, "type": "table", "title": "Volume Groups (per node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        { "refId": "SIZE",  "format": "table", "instant": true, "expr": "topolvm_volumegroup_size_bytes{device_class=\"ssd\"} / 1073741824" },
+        { "refId": "AVAIL", "format": "table", "instant": true, "expr": "topolvm_volumegroup_available_bytes{device_class=\"ssd\"} / 1073741824" },
+        { "refId": "USED",  "format": "table", "instant": true, "expr": "(1 - topolvm_volumegroup_available_bytes{device_class=\"ssd\"} / topolvm_volumegroup_size_bytes{device_class=\"ssd\"}) * 100" }
+      ],
+      "transformations": [
+        { "id": "joinByField", "options": { "byField": "node", "mode": "outer" } },
+        { "id": "organize", "options": {
+          "excludeByName": { "Time": true, "Time 1": true, "Time 2": true, "Time 3": true, "device_class": true, "device_class 1": true, "device_class 2": true, "device_class 3": true, "__name__": true, "instance": true, "job": true, "pod": true },
+          "renameByName": { "node": "Node", "Value #SIZE": "Size GiB", "Value #AVAIL": "Avail GiB", "Value #USED": "Used %" } } }
+      ],
+      "fieldConfig": { "defaults": { "decimals": 1 }, "overrides": [
+        { "matcher": { "id": "byName", "options": "Used %" }, "properties": [ { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "gradient" } }, { "id": "max", "value": 100 }, { "id": "min", "value": 0 }, { "id": "unit", "value": "percent" }, { "id": "thresholds", "value": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 80 }, { "color": "red", "value": 90 } ] } } ] }
+      ] }
+    },
+    {
+      "id": 6, "type": "table", "title": "NVMe Storage Latency (per node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "targets": [
+        { "refId": "READ",  "format": "table", "instant": true, "expr": "1000 * avg by(node)(rate(node_disk_read_time_seconds_total{device=~\"nvme[0-9]+n[0-9]+\"}[5m]) / clamp_min(rate(node_disk_reads_completed_total{device=~\"nvme[0-9]+n[0-9]+\"}[5m]), 1))" },
+        { "refId": "WRITE", "format": "table", "instant": true, "expr": "1000 * avg by(node)(rate(node_disk_write_time_seconds_total{device=~\"nvme[0-9]+n[0-9]+\"}[5m]) / clamp_min(rate(node_disk_writes_completed_total{device=~\"nvme[0-9]+n[0-9]+\"}[5m]), 1))" },
+        { "refId": "UTIL",  "format": "table", "instant": true, "expr": "100 * avg by(node)(rate(node_disk_io_time_seconds_total{device=~\"nvme[0-9]+n[0-9]+\"}[5m]))" }
+      ],
+      "transformations": [
+        { "id": "joinByField", "options": { "byField": "node", "mode": "outer" } },
+        { "id": "organize", "options": {
+          "excludeByName": { "Time": true, "Time 1": true, "Time 2": true },
+          "renameByName": { "node": "Node", "Value #READ": "Read ms", "Value #WRITE": "Write ms", "Value #UTIL": "IO Util %" } } }
+      ],
+      "fieldConfig": { "defaults": { "decimals": 2 }, "overrides": [
+        { "matcher": { "id": "byName", "options": "IO Util %" }, "properties": [ { "id": "unit", "value": "percent" } ] }
+      ] }
+    },
+    {
+      "id": 7, "type": "timeseries", "title": "VG Used % (by node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 } },
+      "targets": [ { "refId": "A", "expr": "(1 - topolvm_volumegroup_available_bytes{device_class=\"ssd\"} / topolvm_volumegroup_size_bytes{device_class=\"ssd\"}) * 100", "legendFormat": "{{node}}" } ]
+    },
+    {
+      "id": 8, "type": "timeseries", "title": "NVMe Latency ms (read/write, by node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "fieldConfig": { "defaults": { "unit": "ms" } },
+      "targets": [
+        { "refId": "R", "expr": "1000 * avg by(node)(rate(node_disk_read_time_seconds_total{device=~\"nvme[0-9]+n[0-9]+\"}[5m]) / clamp_min(rate(node_disk_reads_completed_total{device=~\"nvme[0-9]+n[0-9]+\"}[5m]), 1))", "legendFormat": "{{node}} read" },
+        { "refId": "W", "expr": "1000 * avg by(node)(rate(node_disk_write_time_seconds_total{device=~\"nvme[0-9]+n[0-9]+\"}[5m]) / clamp_min(rate(node_disk_writes_completed_total{device=~\"nvme[0-9]+n[0-9]+\"}[5m]), 1))", "legendFormat": "{{node}} write" }
+      ]
+    }
+  ]
+}

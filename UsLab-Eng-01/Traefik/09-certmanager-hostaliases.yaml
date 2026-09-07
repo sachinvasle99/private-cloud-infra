@@ -1,0 +1,48 @@
+# =============================================================================
+# ⚠️ NO LONGER APPLIED (2026-06-25): firewall HAIRPIN NAT was enabled on UsLab,
+# so the in-cluster HTTP-01 self-check now reaches 209.245.232.1 and loops back
+# to Traefik .61 on its own. This hostAliases patch was REMOVED from the
+# cert-manager deployment and a staging cert re-issued in ~24s to confirm.
+# Kept here ONLY as reference for clusters that lack NAT hairpin / split DNS.
+# To re-apply on such a cluster, use the patch below.
+# =============================================================================
+# cert-manager hostAliases — fix HTTP-01 self-check on a NON-hairpin network.
+#
+# PROBLEM (proven on UsLab 2026-06-24): public DNS points the ingress hosts at
+# the edge IP 209.245.232.1. cert-manager's HTTP-01 self-check runs FROM INSIDE
+# the cluster, resolves the host to that public IP, and tries to reach it — but
+# the firewall does NOT hairpin (NAT-loopback) LAN→own-public-IP, so it times
+# out. cert-manager never calls Let's Encrypt → certs stay pending. (Pune's
+# network hairpins or has split DNS, so Pune didn't hit this.)
+#
+# FIX (no DNS change anywhere): give ONLY the cert-manager controller pod a
+# /etc/hosts entry mapping the ingress hosts → the Traefik VIP 10.35.0.61
+# (which IS reachable in-cluster). The self-check then hits Traefik directly and
+# passes; Let's Encrypt still validates EXTERNALLY via 209.245.232.1→.61 (your
+# edge forward). Only affects cert-manager; touches no DNS / no CoreDNS.
+#
+# APPLY (one-off, current cluster):
+#   kubectl -n cert-manager patch deploy cert-manager --type merge -p "$(cat <<'JSON'
+#   {"spec":{"template":{"spec":{"hostAliases":[{"ip":"10.35.0.61","hostnames":[
+#     "grafana.eng.antbrains.com","monitor-eng.antbrains.com",
+#     "rancher-uslab.eng.antbrains.com","eng-01.krista.app",
+#     "studio.eng-01.krista.app","extension.eng-01.krista.app"]}]}}}}
+#   JSON
+#   )"
+#
+# PERSIST (survives cert-manager upgrades) — set in the cert-manager Helm values:
+#   hostAliases:
+#     - ip: "10.35.0.61"
+#       hostnames:
+#         - grafana.eng.antbrains.com
+#         - monitor-eng.antbrains.com
+#         - rancher-uslab.eng.antbrains.com
+#         - eng-01.krista.app
+#         - studio.eng-01.krista.app
+#         - extension.eng-01.krista.app
+#
+# ADD A HOST: append it to the hostnames list AND ensure it has a PUBLIC A record
+# → the edge IP (209.245.232.1) so Let's Encrypt's external validation can reach
+# it. Hosts without a public A record (e.g. internal-only) will get "no valid A
+# records found" from LE and must use a different cert source (internal CA / DNS-01).
+# =============================================================================

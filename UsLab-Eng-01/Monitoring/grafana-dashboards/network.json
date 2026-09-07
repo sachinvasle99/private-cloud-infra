@@ -1,0 +1,76 @@
+{
+  "title": "Network",
+  "uid": "uslab-network",
+  "tags": ["uslab-eng-01", "network"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "node", "type": "query",
+        "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+        "query": "label_values(node_uname_info, node)",
+        "refresh": 2, "multi": true, "includeAll": true,
+        "current": { "text": "All", "value": "$__all" }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1, "type": "timeseries", "title": "Receive throughput (bps, by node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "bps" } },
+      "targets": [ { "refId": "A", "expr": "sum by(node)(rate(node_network_receive_bytes_total{device!~\"lo|veth.*|cali.*|tunl.*\",node=~\"$node\"}[5m])) * 8", "legendFormat": "{{node}}" } ]
+    },
+    {
+      "id": 2, "type": "timeseries", "title": "Transmit throughput (bps, by node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "bps" } },
+      "targets": [ { "refId": "A", "expr": "sum by(node)(rate(node_network_transmit_bytes_total{device!~\"lo|veth.*|cali.*|tunl.*\",node=~\"$node\"}[5m])) * 8", "legendFormat": "{{node}}" } ]
+    },
+    {
+      "id": 3, "type": "timeseries", "title": "Receive drops + errors /s (by node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        { "refId": "D", "expr": "sum by(node)(rate(node_network_receive_drop_total{device!~\"lo|veth.*|cali.*|tunl.*\",node=~\"$node\"}[5m]))", "legendFormat": "{{node}} drops" },
+        { "refId": "E", "expr": "sum by(node)(rate(node_network_receive_errs_total{device!~\"lo|veth.*|cali.*|tunl.*\",node=~\"$node\"}[5m]))", "legendFormat": "{{node}} errs" }
+      ]
+    },
+    {
+      "id": 4, "type": "timeseries", "title": "Conntrack usage % (by node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 } },
+      "targets": [ { "refId": "A", "expr": "100 * node_nf_conntrack_entries{node=~\"$node\"} / node_nf_conntrack_entries_limit{node=~\"$node\"}", "legendFormat": "{{node}}" } ]
+    },
+    {
+      "id": 5, "type": "table", "title": "Blackbox ICMP — node reachability & latency",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [
+        { "refId": "UP",  "format": "table", "instant": true, "expr": "probe_success{job=\"blackbox-icmp\"}" },
+        { "refId": "RTT", "format": "table", "instant": true, "expr": "probe_duration_seconds{job=\"blackbox-icmp\"} * 1000" }
+      ],
+      "transformations": [
+        { "id": "joinByField", "options": { "byField": "instance", "mode": "outer" } },
+        { "id": "organize", "options": {
+          "excludeByName": { "Time": true, "Time 1": true, "Time 2": true, "__name__": true, "__name__ 1": true, "__name__ 2": true, "job": true, "job 1": true, "job 2": true },
+          "renameByName": { "instance": "Node IP", "Value #UP": "Reachable (1=up)", "Value #RTT": "ICMP RTT ms" } } }
+      ],
+      "fieldConfig": { "defaults": { "decimals": 2 } }
+    },
+    {
+      "id": 6, "type": "table", "title": "Top Pods by network RX (Mbps)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [ { "refId": "A", "format": "table", "instant": true, "expr": "topk(15, sum by(namespace,pod)(rate(container_network_receive_bytes_total{pod!=\"\"}[5m])) * 8 / 1000000)" } ],
+      "transformations": [ { "id": "organize", "options": { "excludeByName": { "Time": true }, "renameByName": { "namespace": "Namespace", "pod": "Pod", "Value": "RX Mbps" } } } ],
+      "fieldConfig": { "defaults": { "decimals": 3 } }
+    }
+  ]
+}

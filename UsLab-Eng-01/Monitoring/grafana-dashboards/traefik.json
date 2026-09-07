@@ -1,0 +1,378 @@
+{
+  "title": "Traefik Ingress",
+  "uid": "uslab-traefik",
+  "tags": ["uslab-eng-01", "traefik", "ingress"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "30s",
+  "time": { "from": "now-3h", "to": "now" },
+  "annotations": {
+    "list": [
+      {
+        "name": "Config reloads",
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "enable": true,
+        "iconColor": "purple",
+        "expr": "changes(traefik_config_reloads_total[2m]) > 0",
+        "titleFormat": "Traefik config reload",
+        "step": "60s"
+      }
+    ]
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "type": "datasource",
+        "label": "Data source",
+        "query": "prometheus",
+        "current": { "text": "Prometheus", "value": "PBFA97CFB590B2093" },
+        "hide": 0
+      },
+      {
+        "name": "node",
+        "type": "query",
+        "label": "Traefik node",
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "query": "label_values(traefik_entrypoint_requests_total, node)",
+        "refresh": 2, "multi": true, "includeAll": true, "allValue": ".*",
+        "current": { "text": "All", "value": "$__all" }
+      },
+      {
+        "name": "entrypoint",
+        "type": "query",
+        "label": "Entrypoint",
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "query": "label_values(traefik_entrypoint_requests_total, entrypoint)",
+        "refresh": 2, "multi": true, "includeAll": true, "allValue": ".*",
+        "current": { "text": "All", "value": "$__all" }
+      },
+      {
+        "name": "service",
+        "type": "query",
+        "label": "Service",
+        "datasource": { "type": "prometheus", "uid": "${datasource}" },
+        "query": "label_values(traefik_service_requests_total, service)",
+        "refresh": 2, "multi": true, "includeAll": true, "allValue": ".*",
+        "current": { "text": "All", "value": "$__all" }
+      }
+    ]
+  },
+  "panels": [
+    { "id": 100, "type": "row", "title": "Golden Signals", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }, "collapsed": false },
+    {
+      "id": 1, "type": "stat", "title": "Traefik Pods Up",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "short", "thresholds": { "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 1 } ] } } },
+      "targets": [ { "refId": "A", "instant": true, "expr": "count(traefik_config_last_reload_success{node=~\"$node\"})" } ]
+    },
+    {
+      "id": 2, "type": "stat", "title": "Request Rate",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "blue" } } },
+      "targets": [ { "refId": "A", "expr": "sum(rate(traefik_entrypoint_requests_total{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval]))" } ]
+    },
+    {
+      "id": 3, "type": "stat", "title": "Success Rate",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "unit": "percent", "decimals": 2, "min": 0, "max": 100, "thresholds": { "steps": [ { "color": "red", "value": null }, { "color": "yellow", "value": 95 }, { "color": "green", "value": 99 } ] } } },
+      "targets": [ { "refId": "A", "expr": "100 * (1 - (sum(rate(traefik_service_requests_total{code=~\"5..\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])) / clamp_min(sum(rate(traefik_service_requests_total{code!=\"0\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])),1)))" } ]
+    },
+    {
+      "id": 4, "type": "stat", "title": "5xx Error Rate",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "unit": "percent", "decimals": 2, "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 5 } ] } } },
+      "targets": [ { "refId": "A", "expr": "100 * sum(rate(traefik_service_requests_total{code=~\"5..\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])) / clamp_min(sum(rate(traefik_service_requests_total{code!=\"0\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])),1)" } ]
+    },
+    {
+      "id": 5, "type": "stat", "title": "p99 Latency",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "unit": "s", "decimals": 3, "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 0.5 }, { "color": "red", "value": 1 } ] } } },
+      "targets": [ { "refId": "A", "expr": "histogram_quantile(0.99, sum by(le)(rate(traefik_entrypoint_request_duration_seconds_bucket{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval])))" } ]
+    },
+    {
+      "id": 6, "type": "stat", "title": "Open Connections",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "purple" } } },
+      "targets": [ { "refId": "A", "expr": "sum(traefik_open_connections{entrypoint=~\"$entrypoint\",node=~\"$node\"})" } ]
+    },
+
+    { "id": 110, "type": "row", "title": "Traffic", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 }, "collapsed": false },
+    {
+      "id": 10, "type": "timeseries", "title": "Request Rate by Entrypoint",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 15, "stacking": { "mode": "normal" } } } },
+      "options": { "legend": { "displayMode": "table", "calcs": ["mean", "max", "lastNotNull"], "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "legendFormat": "{{entrypoint}}", "expr": "sum by(entrypoint)(rate(traefik_entrypoint_requests_total{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval]))" } ]
+    },
+    {
+      "id": 11, "type": "timeseries", "title": "Request Rate by Service",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 15, "stacking": { "mode": "normal" } } } },
+      "options": { "legend": { "displayMode": "table", "calcs": ["mean", "max", "lastNotNull"], "placement": "bottom", "sortBy": "Last *", "sortDesc": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "legendFormat": "{{service}}", "expr": "sum by(service)(rate(traefik_service_requests_total{service=~\"$service\",node=~\"$node\",code!=\"0\"}[$__rate_interval]))" } ]
+    },
+    {
+      "id": 12, "type": "timeseries", "title": "Requests by Method",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 7, "w": 8, "x": 0, "y": 14 },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 15, "stacking": { "mode": "normal" } } } },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "legendFormat": "{{method}}", "expr": "sum by(method)(rate(traefik_entrypoint_requests_total{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval]))" } ]
+    },
+    {
+      "id": 13, "type": "timeseries", "title": "Requests by Protocol",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 7, "w": 8, "x": 8, "y": 14 },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 15, "stacking": { "mode": "normal" } } } },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "legendFormat": "{{protocol}}", "expr": "sum by(protocol)(rate(traefik_entrypoint_requests_total{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval]))" } ]
+    },
+    {
+      "id": 14, "type": "timeseries", "title": "Responses by Status Class",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 7, "w": 8, "x": 16, "y": 14 },
+      "fieldConfig": {
+        "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 25, "stacking": { "mode": "normal" } } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "2xx" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } } ] },
+          { "matcher": { "id": "byName", "options": "3xx" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "blue" } } ] },
+          { "matcher": { "id": "byName", "options": "4xx" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "yellow" } } ] },
+          { "matcher": { "id": "byName", "options": "5xx" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } } ] }
+        ]
+      },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "refId": "A", "legendFormat": "2xx", "expr": "sum(rate(traefik_entrypoint_requests_total{entrypoint=~\"$entrypoint\",node=~\"$node\",code=~\"2..\"}[$__rate_interval]))" },
+        { "refId": "B", "legendFormat": "3xx", "expr": "sum(rate(traefik_entrypoint_requests_total{entrypoint=~\"$entrypoint\",node=~\"$node\",code=~\"3..\"}[$__rate_interval]))" },
+        { "refId": "C", "legendFormat": "4xx", "expr": "sum(rate(traefik_entrypoint_requests_total{entrypoint=~\"$entrypoint\",node=~\"$node\",code=~\"4..\"}[$__rate_interval]))" },
+        { "refId": "D", "legendFormat": "5xx", "expr": "sum(rate(traefik_entrypoint_requests_total{entrypoint=~\"$entrypoint\",node=~\"$node\",code=~\"5..\"}[$__rate_interval]))" }
+      ]
+    },
+
+    { "id": 120, "type": "row", "title": "Errors", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 21 }, "collapsed": false },
+    {
+      "id": 20, "type": "timeseries", "title": "Error Ratio (% of requests)",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 22 },
+      "fieldConfig": {
+        "defaults": { "unit": "percent", "decimals": 2, "custom": { "drawStyle": "line", "fillOpacity": 10 } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "4xx %" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "yellow" } } ] },
+          { "matcher": { "id": "byName", "options": "5xx %" }, "properties": [ { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } } ] }
+        ]
+      },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "refId": "A", "legendFormat": "4xx %", "expr": "100 * sum(rate(traefik_service_requests_total{code=~\"4..\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])) / clamp_min(sum(rate(traefik_service_requests_total{code!=\"0\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])),1)" },
+        { "refId": "B", "legendFormat": "5xx %", "expr": "100 * sum(rate(traefik_service_requests_total{code=~\"5..\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])) / clamp_min(sum(rate(traefik_service_requests_total{code!=\"0\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])),1)" }
+      ]
+    },
+    {
+      "id": 21, "type": "timeseries", "title": "4xx / 5xx Responses by Code",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 22 },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 20, "stacking": { "mode": "normal" } } } },
+      "options": { "legend": { "displayMode": "table", "calcs": ["mean", "max"], "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "legendFormat": "{{code}}", "expr": "sum by(code)(rate(traefik_service_requests_total{code=~\"[45]..\",service=~\"$service\",node=~\"$node\"}[$__rate_interval]))" } ]
+    },
+    {
+      "id": 22, "type": "bargauge", "title": "Top Services — 5xx Rate",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 30 },
+      "options": { "displayMode": "gradient", "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"] }, "showUnfilled": true },
+      "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 3, "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.001 } ] } } },
+      "targets": [ { "refId": "A", "instant": true, "legendFormat": "{{service}}", "expr": "topk(10, sum by(service)(rate(traefik_service_requests_total{code=~\"5..\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])))" } ]
+    },
+    {
+      "id": 23, "type": "bargauge", "title": "Top Services — 4xx Rate",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 30 },
+      "options": { "displayMode": "gradient", "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"] }, "showUnfilled": true },
+      "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 3, "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 0.001 } ] } } },
+      "targets": [ { "refId": "A", "instant": true, "legendFormat": "{{service}}", "expr": "topk(10, sum by(service)(rate(traefik_service_requests_total{code=~\"4..\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])))" } ]
+    },
+
+    { "id": 130, "type": "row", "title": "Latency", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 38 }, "collapsed": false },
+    {
+      "id": 30, "type": "timeseries", "title": "Entrypoint Latency (p50 / p90 / p99)",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 39 },
+      "fieldConfig": { "defaults": { "unit": "s", "decimals": 3, "custom": { "drawStyle": "line", "fillOpacity": 0 } } },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "refId": "A", "legendFormat": "p50", "expr": "histogram_quantile(0.50, sum by(le)(rate(traefik_entrypoint_request_duration_seconds_bucket{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval])))" },
+        { "refId": "B", "legendFormat": "p90", "expr": "histogram_quantile(0.90, sum by(le)(rate(traefik_entrypoint_request_duration_seconds_bucket{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval])))" },
+        { "refId": "C", "legendFormat": "p99", "expr": "histogram_quantile(0.99, sum by(le)(rate(traefik_entrypoint_request_duration_seconds_bucket{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval])))" }
+      ]
+    },
+    {
+      "id": 31, "type": "timeseries", "title": "Service p99 Latency",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 39 },
+      "fieldConfig": { "defaults": { "unit": "s", "decimals": 3, "custom": { "drawStyle": "line", "fillOpacity": 0 } } },
+      "options": { "legend": { "displayMode": "table", "calcs": ["mean", "max"], "placement": "bottom", "sortBy": "Max", "sortDesc": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "legendFormat": "{{service}}", "expr": "histogram_quantile(0.99, sum by(le, service)(rate(traefik_service_request_duration_seconds_bucket{service=~\"$service\",node=~\"$node\"}[$__rate_interval])))" } ]
+    },
+    {
+      "id": 32, "type": "heatmap", "title": "Service Latency Heatmap",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 47 },
+      "options": { "calculate": false, "cellGap": 1, "color": { "mode": "scheme", "scheme": "Spectral", "steps": 64 }, "yAxis": { "unit": "s", "axisPlacement": "left" }, "legend": { "show": true }, "tooltip": { "show": true, "yHistogram": true } },
+      "targets": [ { "refId": "A", "format": "heatmap", "legendFormat": "{{le}}", "expr": "sum by(le)(rate(traefik_service_request_duration_seconds_bucket{service=~\"$service\",node=~\"$node\"}[$__rate_interval]))" } ]
+    },
+    {
+      "id": 33, "type": "timeseries", "title": "Average Latency by Service",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 47 },
+      "fieldConfig": { "defaults": { "unit": "s", "decimals": 3, "custom": { "drawStyle": "line", "fillOpacity": 0 } } },
+      "options": { "legend": { "displayMode": "table", "calcs": ["mean", "max"], "placement": "bottom", "sortBy": "Mean", "sortDesc": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "legendFormat": "{{service}}", "expr": "sum by(service)(rate(traefik_service_request_duration_seconds_sum{service=~\"$service\",node=~\"$node\"}[$__rate_interval])) / clamp_min(sum by(service)(rate(traefik_service_request_duration_seconds_count{service=~\"$service\",node=~\"$node\"}[$__rate_interval])),1)" } ]
+    },
+
+    { "id": 140, "type": "row", "title": "Bandwidth", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 55 }, "collapsed": false },
+    {
+      "id": 40, "type": "timeseries", "title": "Throughput by Entrypoint (in / out)",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 56 },
+      "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "drawStyle": "line", "fillOpacity": 10 } } },
+      "options": { "legend": { "displayMode": "table", "calcs": ["mean", "max"], "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "refId": "A", "legendFormat": "in — {{entrypoint}}", "expr": "sum by(entrypoint)(rate(traefik_entrypoint_requests_bytes_total{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval]))" },
+        { "refId": "B", "legendFormat": "out — {{entrypoint}}", "expr": "sum by(entrypoint)(rate(traefik_entrypoint_responses_bytes_total{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval]))" }
+      ]
+    },
+    {
+      "id": 41, "type": "timeseries", "title": "Throughput by Service (in / out)",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 56 },
+      "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "drawStyle": "line", "fillOpacity": 10 } } },
+      "options": { "legend": { "displayMode": "table", "calcs": ["mean", "max"], "placement": "bottom", "sortBy": "Max", "sortDesc": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "refId": "A", "legendFormat": "in — {{service}}", "expr": "sum by(service)(rate(traefik_service_requests_bytes_total{service=~\"$service\",node=~\"$node\"}[$__rate_interval]))" },
+        { "refId": "B", "legendFormat": "out — {{service}}", "expr": "sum by(service)(rate(traefik_service_responses_bytes_total{service=~\"$service\",node=~\"$node\"}[$__rate_interval]))" }
+      ]
+    },
+
+    { "id": 150, "type": "row", "title": "Connections & TLS", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 64 }, "collapsed": false },
+    {
+      "id": 50, "type": "timeseries", "title": "Open Connections by Entrypoint",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 65 },
+      "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "line", "fillOpacity": 15, "stacking": { "mode": "normal" } } } },
+      "options": { "legend": { "displayMode": "table", "calcs": ["mean", "max"], "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "legendFormat": "{{entrypoint}}", "expr": "sum by(entrypoint)(traefik_open_connections{entrypoint=~\"$entrypoint\",node=~\"$node\"})" } ]
+    },
+    {
+      "id": 51, "type": "piechart", "title": "TLS Version Share",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 65 },
+      "options": { "pieType": "donut", "reduceOptions": { "calcs": ["lastNotNull"] }, "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] } },
+      "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 3 } },
+      "targets": [ { "refId": "A", "legendFormat": "TLS {{tls_version}}", "expr": "sum by(tls_version)(rate(traefik_entrypoint_requests_tls_total{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval]))" } ]
+    },
+    {
+      "id": 52, "type": "timeseries", "title": "TLS Handshakes by Cipher",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 65 },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 15, "stacking": { "mode": "normal" } } } },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "legendFormat": "{{tls_cipher}}", "expr": "sum by(tls_cipher)(rate(traefik_entrypoint_requests_tls_total{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval]))" } ]
+    },
+    {
+      "id": 53, "type": "table", "title": "TLS Certificate Expiry",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 73 },
+      "targets": [ { "refId": "A", "format": "table", "instant": true, "expr": "(min by(cn, sans)(traefik_tls_certs_not_after) - time()) / 86400" } ],
+      "transformations": [
+        { "id": "organize", "options": { "excludeByName": { "Time": true }, "indexByName": { "cn": 0, "sans": 1, "Value": 2 }, "renameByName": { "cn": "Common Name", "sans": "SANs", "Value": "Days Left" } } },
+        { "id": "sortBy", "options": { "fields": "", "sort": [ { "field": "Days Left", "desc": false } ] } }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "align": "left" }, "decimals": 0, "unit": "short" },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Days Left" }, "properties": [ { "id": "custom.align", "value": "center" }, { "id": "custom.cellOptions", "value": { "type": "color-background" } }, { "id": "thresholds", "value": { "steps": [ { "color": "red", "value": null }, { "color": "orange", "value": 7 }, { "color": "yellow", "value": 21 }, { "color": "green", "value": 30 } ] } } ] }
+        ]
+      }
+    },
+
+    { "id": 160, "type": "row", "title": "Per-Service Summary (RED)", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 81 }, "collapsed": false },
+    {
+      "id": 60, "type": "table", "title": "Per-Service — Rate / Errors / Latency / Bandwidth",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 11, "w": 24, "x": 0, "y": 82 },
+      "targets": [
+        { "refId": "RPS", "format": "table", "instant": true, "expr": "sum by(service)(rate(traefik_service_requests_total{service=~\"$service\",node=~\"$node\",code!=\"0\"}[$__rate_interval]))" },
+        { "refId": "E4", "format": "table", "instant": true, "expr": "100 * sum by(service)(rate(traefik_service_requests_total{code=~\"4..\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])) / clamp_min(sum by(service)(rate(traefik_service_requests_total{code!=\"0\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])),1)" },
+        { "refId": "E5", "format": "table", "instant": true, "expr": "100 * sum by(service)(rate(traefik_service_requests_total{code=~\"5..\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])) / clamp_min(sum by(service)(rate(traefik_service_requests_total{code!=\"0\",service=~\"$service\",node=~\"$node\"}[$__rate_interval])),1)" },
+        { "refId": "P50", "format": "table", "instant": true, "expr": "histogram_quantile(0.50, sum by(le, service)(rate(traefik_service_request_duration_seconds_bucket{service=~\"$service\",node=~\"$node\"}[$__rate_interval])))" },
+        { "refId": "P99", "format": "table", "instant": true, "expr": "histogram_quantile(0.99, sum by(le, service)(rate(traefik_service_request_duration_seconds_bucket{service=~\"$service\",node=~\"$node\"}[$__rate_interval])))" },
+        { "refId": "IN", "format": "table", "instant": true, "expr": "sum by(service)(rate(traefik_service_requests_bytes_total{service=~\"$service\",node=~\"$node\"}[$__rate_interval]))" },
+        { "refId": "OUT", "format": "table", "instant": true, "expr": "sum by(service)(rate(traefik_service_responses_bytes_total{service=~\"$service\",node=~\"$node\"}[$__rate_interval]))" }
+      ],
+      "transformations": [
+        { "id": "joinByField", "options": { "byField": "service", "mode": "outer" } },
+        { "id": "organize", "options": {
+            "excludeByName": { "Time": true, "Time 1": true, "Time 2": true, "Time 3": true, "Time 4": true, "Time 5": true, "Time 6": true, "Time 7": true },
+            "renameByName": { "service": "Service", "Value #RPS": "Req/s", "Value #E4": "4xx %", "Value #E5": "5xx %", "Value #P50": "p50 (s)", "Value #P99": "p99 (s)", "Value #IN": "In", "Value #OUT": "Out" }
+        } },
+        { "id": "sortBy", "options": { "fields": "", "sort": [ { "field": "Req/s", "desc": true } ] } }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "align": "center" }, "decimals": 2 },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Service" }, "properties": [ { "id": "custom.align", "value": "left" } ] },
+          { "matcher": { "id": "byName", "options": "Req/s" }, "properties": [ { "id": "unit", "value": "reqps" } ] },
+          { "matcher": { "id": "byName", "options": "4xx %" }, "properties": [ { "id": "unit", "value": "percent" }, { "id": "custom.cellOptions", "value": { "type": "color-background" } }, { "id": "thresholds", "value": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 5 }, { "color": "orange", "value": 20 } ] } } ] },
+          { "matcher": { "id": "byName", "options": "5xx %" }, "properties": [ { "id": "unit", "value": "percent" }, { "id": "custom.cellOptions", "value": { "type": "color-background" } }, { "id": "thresholds", "value": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 5 } ] } } ] },
+          { "matcher": { "id": "byName", "options": "p50 (s)" }, "properties": [ { "id": "unit", "value": "s" }, { "id": "decimals", "value": 3 } ] },
+          { "matcher": { "id": "byName", "options": "p99 (s)" }, "properties": [ { "id": "unit", "value": "s" }, { "id": "decimals", "value": 3 }, { "id": "custom.cellOptions", "value": { "type": "color-background" } }, { "id": "thresholds", "value": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 0.5 }, { "color": "red", "value": 1 } ] } } ] },
+          { "matcher": { "id": "byName", "options": "In" }, "properties": [ { "id": "unit", "value": "Bps" } ] },
+          { "matcher": { "id": "byName", "options": "Out" }, "properties": [ { "id": "unit", "value": "Bps" } ] }
+        ]
+      }
+    },
+
+    { "id": 170, "type": "row", "title": "Reliability & Distribution", "gridPos": { "h": 1, "w": 24, "x": 0, "y": 93 }, "collapsed": false },
+    {
+      "id": 70, "type": "timeseries", "title": "Config Reloads",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 94 },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "drawStyle": "line", "fillOpacity": 10 } },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "last reload ok (1=ok)" }, "properties": [ { "id": "custom.drawStyle", "value": "points" }, { "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } } ] }
+        ]
+      },
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "refId": "A", "legendFormat": "reloads/min", "expr": "sum(rate(traefik_config_reloads_total{node=~\"$node\"}[$__rate_interval])) * 60" },
+        { "refId": "B", "legendFormat": "last reload ok (1=ok)", "expr": "min(traefik_config_last_reload_success{node=~\"$node\"})" }
+      ]
+    },
+    {
+      "id": 71, "type": "timeseries", "title": "Request Distribution by Traefik Pod",
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 94 },
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "drawStyle": "line", "fillOpacity": 15, "stacking": { "mode": "normal" } } } },
+      "options": { "legend": { "displayMode": "table", "calcs": ["mean", "max"], "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [ { "refId": "A", "legendFormat": "{{node}} / {{pod}}", "expr": "sum by(node, pod)(rate(traefik_entrypoint_requests_total{entrypoint=~\"$entrypoint\",node=~\"$node\"}[$__rate_interval]))" } ]
+    }
+  ]
+}

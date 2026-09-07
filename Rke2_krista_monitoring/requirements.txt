@@ -1,0 +1,13 @@
+kubernetes>=28.1.0
+requests>=2.31.0
+urllib3>=2.0.7
+rich>=13.7.0
+tabulate>=0.9.0
+click>=8.1.7
+python-dateutil>=2.8.2
+pyyaml>=6.0.1
+jinja2>=3.1.2
+websocket-client>=1.7.0
+# Web service dependencies
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0

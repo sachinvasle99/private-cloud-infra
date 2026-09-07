@@ -1,0 +1,84 @@
+# =============================================================================
+# Developer permission set — "deploy & debug, NO secret write"
+#
+# This ClusterRole is the canonical, portable definition of what a developer
+# may do INSIDE a namespace. It is namespaced in effect (granted via a
+# RoleBinding per namespace — see developer-rolebindings.yaml), so it carries
+# NO cluster-scoped power on its own.
+#
+# Mirrors Rancher's built-in "edit" role MINUS secret writes, MINUS RBAC,
+# MINUS namespace/quota admin. Secrets, serviceaccounts, networkpolicies,
+# quotas and limitranges are READ-ONLY on purpose.
+#
+# The matching Rancher RoleTemplate (developer-rancher-roletemplate.yaml)
+# carries the SAME rules — keep the two in sync if you edit either.
+# =============================================================================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: developer
+  labels:
+    app.kubernetes.io/part-of: access-control
+    rbac.uslab/role: developer
+rules:
+  # ---- Pods: manage incl. delete (deleting a pod under a controller just
+  #      recreates it — the standard "restart a stuck pod" debug action) ----
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+  # ---- Other core objects: create/update/patch but NO delete ----
+  #      (no tearing down services/config, no destroying PVC data)
+  - apiGroups: [""]
+    resources:
+      - services
+      - configmaps
+      - persistentvolumeclaims
+      - endpoints
+      - replicationcontrollers
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+  # ---- Debug into running pods ----
+  - apiGroups: [""]
+    resources: ["pods/log", "pods/status"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/exec", "pods/portforward", "pods/attach"]
+    verbs: ["get", "create"]
+  - apiGroups: [""]
+    resources: ["pods/ephemeralcontainers"]
+    verbs: ["update", "patch"]          # `kubectl debug`
+
+  # ---- Read-only on sensitive / shared objects ----
+  - apiGroups: [""]
+    resources: ["secrets", "serviceaccounts", "resourcequotas", "limitranges", "events"]
+    verbs: ["get", "list", "watch"]
+
+  # ---- Controllers: create/update/patch but NO delete ----
+  - apiGroups: ["apps"]
+    resources: ["deployments", "deployments/scale", "replicasets", "statefulsets", "statefulsets/scale", "daemonsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+  - apiGroups: ["policy"]
+    resources: ["poddisruptionbudgets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+  # ---- Networking: ingress create/update/patch (no delete), NetworkPolicy
+  #      read-only (don't let devs weaken namespace isolation) ----
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["networkpolicies"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get", "list", "watch"]

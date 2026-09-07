@@ -1,0 +1,137 @@
+# Logical Postgres backups for the uslab-eng-01 plain StatefulSets.
+# pg_dumpall (all DBs + roles) streamed straight to MinIO, gzip'd, no disk spill:
+#   initContainer copies the `mc` binary into a shared dir; the postgres
+#   container pipes `pg_dumpall | gzip | mc pipe` to a date-partitioned object.
+# Objects: uslab-eng-01-backup/pgdump/<instance>/YYYY/MM/DD/<instance>-<ts>.sql.gz
+# Secrets used: minio-backup-creds (AWS_*), postgres-<inst>-credentials (PG creds).
+# --insecure trusts MinIO's self-signed cert (lab). NOTE: pg_dumpall image must be
+# >= server version; using postgres:17 (newer client dumps older servers fine).
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: pgdump-node1, namespace: uslab-eng-01 }
+spec:
+  schedule: "30 17 * * *"             # 23:00 IST (17:30 UTC) daily — all services
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          volumes: [{ name: bin, emptyDir: {} }]
+          initContainers:
+            - name: getmc
+              image: minio/mc:latest
+              command: ["sh","-c","cp /usr/bin/mc /binshare/mc"]
+              volumeMounts: [{ name: bin, mountPath: /binshare }]
+          containers:
+            - name: dump
+              image: postgres:17
+              env:
+                - { name: PGHOST,  value: "node1-postgres" }
+                - { name: INSTANCE, value: "node1" }
+                - { name: MINIO_URL, value: "https://10.35.0.36:9000" }
+                - { name: PGUSER,     valueFrom: { secretKeyRef: { name: postgres-node1-credentials, key: username } } }
+                - { name: PGPASSWORD, valueFrom: { secretKeyRef: { name: postgres-node1-credentials, key: password } } }
+                - { name: AK, valueFrom: { secretKeyRef: { name: minio-backup-creds, key: AWS_ACCESS_KEY_ID } } }
+                - { name: SK, valueFrom: { secretKeyRef: { name: minio-backup-creds, key: AWS_SECRET_ACCESS_KEY } } }
+              command:
+                - sh
+                - -c
+                - >
+                  set -euo pipefail;
+                  /binshare/mc alias set bk "$MINIO_URL" "$AK" "$SK" --insecure >/dev/null;
+                  KEY="uslab-eng-01-backup/pgdump/$INSTANCE/$(date +%Y/%m/%d)/$INSTANCE-$(date +%Y%m%d-%H%M%S).sql.gz";
+                  echo "dumping $INSTANCE -> $KEY";
+                  pg_dumpall -h "$PGHOST" -U "$PGUSER" | gzip | /binshare/mc pipe --insecure "bk/$KEY";
+                  echo "done: $KEY"
+              volumeMounts: [{ name: bin, mountPath: /binshare }]
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: pgdump-node2, namespace: uslab-eng-01 }
+spec:
+  schedule: "30 17 * * *"             # 23:00 IST daily
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          volumes: [{ name: bin, emptyDir: {} }]
+          initContainers:
+            - name: getmc
+              image: minio/mc:latest
+              command: ["sh","-c","cp /usr/bin/mc /binshare/mc"]
+              volumeMounts: [{ name: bin, mountPath: /binshare }]
+          containers:
+            - name: dump
+              image: postgres:17
+              env:
+                - { name: PGHOST,  value: "node2-postgres" }
+                - { name: INSTANCE, value: "node2" }
+                - { name: MINIO_URL, value: "https://10.35.0.36:9000" }
+                - { name: PGUSER,     valueFrom: { secretKeyRef: { name: postgres-node2-credentials, key: username } } }
+                - { name: PGPASSWORD, valueFrom: { secretKeyRef: { name: postgres-node2-credentials, key: password } } }
+                - { name: AK, valueFrom: { secretKeyRef: { name: minio-backup-creds, key: AWS_ACCESS_KEY_ID } } }
+                - { name: SK, valueFrom: { secretKeyRef: { name: minio-backup-creds, key: AWS_SECRET_ACCESS_KEY } } }
+              command:
+                - sh
+                - -c
+                - >
+                  set -euo pipefail;
+                  /binshare/mc alias set bk "$MINIO_URL" "$AK" "$SK" --insecure >/dev/null;
+                  KEY="uslab-eng-01-backup/pgdump/$INSTANCE/$(date +%Y/%m/%d)/$INSTANCE-$(date +%Y%m%d-%H%M%S).sql.gz";
+                  echo "dumping $INSTANCE -> $KEY";
+                  pg_dumpall -h "$PGHOST" -U "$PGUSER" | gzip | /binshare/mc pipe --insecure "bk/$KEY";
+                  echo "done: $KEY"
+              volumeMounts: [{ name: bin, mountPath: /binshare }]
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: pgdump-global, namespace: uslab-eng-01 }
+spec:
+  schedule: "30 17 * * *"             # 23:00 IST daily
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          volumes: [{ name: bin, emptyDir: {} }]
+          initContainers:
+            - name: getmc
+              image: minio/mc:latest
+              command: ["sh","-c","cp /usr/bin/mc /binshare/mc"]
+              volumeMounts: [{ name: bin, mountPath: /binshare }]
+          containers:
+            - name: dump
+              image: postgres:17
+              env:
+                - { name: PGHOST,  value: "global-postgres" }
+                - { name: INSTANCE, value: "global" }
+                - { name: MINIO_URL, value: "https://10.35.0.36:9000" }
+                - { name: PGUSER,     valueFrom: { secretKeyRef: { name: postgres-global-credentials, key: username } } }
+                - { name: PGPASSWORD, valueFrom: { secretKeyRef: { name: postgres-global-credentials, key: password } } }
+                - { name: AK, valueFrom: { secretKeyRef: { name: minio-backup-creds, key: AWS_ACCESS_KEY_ID } } }
+                - { name: SK, valueFrom: { secretKeyRef: { name: minio-backup-creds, key: AWS_SECRET_ACCESS_KEY } } }
+              command:
+                - sh
+                - -c
+                - >
+                  set -euo pipefail;
+                  /binshare/mc alias set bk "$MINIO_URL" "$AK" "$SK" --insecure >/dev/null;
+                  KEY="uslab-eng-01-backup/pgdump/$INSTANCE/$(date +%Y/%m/%d)/$INSTANCE-$(date +%Y%m%d-%H%M%S).sql.gz";
+                  echo "dumping $INSTANCE -> $KEY";
+                  pg_dumpall -h "$PGHOST" -U "$PGUSER" | gzip | /binshare/mc pipe --insecure "bk/$KEY";
+                  echo "done: $KEY"
+              volumeMounts: [{ name: bin, mountPath: /binshare }]

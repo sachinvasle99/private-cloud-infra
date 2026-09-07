@@ -1,0 +1,63 @@
+# VolSync ReplicationSources for uslab-eng-01 FILE PVCs → MinIO (restic, Direct).
+# copyMethod: Direct is mandatory (thick TopoLVM has no snapshot/clone).
+# The repo Secret (restic-*) is created imperatively by setup-secrets.sh
+# (keeps MinIO creds + RESTIC_PASSWORD out of git). customCA trusts MinIO's cert.
+# cacheStorageClassName must be the node-local SC where the PVC lives (rosatini).
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: krista-ai-server-backup
+  namespace: uslab-eng-01
+spec:
+  sourcePVC: krista-ai-server
+  trigger:
+    schedule: "30 17 * * *"          # 23:00 IST (17:30 UTC) daily — all services
+  restic:
+    repository: restic-krista-ai     # Secret (see setup-secrets.sh)
+    copyMethod: Direct
+    pruneIntervalDays: 14
+    cacheCapacity: 2Gi
+    cacheStorageClassName: local-ssd-rosatini
+    # Run the mover as root so it can read every file regardless of owner/perms
+    # (some app files are owned by other UIDs → otherwise restic exits "warning").
+    moverSecurityContext:
+      runAsUser: 0
+      runAsGroup: 0
+      fsGroup: 0
+      runAsNonRoot: false
+    customCA:
+      configMapName: minio-ca
+      key: ca.crt
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 3
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: shared-mediadb-backup
+  namespace: uslab-eng-01
+spec:
+  sourcePVC: shared-mediadb-pvc
+  trigger:
+    schedule: "30 17 * * *"          # 23:00 IST (17:30 UTC) daily — all services
+  restic:
+    repository: restic-mediadb
+    copyMethod: Direct
+    pruneIntervalDays: 14
+    cacheCapacity: 4Gi
+    cacheStorageClassName: local-ssd-rosatini
+    moverSecurityContext:
+      runAsUser: 0
+      runAsGroup: 0
+      fsGroup: 0
+      runAsNonRoot: false
+    customCA:
+      configMapName: minio-ca
+      key: ca.crt
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 3

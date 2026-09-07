@@ -1,0 +1,23 @@
+# =============================================================================
+# Step 0 — Shrink the MetalLB pool so it no longer hands out .61 / .62.
+#
+# .61 = kube-vip ingress VIP (Traefik TCP 80/443); .62 = kube-vip HTTP/3 QUIC
+# VIP (07-...yaml). kube-vip claims them ONLY via loadBalancerClass
+# "kube-vip.io/kube-vip-class"; MetalLB must not also assign them, so we drop
+# .61 and .62 from MetalLB's range. .63-.99 stays MetalLB's (.63-.67 in use).
+#
+# Apply BEFORE freeing NPM / installing kube-vip:
+#   kubectl apply -f 00-metallb-pool.yaml
+#
+# Existing MetalLB services already on .63-.67 are unaffected (still in range).
+# =============================================================================
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: lan-pool
+  namespace: metallb-system
+spec:
+  autoAssign: true
+  avoidBuggyIPs: true
+  addresses:
+    - 10.35.0.63-10.35.0.99      # was 10.35.0.61-10.35.0.99 (.61/.62 now kube-vip VIPs)

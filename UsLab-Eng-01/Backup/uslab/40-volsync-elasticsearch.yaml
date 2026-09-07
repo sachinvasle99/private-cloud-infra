@@ -1,0 +1,26 @@
+# Elasticsearch (uslab-eng-01) backup via VolSync restic Direct.
+# CHOSEN because ES 7.6.2 here has NO repository-s3 plugin and a read-only config,
+# so the native S3 snapshot API would require an IMAGE REBUILD (not just a restart).
+# This Direct copy is CRASH-CONSISTENT: on restore, ES replays its translog and
+# normally recovers (single node). For guaranteed consistency, bake repository-s3 +
+# the MinIO CA into the next ES image rebuild and switch to the native snapshot API.
+# Tip: run  POST /_flush  shortly before a backup to minimise in-memory state.
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: elasticsearch-backup
+  namespace: uslab-eng-01
+spec:
+  sourcePVC: elasticsearch-pvc
+  trigger:
+    schedule: "30 17 * * *"          # 23:00 IST (17:30 UTC) daily — all services
+  restic:
+    repository: restic-elasticsearch
+    copyMethod: Direct
+    pruneIntervalDays: 14
+    cacheCapacity: 4Gi
+    cacheStorageClassName: local-ssd-rosatini
+    moverSecurityContext: { runAsUser: 0, runAsGroup: 0, fsGroup: 0, runAsNonRoot: false }
+    customCA: { configMapName: minio-ca, key: ca.crt }
+    retain: { daily: 7, weekly: 4, monthly: 3 }

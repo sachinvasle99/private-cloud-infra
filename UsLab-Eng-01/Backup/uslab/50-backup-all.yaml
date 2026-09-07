@@ -1,0 +1,75 @@
+# Single-trigger orchestrator: ONE job backs up the whole uslab-eng-01 namespace.
+# It fires every backup — the 3 Postgres dump CronJobs (via `create job --from`)
+# and the 5 VolSync ReplicationSources (via a manual trigger).
+#
+# Run the whole env backup on demand:
+#   kubectl -n uslab-eng-01 create job --from=cronjob/backup-all backup-now-$(date +%s)
+# Scheduled run: 23:00 IST daily (this is the ONLY scheduler — the pg CronJobs are
+# suspended and the ReplicationSources are manual-only, so nothing double-fires).
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: { name: backup-orchestrator, namespace: uslab-eng-01 }
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: { name: backup-orchestrator, namespace: uslab-eng-01 }
+rules:
+  - apiGroups: ["batch"]
+    resources: ["cronjobs"]
+    verbs: ["get","list"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get","list","create","delete"]
+  - apiGroups: ["volsync.backube"]
+    resources: ["replicationsources"]
+    verbs: ["get","list","patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata: { name: backup-orchestrator, namespace: uslab-eng-01 }
+roleRef: { apiGroup: rbac.authorization.k8s.io, kind: Role, name: backup-orchestrator }
+subjects:
+  - { kind: ServiceAccount, name: backup-orchestrator, namespace: uslab-eng-01 }
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: backup-all, namespace: uslab-eng-01 }
+spec:
+  schedule: "30 17 * * *"                 # 23:00 IST — the single scheduler
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          serviceAccountName: backup-orchestrator
+          restartPolicy: Never
+          containers:
+            - name: orchestrate
+              image: bitnami/kubectl:latest
+              command:
+                - sh
+                - -c
+                - |
+                  set -e
+                  NS=uslab-eng-01
+                  TS=$(date +%s)
+                  echo "backup-all run $TS — triggering all uslab-eng-01 backups"
+                  echo "--- file backups (VolSync ReplicationSources) ---"
+                  for rs in krista-ai-server-backup shared-mediadb-backup \
+                            elasticsearch-backup node1-accesspoint3-backup \
+                            node2-accesspoint3-backup; do
+                    kubectl -n $NS patch replicationsource "$rs" --type merge \
+                      -p "{\"spec\":{\"trigger\":{\"manual\":\"all-$TS\"}}}"
+                    echo "  triggered $rs"
+                  done
+                  echo "--- database dumps (from suspended CronJobs) ---"
+                  for inst in global node1 node2; do
+                    kubectl -n $NS delete job "pgdump-$inst-run" --ignore-not-found
+                    kubectl -n $NS create job --from=cronjob/pgdump-$inst "pgdump-$inst-run"
+                    echo "  started pgdump-$inst-run"
+                  done
+                  echo "all backups triggered."

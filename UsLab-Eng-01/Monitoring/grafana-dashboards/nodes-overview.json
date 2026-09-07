@@ -1,0 +1,178 @@
+{
+  "title": "Nodes Overview",
+  "uid": "uslab-nodes",
+  "tags": ["uslab-eng-01", "nodes"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "node",
+        "type": "query",
+        "label": "Cluster node",
+        "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+        "query": "label_values(node_uname_info{environment=\"\"}, node)",
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "current": { "text": "All", "value": "$__all" }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 100, "type": "row", "title": "Cluster Nodes (in-cluster RKE2)",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 }, "collapsed": false
+    },
+    {
+      "id": 1,
+      "type": "table",
+      "title": "Per-Node Overview — Cluster",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 1 },
+      "targets": [
+        { "refId": "CPU",   "format": "table", "instant": true, "expr": "100 - (avg by(node)(rate(node_cpu_seconds_total{mode=\"idle\",environment=\"\"}[5m])) * 100)" },
+        { "refId": "MEM",   "format": "table", "instant": true, "expr": "(1 - avg by(node)(node_memory_MemAvailable_bytes{environment=\"\"}) / avg by(node)(node_memory_MemTotal_bytes{environment=\"\"})) * 100" },
+        { "refId": "DISK",  "format": "table", "instant": true, "expr": "100 - (avg by(node)(node_filesystem_avail_bytes{mountpoint=\"/\",environment=\"\"}) / avg by(node)(node_filesystem_size_bytes{mountpoint=\"/\",environment=\"\"}) * 100)" },
+        { "refId": "LOAD",  "format": "table", "instant": true, "expr": "max by(node)(node_load1{environment=\"\"})" },
+        { "refId": "TEMP",  "format": "table", "instant": true, "expr": "max by(node)(node_hwmon_temp_celsius{environment=\"\"})" },
+        { "refId": "NIC",   "format": "table", "instant": true, "expr": "max by(node)(node_network_speed_bytes{device=~\"e.*|en.*|eth.*\",environment=\"\"}) * 8 / 1e9" },
+        { "refId": "FD",    "format": "table", "instant": true, "expr": "max by(node)(node_filefd_allocated{environment=\"\"} / node_filefd_maximum{environment=\"\"} * 100)" },
+        { "refId": "UP",    "format": "table", "instant": true, "expr": "max by(node)(node_time_seconds{environment=\"\"} - node_boot_time_seconds{environment=\"\"})" }
+      ],
+      "transformations": [
+        { "id": "joinByField", "options": { "byField": "node", "mode": "outer" } },
+        { "id": "organize", "options": {
+            "excludeByName": { "Time": true, "Time 1": true, "Time 2": true, "Time 3": true, "Time 4": true, "Time 5": true, "Time 6": true, "Time 7": true, "Time 8": true },
+            "renameByName": {
+              "node": "Node",
+              "Value #CPU": "CPU %", "Value #MEM": "Mem %", "Value #DISK": "Disk %",
+              "Value #LOAD": "Load1", "Value #TEMP": "Temp °C", "Value #NIC": "NIC Gbps",
+              "Value #FD": "FD %", "Value #UP": "Uptime (s)"
+            }
+        } }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "align": "center", "cellOptions": { "type": "auto" } }, "decimals": 1 },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "CPU %" },  "properties": [ { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "gradient" } }, { "id": "max", "value": 100 }, { "id": "min", "value": 0 }, { "id": "unit", "value": "percent" }, { "id": "thresholds", "value": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 70 }, { "color": "red", "value": 85 } ] } } ] },
+          { "matcher": { "id": "byName", "options": "Mem %" },  "properties": [ { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "gradient" } }, { "id": "max", "value": 100 }, { "id": "min", "value": 0 }, { "id": "unit", "value": "percent" }, { "id": "thresholds", "value": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 75 }, { "color": "red", "value": 90 } ] } } ] },
+          { "matcher": { "id": "byName", "options": "Disk %" }, "properties": [ { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "gradient" } }, { "id": "max", "value": 100 }, { "id": "min", "value": 0 }, { "id": "unit", "value": "percent" }, { "id": "thresholds", "value": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 80 }, { "color": "red", "value": 90 } ] } } ] },
+          { "matcher": { "id": "byName", "options": "Uptime (s)" }, "properties": [ { "id": "unit", "value": "s" } ] }
+        ]
+      }
+    },
+    {
+      "id": 2, "type": "timeseries", "title": "CPU Usage % (by cluster node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 10 },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 } },
+      "targets": [ { "refId": "A", "expr": "100 - (avg by(node)(rate(node_cpu_seconds_total{mode=\"idle\",environment=\"\",node=~\"$node\"}[5m])) * 100)", "legendFormat": "{{node}}" } ]
+    },
+    {
+      "id": 3, "type": "timeseries", "title": "Memory Usage % (by cluster node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 10 },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 } },
+      "targets": [ { "refId": "A", "expr": "(1 - avg by(node)(node_memory_MemAvailable_bytes{environment=\"\",node=~\"$node\"}) / avg by(node)(node_memory_MemTotal_bytes{environment=\"\",node=~\"$node\"})) * 100", "legendFormat": "{{node}}" } ]
+    },
+    {
+      "id": 4, "type": "timeseries", "title": "Network Throughput (RX/TX bps, by cluster node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
+      "fieldConfig": { "defaults": { "unit": "bps" } },
+      "targets": [
+        { "refId": "RX", "expr": "sum by(node)(rate(node_network_receive_bytes_total{device!~\"lo|veth.*|cali.*|tunl.*\",environment=\"\",node=~\"$node\"}[5m])) * 8", "legendFormat": "{{node}} rx" },
+        { "refId": "TX", "expr": "sum by(node)(rate(node_network_transmit_bytes_total{device!~\"lo|veth.*|cali.*|tunl.*\",environment=\"\",node=~\"$node\"}[5m])) * 8", "legendFormat": "{{node}} tx" }
+      ]
+    },
+    {
+      "id": 5, "type": "timeseries", "title": "Load1 & Temperature (by cluster node)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
+      "targets": [
+        { "refId": "LOAD", "expr": "max by(node)(node_load1{environment=\"\",node=~\"$node\"})", "legendFormat": "{{node}} load1" },
+        { "refId": "TEMP", "expr": "max by(node)(node_hwmon_temp_celsius{environment=\"\",node=~\"$node\"})", "legendFormat": "{{node}} °C" }
+      ]
+    },
+    {
+      "id": 200, "type": "row", "title": "External Nodes (non-K8s servers — node-exporter)",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 }, "collapsed": false
+    },
+    {
+      "id": 11,
+      "type": "table",
+      "title": "Per-Node Overview — External",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 27 },
+      "targets": [
+        { "refId": "REACH", "format": "table", "instant": true, "expr": "max by(node)(probe_success{job=\"external-blackbox-icmp\"})" },
+        { "refId": "CPU",   "format": "table", "instant": true, "expr": "100 - (avg by(node)(rate(node_cpu_seconds_total{mode=\"idle\",environment=\"external\"}[5m])) * 100)" },
+        { "refId": "MEM",   "format": "table", "instant": true, "expr": "(1 - avg by(node)(node_memory_MemAvailable_bytes{environment=\"external\"}) / avg by(node)(node_memory_MemTotal_bytes{environment=\"external\"})) * 100" },
+        { "refId": "DISK",  "format": "table", "instant": true, "expr": "100 - (avg by(node)(node_filesystem_avail_bytes{mountpoint=\"/\",environment=\"external\"}) / avg by(node)(node_filesystem_size_bytes{mountpoint=\"/\",environment=\"external\"}) * 100)" },
+        { "refId": "LOAD",  "format": "table", "instant": true, "expr": "max by(node)(node_load1{environment=\"external\"})" },
+        { "refId": "TEMP",  "format": "table", "instant": true, "expr": "max by(node)(node_hwmon_temp_celsius{environment=\"external\"})" },
+        { "refId": "RTT",   "format": "table", "instant": true, "expr": "max by(node)(probe_duration_seconds{job=\"external-blackbox-icmp\"}) * 1000" },
+        { "refId": "UP",    "format": "table", "instant": true, "expr": "max by(node)(node_time_seconds{environment=\"external\"} - node_boot_time_seconds{environment=\"external\"})" }
+      ],
+      "transformations": [
+        { "id": "joinByField", "options": { "byField": "node", "mode": "outer" } },
+        { "id": "organize", "options": {
+            "excludeByName": { "Time": true, "Time 1": true, "Time 2": true, "Time 3": true, "Time 4": true, "Time 5": true, "Time 6": true, "Time 7": true, "Time 8": true },
+            "renameByName": {
+              "node": "Node",
+              "Value #REACH": "Reachable", "Value #CPU": "CPU %", "Value #MEM": "Mem %",
+              "Value #DISK": "Disk %", "Value #LOAD": "Load1", "Value #TEMP": "Temp °C",
+              "Value #RTT": "ICMP RTT ms", "Value #UP": "Uptime (s)"
+            }
+        } }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "align": "center", "cellOptions": { "type": "auto" } }, "decimals": 1 },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Reachable" }, "properties": [ { "id": "custom.cellOptions", "value": { "type": "color-background" } }, { "id": "thresholds", "value": { "steps": [ { "color": "red", "value": null }, { "color": "green", "value": 1 } ] } }, { "id": "mappings", "value": [ { "type": "value", "options": { "0": { "text": "DOWN" }, "1": { "text": "UP" } } } ] } ] },
+          { "matcher": { "id": "byName", "options": "CPU %" },  "properties": [ { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "gradient" } }, { "id": "max", "value": 100 }, { "id": "min", "value": 0 }, { "id": "unit", "value": "percent" }, { "id": "thresholds", "value": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 70 }, { "color": "red", "value": 85 } ] } } ] },
+          { "matcher": { "id": "byName", "options": "Mem %" },  "properties": [ { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "gradient" } }, { "id": "max", "value": 100 }, { "id": "min", "value": 0 }, { "id": "unit", "value": "percent" }, { "id": "thresholds", "value": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 75 }, { "color": "red", "value": 90 } ] } } ] },
+          { "matcher": { "id": "byName", "options": "Disk %" }, "properties": [ { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "gradient" } }, { "id": "max", "value": 100 }, { "id": "min", "value": 0 }, { "id": "unit", "value": "percent" }, { "id": "thresholds", "value": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 80 }, { "color": "red", "value": 90 } ] } } ] },
+          { "matcher": { "id": "byName", "options": "Uptime (s)" }, "properties": [ { "id": "unit", "value": "s" } ] }
+        ]
+      }
+    },
+    {
+      "id": 12, "type": "timeseries", "title": "CPU Usage % (external)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 35 },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 } },
+      "targets": [ { "refId": "A", "expr": "100 - (avg by(node)(rate(node_cpu_seconds_total{mode=\"idle\",environment=\"external\"}[5m])) * 100)", "legendFormat": "{{node}}" } ]
+    },
+    {
+      "id": 13, "type": "timeseries", "title": "Memory Usage % (external)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 35 },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100 } },
+      "targets": [ { "refId": "A", "expr": "(1 - avg by(node)(node_memory_MemAvailable_bytes{environment=\"external\"}) / avg by(node)(node_memory_MemTotal_bytes{environment=\"external\"})) * 100", "legendFormat": "{{node}}" } ]
+    },
+    {
+      "id": 14, "type": "timeseries", "title": "Network Throughput (RX/TX bps, external)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 43 },
+      "fieldConfig": { "defaults": { "unit": "bps" } },
+      "targets": [
+        { "refId": "RX", "expr": "sum by(node)(rate(node_network_receive_bytes_total{device!~\"lo|veth.*|cali.*|tunl.*|docker.*|br-.*\",environment=\"external\"}[5m])) * 8", "legendFormat": "{{node}} rx" },
+        { "refId": "TX", "expr": "sum by(node)(rate(node_network_transmit_bytes_total{device!~\"lo|veth.*|cali.*|tunl.*|docker.*|br-.*\",environment=\"external\"}[5m])) * 8", "legendFormat": "{{node}} tx" }
+      ]
+    },
+    {
+      "id": 15, "type": "timeseries", "title": "ICMP RTT (ms) & Reachability (external)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 43 },
+      "fieldConfig": { "defaults": { "unit": "ms" } },
+      "targets": [
+        { "refId": "RTT",   "expr": "max by(node)(probe_duration_seconds{job=\"external-blackbox-icmp\"}) * 1000", "legendFormat": "{{node}} RTT" },
+        { "refId": "REACH", "expr": "max by(node)(probe_success{job=\"external-blackbox-icmp\"})", "legendFormat": "{{node}} up(1/0)" }
+      ]
+    }
+  ]
+}

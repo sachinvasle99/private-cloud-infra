@@ -1,0 +1,173 @@
+# =============================================================================
+# Prometheus Helm values — UsLab-Eng-01   (namespace: devops-stack)
+# Chart: prometheus-community/prometheus  (latest)  — the non-operator server +
+#        node-exporter + kube-state-metrics. Matches the old cluster's layout
+#        (configmap/extraScrapeConfigs style, blackbox + process exporters).
+#
+# Install:
+#   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+#   helm repo update
+#   helm upgrade --install prometheus prometheus-community/prometheus \
+#     -n devops-stack --create-namespace \
+#     -f Monitoring/prometheus-values.yaml
+#
+# Server service (data source for krista-monitor):
+#   http://prometheus-server.devops-stack.svc.cluster.local      (port 80)
+# =============================================================================
+
+# ---- Prometheus server ----
+server:
+  # latest stable server image is pulled by the chart; pin here if you want to.
+  # image: { repository: quay.io/prometheus/prometheus, tag: v3.4.1 }
+  retention: "15d"
+
+  # TSDB on fast node-local NVMe (TopoLVM). RWO + node-local => single replica,
+  # pinned to dough (keeps it off cheese, where NPM + the monitor live).
+  persistentVolume:
+    enabled: true
+    size: 50Gi
+    storageClass: local-ssd-dough
+  replicaCount: 1
+  strategy:
+    type: Recreate              # RWO PVC — never two server pods at once
+
+  resources:
+    requests: { cpu: 250m, memory: 1Gi }
+    limits:   { cpu: "2",  memory: 4Gi }
+
+  # process-exporter walks /proc (hostPID) and takes ~8-10s/scrape on busy nodes,
+  # hitting the default 10s scrape_timeout -> up==0 on the busiest nodes. Raise
+  # the global timeout (still < the 60s interval) so those scrapes complete.
+  global:
+    scrape_interval: 60s
+    scrape_timeout: 30s
+    evaluation_interval: 60s
+
+  service:
+    servicePort: 80             # data source URL uses :80
+
+# Extra scrape jobs. NOTE: in this chart `extraScrapeConfigs` is a TOP-LEVEL
+# value (NOT under `server:`). The chart defaults already cover kubelet,
+# kube-state-metrics, node-exporter, and annotation-based pod/service discovery.
+extraScrapeConfigs: |
+  # --- Blackbox ICMP reachability of every cluster node ---
+  - job_name: 'blackbox-icmp'
+    metrics_path: /probe
+    params: { module: [icmp] }
+    static_configs:
+      - targets:
+        - 10.35.0.30   # roso
+        - 10.35.0.51   # cheese
+        - 10.35.0.52   # dough
+        - 10.35.0.53   # rosatini
+        - 10.35.0.54   # nicks
+        # - <IP_poco>  # poco (add when joined)
+    relabel_configs:
+      - { source_labels: [__address__], target_label: __param_target }
+      - { source_labels: [__param_target], target_label: instance }
+      - { target_label: __address__, replacement: blackbox-exporter.devops-stack:9115 }
+
+  # --- TopoLVM metrics (per-node volume-group capacity: topolvm_volumegroup_*) ---
+  # Scrapes the metrics endpoints (:8080) of topolvm-system pods so the krista
+  # monitor's TopoLVM storage checks have data. The `node` label is stamped from
+  # the pod's node so per-node VG usage maps to vg-topolvm-<node>.
+  - job_name: 'topolvm'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces: { names: [topolvm-system] }
+    relabel_configs:
+      # keep only the metrics container port (8080), drop healthz/registrar ports
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        regex: '8080'
+        action: keep
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        target_label: node
+    metrics_path: /metrics
+
+  # --- Traefik ingress metrics (per entrypoint/router/service: traefik_*) -----
+  # Scrapes the rke2-traefik DaemonSet pods on their `metrics` entrypoint
+  # (:9100/metrics), enabled via metrics.prometheus in
+  # ../Traefik/06-rke2-traefik-helmchartconfig.yaml. Feeds the Grafana
+  # "Traefik Ingress" dashboard. `node`/`pod` are stamped from the pod so the
+  # 4 app-node Traefik replicas are distinguishable.
+  - job_name: 'traefik'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces: { names: [kube-system] }
+    relabel_configs:
+      # keep only rke2-traefik pods
+      - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+        regex: 'rke2-traefik'
+        action: keep
+      # and only their metrics entrypoint port (9100), drop web/websecure ports
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        regex: '9100'
+        action: keep
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - source_labels: [__meta_kubernetes_pod_node_name]
+        target_label: node
+    metrics_path: /metrics
+
+  # --- External (non-K8s) servers -------------------------------------------
+  # Hosts outside the cluster that each run the external-monitoring stack
+  # (node-exporter :9101, process-exporter :9256, blackbox-exporter :9115).
+  # The in-cluster node-exporter DaemonSet cannot reach these, so they are
+  # scraped as static targets here. The `node` + `environment=external`
+  # labels MUST match across all three jobs for the same host so dashboards
+  # merge them as one server.
+  #   ADD A SERVER: append a 4-line stanza to EACH of the three jobs below.
+
+  - job_name: 'external-node-exporter'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['10.35.0.161:9101']
+        labels: { node: 'poco', environment: 'external' }
+      - targets: ['10.35.0.166:9101']
+        labels: { node: 'pietab', environment: 'external' }
+
+  - job_name: 'external-process-exporter'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['10.35.0.161:9256']
+        labels: { node: 'poco', environment: 'external' }
+      - targets: ['10.35.0.166:9256']
+        labels: { node: 'pietab', environment: 'external' }
+
+  # Each external server probes itself via its own local blackbox-exporter.
+  # The relabel rewrites the target IP to "<ip>:9115" so we never hardcode
+  # the blackbox endpoint per server.
+  - job_name: 'external-blackbox-icmp'
+    scrape_interval: 30s
+    metrics_path: /probe
+    params: { module: [icmp] }
+    static_configs:
+      - targets: ['10.35.0.161']
+        labels: { node: 'poco', environment: 'external' }
+      - targets: ['10.35.0.166']
+        labels: { node: 'pietab', environment: 'external' }
+    relabel_configs:
+      - { source_labels: [__address__], target_label: __param_target }
+      - { source_labels: [__param_target], target_label: instance }
+      - source_labels: [__address__]
+        regex: '([^:]+)'
+        target_label: __address__
+        replacement: '${1}:9115'
+
+# ---- node_exporter: MUST run on every node incl. control plane (roso) ----
+prometheus-node-exporter:
+  tolerations:
+    - operator: Exists          # land on roso/poco too (any taint)
+  hostNetwork: true
+
+# ---- kube-state-metrics: pods, deployments, PVCs, node status ----
+kube-state-metrics:
+  enabled: true
+
+# ---- Lean: the krista monitor does its own alerting + UI, so skip these ----
+alertmanager:
+  enabled: false
+prometheus-pushgateway:
+  enabled: false

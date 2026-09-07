@@ -1,0 +1,19 @@
+10.0.1.25 pane
+10.0.1.30 fratelli
+10.0.1.35 cicis
+10.0.1.40 cesar
+10.0.1.45 papaj
+10.0.1.50 grimaldi
+10.0.1.100 k8s-api.antbrains.com
+
+
+# Add all cluster nodes to /etc/hosts
+cat << EOF | sudo tee -a /etc/hosts
+10.0.1.25 pane
+10.0.1.30 fratelli
+10.0.1.35 cicis
+10.0.1.40 cesar
+10.0.1.45 papaj
+10.0.1.50 grimaldi
+10.0.1.100 k8s-api.antbrains.com
+EOF

@@ -1,0 +1,29 @@
+# MinIO server's self-signed CA (CN=pane) for https://10.35.0.36:9000.
+# restic (VolSync) and any S3 client must trust this or TLS verification fails.
+# ConfigMap consumed by VolSync ReplicationSource .spec.restic.customCA.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minio-ca
+  namespace: uslab-eng-01
+data:
+  ca.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIIDFjCCAf6gAwIBAgIUR/XIv+L8uQqcndh3f4+gegpbXRAwDQYJKoZIhvcNAQEL
+    BQAwDzENMAsGA1UEAwwEcGFuZTAeFw0yNjA2MjkxMDIyNTlaFw0zNjA2MjYxMDIy
+    NTlaMA8xDTALBgNVBAMMBHBhbmUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
+    AoIBAQCkdEV207fg62z8EQOVkG9yYrD3xCnEC47YeN0tU0J9QF0gjeZkqh2xu6r7
+    rlQsN+imZjeYgbyYq5auAHUVqe+AZe7GKOU9jaIHQndlfQK5pnUtSS/YDpwu6D3P
+    377czVrp1DZFiwNFqCsO+CoMINJn+mm0efcSTD/Zdje/GZy/6neBkfNBwqY6KNNK
+    PLtWXkWI1ai67D+i0I14yVXenfs0peq7tXHKuLnaltxZ3R1QIPAoCPcDZp9V17Gj
+    kbIrvD3MyKZi8G8lkhCVGyHJrNpGhDz11J6tgt50BlSMXe7ZAWbEeh2fmp5QQ2ef
+    AbUncJFhwhs4DHf6SSDBzZHdVygrAgMBAAGjajBoMB0GA1UdDgQWBBSNgh4U18Fw
+    f1HlH/Z5q+7WKtp8YjAfBgNVHSMEGDAWgBSNgh4U18Fwf1HlH/Z5q+7WKtp8YjAP
+    BgNVHRMBAf8EBTADAQH/MBUGA1UdEQQOMAyHBAojACSCBHBhbmUwDQYJKoZIhvcN
+    AQELBQADggEBAHs6i6E8SztCk4GQ0oQxd3adnRkIqlU+29SCSjcAPANpBdCXn3nW
+    NKGGkXvfh9A/5xOXnNCXkGd/T3JVeBGDXG6xTNwjvVnzMEctcRitrDmnW0NIu88x
+    lJPEsVzosW+J+wFQLlj7qvt0RsjBRhZIenzcSVfW3E27HXQg4dwPvzfuAlLLq+52
+    zgYE/97SSc73TtG7AB9YVu6zOIQoZFWevNtowitbjoKHSOLHIkOQ2AJ69o+7/8Fz
+    1oMAMuJGlD2/Qcys7MIRoiYEO2/QKjaWjCoreq6n663rISY0DoKoEE7AlaUEZ0M5
+    PQQfDiCh+b4Q+KaqD3gE0oggfKAL7GXpTZ0=
+    -----END CERTIFICATE-----

@@ -1,0 +1,99 @@
+# =============================================================================
+# App Ingresses — recreate the hostnames NPM proxies today, on Traefik.
+# Apply these AFTER Traefik + cert-manager issuers are up and .61 is live.
+# Pattern matches Pune's proxy-ingress.yaml: ingressClassName: traefik +
+# cert-manager.io/cluster-issuer annotation + tls: block (cert auto-issued).
+#
+# Test with letsencrypt-staging first (swap the annotation), then prod.
+#
+#   kubectl apply -f 10-ingress-examples.yaml
+# =============================================================================
+---
+# --- Grafana (plain HTTP backend) -------------------------------------------
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: devops-stack
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts: [grafana.eng.antbrains.com]
+      secretName: grafana-tls
+  rules:
+    - host: grafana.eng.antbrains.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port: { number: 80 }
+---
+# --- PMM monitoring UI (monitoring-service = the PMM StatefulSet service) ----
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: monitoring
+  namespace: devops-stack
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts: [monitor-eng.antbrains.com]
+      secretName: monitor-eng-tls
+  rules:
+    - host: monitor-eng.antbrains.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: monitoring-service   # PMM server svc (80→http 8080, 443→https 8443)
+                port: { number: 80 }
+---
+# --- Rancher (HTTPS, self-signed backend → needs serversTransport) ----------
+# Rancher redirects HTTP→HTTPS and serves a self-signed cert on :443, so the
+# backend must be reached over HTTPS with cert verification skipped. Global
+# insecureSkipVerify is false, so scope it with this ServersTransport.
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: rancher-transport
+  namespace: cattle-system
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rancher
+  namespace: cattle-system
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/service.serversscheme: https
+    traefik.ingress.kubernetes.io/service.serverstransport: cattle-system-rancher-transport@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts: [rancher-uslab.eng.antbrains.com]
+      secretName: rancher-tls
+  rules:
+    - host: rancher-uslab.eng.antbrains.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rancher
+                port: { number: 443 }

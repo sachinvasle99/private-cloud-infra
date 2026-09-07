@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rke2-deep-monitor-config
+  namespace: rke2-monitor
+  labels:
+    app.kubernetes.io/name: rke2-deep-monitor
+data:
+  # Data retention in days (default: 7). Older data is pruned every 100 scrapes.
+  RETENTION_DAYS: "7"
+
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  LOG_LEVEL: "INFO"
+
+  # Listen port (must match service/container port)
+  LISTEN_PORT: "8080"
+
+  # Optional: fallback cluster name if not yet set in the dashboard UI
+  # (Settings → Cluster → Cluster Name takes precedence over this).
+  # CLUSTER_NAME: "prod-east"

@@ -1,0 +1,41 @@
+# =============================================================================
+# MetalLB address pool + L2 advertisement — UsLab-Eng-01
+#
+# MetalLB hands real LAN IPs to Service type=LoadBalancer. In this initial stage
+# there is NO ingress controller; Nginx Proxy Manager (NPM) takes ONE LoadBalancer
+# IP from this pool and does all HTTP/HTTPS routing + TLS itself.
+#
+# Mode: Layer 2 (ARP). One node answers ARP for each VIP — simplest, no router/BGP
+# config needed; fine for a single L2 segment like 10.35.0.0/24.
+#
+# >>> Fill in <METALLB_POOL> with a free range in 10.35.0.0/24 that is OUTSIDE
+#     the DHCP scope and does NOT include node IPs or the keepalived API VIP.
+#     Example: 10.35.0.200-10.35.0.210
+#
+# Apply AFTER the MetalLB controller+speaker pods are Running (see README).
+#   kubectl apply -f UsLab-Eng-01/MetalLB/metallb-pools.yaml
+# =============================================================================
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: lan-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - 10.35.0.63-10.35.0.99          # e.g. 10.35.0.200-10.35.0.210
+  autoAssign: true
+  avoidBuggyIPs: true
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: lan-l2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - lan-pool
+  # Optional: restrict which nodes can announce VIPs. By default all nodes are
+  # eligible. To keep ingress traffic on the 4 app nodes, uncomment:
+  # nodeSelectors:
+  #   - matchLabels:
+  #       node.antbrains.com/role: app

@@ -1,0 +1,66 @@
+# =============================================================================
+# Process exporter — UsLab-Eng-01 (namespace: devops-stack)
+# Per-node process CPU/memory metrics (DaemonSet, hostPID). Scraped via the
+# prometheus.io/scrape annotation on its (headless) Service.
+#   kubectl apply -f Monitoring/exporters/process-exporter.yaml
+# =============================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: process-exporter-config
+  namespace: devops-stack
+data:
+  config.yml: |
+    process_names:
+      - name: "{{.Comm}}"
+        cmdline: ['.+']
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: process-exporter
+  namespace: devops-stack
+spec:
+  selector:
+    matchLabels: { app: process-exporter }
+  template:
+    metadata:
+      labels: { app: process-exporter }
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9256"
+    spec:
+      hostPID: true
+      tolerations:
+        - operator: Exists          # run on every node incl. roso/poco
+      containers:
+        - name: process-exporter
+          image: ncabatoff/process-exporter:latest   # pin a tag for prod
+          args: ["-procfs", "/host/proc", "-config.path", "/etc/process-exporter/config.yml"]
+          ports:
+            - { name: http, containerPort: 9256 }
+          volumeMounts:
+            - { name: proc,   mountPath: /host/proc, readOnly: true }
+            - { name: config, mountPath: /etc/process-exporter }
+          resources:
+            requests: { cpu: 10m,  memory: 32Mi }
+            limits:   { cpu: 100m, memory: 64Mi }
+      volumes:
+        - name: proc
+          hostPath: { path: /proc }
+        - name: config
+          configMap: { name: process-exporter-config }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: process-exporter
+  namespace: devops-stack
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9256"
+spec:
+  clusterIP: None
+  ports:
+    - { name: http, port: 9256, targetPort: 9256 }
+  selector: { app: process-exporter }

@@ -1,0 +1,423 @@
+# =============================================================================
+# Grafana Helm values — UsLab-Eng-01  (namespace: devops-stack)
+# Chart: grafana/grafana
+#
+# - Prometheus auto-provisioned as the default data source.
+# - Persistence on node-local TopoLVM (RWO -> single replica, pinned to rosatini).
+# - Grafana unified alerting is ON by default (Grafana 10+): create alert rules
+#   + contact points (Slack/Teams/Email/webhook) from the UI.
+# - Exposed via NPM (ClusterIP svc -> NPM proxy host). See README.
+#
+# Install:
+#   helm repo add grafana https://grafana.github.io/helm-charts && helm repo update
+#   helm upgrade --install grafana grafana/grafana -n devops-stack -f Monitoring/grafana-values.yaml
+# =============================================================================
+
+# Admin login (change after first login, or move to an existing Secret).
+adminUser: admin
+adminPassword: "ChangeMe#2026"
+
+replicas: 1
+deploymentStrategy:
+  type: Recreate                 # RWO PVC — never two pods at once
+
+persistence:
+  enabled: true
+  type: pvc
+  storageClassName: local-ssd-rosatini   # pins Grafana to rosatini (node-local NVMe)
+  accessModes: ["ReadWriteOnce"]
+  size: 5Gi
+
+# Prometheus data source — provisioned so dashboards/alerts work out of the box.
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-server.devops-stack.svc.cluster.local
+        isDefault: true
+        jsonData:
+          timeInterval: "30s"      # matches the Prometheus scrape interval
+
+# Curated starter dashboards (fetched from grafana.com at first boot — needs
+# pod egress to the internet, which the cluster already has for image pulls).
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: default
+        orgId: 1
+        folder: ""
+        type: file
+        disableDeletion: false
+        editable: true
+        options: { path: /var/lib/grafana/dashboards/default }
+dashboards:
+  default:
+    node-exporter-full:   { gnetId: 1860,  revision: 37, datasource: Prometheus }
+    kube-state-cluster:   { gnetId: 15757, revision: 43, datasource: Prometheus }   # K8s cluster overview
+    node-exporter-nodes:  { gnetId: 15172, revision: 1,  datasource: Prometheus }
+
+# Sidecar: auto-load the hand-built JSON dashboards in
+# Monitoring/grafana-dashboards/ (traefik, nodes-overview, network, …). They are
+# shipped as ConfigMaps labeled grafana_dashboard=1 in the devops-stack namespace
+# — see README ("Custom JSON dashboards") for the one-liner that (re)creates them.
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+    folder: /var/lib/grafana/dashboards/custom
+    searchNamespace: devops-stack
+    provider:
+      foldersFromFilesStructure: false
+
+service:
+  type: ClusterIP
+  port: 80
+
+# Set so links/alerts use the external hostname (served via NPM).
+grafana.ini:
+  server:
+    root_url: "https://grafana.eng.antbrains.com"
+    serve_from_sub_path: false
+  # Unified alerting is enabled by default; left explicit for clarity.
+  unified_alerting:
+    enabled: true
+  alerting:
+    enabled: false
+
+resources:
+  requests: { cpu: 100m, memory: 256Mi }
+  limits:   { cpu: "1",  memory: 1Gi }
+
+# =============================================================================
+# Provisioned alerting — written by the chart into /etc/grafana/provisioning/
+# alerting/ and reloaded on every Grafana start. This means the contact point,
+# notification policy, and alert rules are recreated from THIS file on each
+# (re)deploy, so they SURVIVE a Grafana reinstall or PVC loss (not UI-only).
+# Provisioned items show as read-only in the UI (edit here + helm upgrade).
+# =============================================================================
+alerting:
+  # ---- Contact point: Microsoft Teams (Power Automate workflow webhook) ----
+  contactpoints.yaml:
+    apiVersion: 1
+    contactPoints:
+      - orgId: 1
+        name: teams-default
+        receivers:
+          - uid: teams_default
+            type: teams
+            disableResolveMessage: false
+            settings:
+              url: "https://default3694f6b4b5f147ef852fa0b4a459ab.44.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8184cdc157b5477e8dcaecfde58c43b6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=bHPoBXwO_Nc1b9N7k1rbcTFyFjdkIUuehuu8QnNxYaQ"
+              title: '{{ `{{` }} .Status | toUpper {{ `}}` }}: {{ `{{` }} .CommonLabels.alertname {{ `}}` }}'
+              message: |-
+                {{ `{{` }} if eq .Status "firing" {{ `}}` }}🚨 {{ `{{` }} .CommonLabels.severity | toUpper {{ `}}` }} ALERT{{ `{{` }} else {{ `}}` }}✅ RESOLVED{{ `{{` }} end {{ `}}` }} — uslab-eng-01
+                {{ `{{` }} range .Alerts {{ `}}` }}Rule: {{ `{{` }} .Labels.alertname {{ `}}` }}
+                Severity: {{ `{{` }} .Labels.severity {{ `}}` }}
+                Item: {{ `{{` }} if .Labels.node {{ `}}` }}{{ `{{` }} .Labels.node {{ `}}` }}{{ `{{` }} else if .Labels.instance {{ `}}` }}{{ `{{` }} .Labels.instance {{ `}}` }}{{ `{{` }} else if .Labels.pod {{ `}}` }}{{ `{{` }} .Labels.pod {{ `}}` }}{{ `{{` }} else {{ `}}` }}-{{ `{{` }} end {{ `}}` }}
+                Metric: {{ `{{` }} .ValueString {{ `}}` }}
+                Summary: {{ `{{` }} .Annotations.summary {{ `}}` }}
+                Time (UTC): {{ `{{` }} .StartsAt {{ `}}` }}
+                {{ `{{` }} if .DashboardURL {{ `}}` }}Dashboard: {{ `{{` }} .DashboardURL {{ `}}` }}
+                {{ `{{` }} end {{ `}}` }}{{ `{{` }} if .PanelURL {{ `}}` }}Panel: {{ `{{` }} .PanelURL {{ `}}` }}
+                {{ `{{` }} end {{ `}}` }}{{ `{{` }} end {{ `}}` }}
+
+  # ---- Root notification policy: route everything to Teams ----
+  policies.yaml:
+    apiVersion: 1
+    policies:
+      - orgId: 1
+        receiver: teams-default
+        group_by: ["grafana_folder", "alertname"]
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 4h
+
+  # ---- Alert rules ----
+  rules.yaml:
+    apiVersion: 1
+    groups:
+      - orgId: 1
+        name: uslab-cluster
+        folder: UsLab Alerts
+        interval: 1m
+        rules:
+          - uid: uslab-node-notready
+            title: Node NotReady
+            condition: C
+            for: 2m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: critical }
+            annotations: { summary: "[CRITICAL] A node is NotReady in uslab-eng-01 - check kubelet/node health." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'sum by(node)(kube_node_status_condition{condition="Ready",status="false"})' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [0] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-node-cpu-high
+            title: Node CPU High (>85%)
+            condition: C
+            for: 10m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] Node CPU > 85% for 10m (uslab-eng-01) - check top consumers / scale out." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: '100 - (avg by(node)(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [85] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-node-mem-high
+            title: Node Memory High (>90%)
+            condition: C
+            for: 10m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] Node memory > 90% for 10m (uslab-eng-01) - OOM risk; review pod limits." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: '(1 - avg by(node)(node_memory_MemAvailable_bytes) / avg by(node)(node_memory_MemTotal_bytes)) * 100' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [90] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-node-disk-high
+            title: Node Root Disk High (>90%)
+            condition: C
+            for: 10m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: critical }
+            annotations: { summary: "[CRITICAL] Node root disk > 90% (uslab-eng-01) - clean up images/logs or expand." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: '100 - (avg by(node)(node_filesystem_avail_bytes{mountpoint="/"}) / avg by(node)(node_filesystem_size_bytes{mountpoint="/"}) * 100)' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [90] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-node-load-high
+            title: Node Load High (>1.5 per core)
+            condition: C
+            for: 10m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] Node load15 > 1.5 per core (uslab-eng-01) - CPU saturation." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'max by(node)(node_load15) / count by(node)(node_cpu_seconds_total{mode="idle"})' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [1.5] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-node-temp-high
+            title: Node Temperature High (>85C)
+            condition: C
+            for: 5m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] Node temperature > 85C (uslab-eng-01) - check cooling/airflow." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'max by(node)(node_hwmon_temp_celsius)' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [85] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-node-fd-high
+            title: Node File Descriptors High (>80%)
+            condition: C
+            for: 10m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] Node file-descriptor usage > 80% (uslab-eng-01)." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'max by(node)(node_filefd_allocated / node_filefd_maximum * 100)' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [80] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-nic-errors
+            title: NIC Errors
+            condition: C
+            for: 5m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] NIC RX/TX errors on a node (uslab-eng-01) - check NIC/cabling." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'sum by(node)(rate(node_network_receive_errs_total{device!~"lo|veth.*|cali.*|tunl.*"}[5m]) + rate(node_network_transmit_errs_total{device!~"lo|veth.*|cali.*|tunl.*"}[5m]))' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [1] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-conntrack-high
+            title: Conntrack Usage High (>80%)
+            condition: C
+            for: 5m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] Conntrack table > 80% (uslab-eng-01) - connection table filling." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'max by(node)(node_nf_conntrack_entries / node_nf_conntrack_entries_limit * 100)' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [80] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-topolvm-vg-high
+            title: TopoLVM VG Usage High (>85%)
+            condition: C
+            for: 10m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] TopoLVM VG > 85% used (uslab-eng-01) - node storage filling." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: '(1 - topolvm_volumegroup_available_bytes{device_class="ssd"} / topolvm_volumegroup_size_bytes{device_class="ssd"}) * 100' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [85] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-topolvm-latency-high
+            title: TopoLVM Disk Latency High (>20ms)
+            condition: C
+            for: 10m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] NVMe disk latency > 20ms (uslab-eng-01) - storage running slow." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'max by(node)(1000 * (rate(node_disk_read_time_seconds_total{device=~"nvme[0-9]+n[0-9]+"}[5m]) + rate(node_disk_write_time_seconds_total{device=~"nvme[0-9]+n[0-9]+"}[5m])) / clamp_min(rate(node_disk_reads_completed_total{device=~"nvme[0-9]+n[0-9]+"}[5m]) + rate(node_disk_writes_completed_total{device=~"nvme[0-9]+n[0-9]+"}[5m]), 1))' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [20] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-topolvm-csi-down
+            title: TopoLVM CSI Pods Not Ready
+            condition: C
+            for: 5m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: critical }
+            annotations: { summary: "[CRITICAL] TopoLVM CSI pod(s) not ready (uslab-eng-01) - PVCs may fail." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'count(kube_pod_info{namespace="topolvm-system"}) - sum(kube_pod_status_ready{namespace="topolvm-system",condition="true"})' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [0] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-pvc-pending
+            title: PVC Pending
+            condition: C
+            for: 10m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] A PVC is pending (uslab-eng-01) - check storage capacity/binding." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'sum(kube_persistentvolumeclaim_status_phase{phase="Pending"})' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [0] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-fs-readonly
+            title: Filesystem Read-Only
+            condition: C
+            for: 2m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: critical }
+            annotations: { summary: "[CRITICAL] A filesystem went read-only (uslab-eng-01) - disk/FS error." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'max by(node)(node_filesystem_readonly{mountpoint=~"/.*"})' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [0] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+          - uid: uslab-target-down
+            title: Prometheus Target Down
+            condition: C
+            for: 5m
+            noDataState: OK
+            execErrState: Error
+            labels: { severity: warning }
+            annotations: { summary: "[WARNING] A Prometheus scrape target is down (uslab-eng-01)." }
+            data:
+              - refId: A
+                relativeTimeRange: { from: 600, to: 0 }
+                datasourceUid: PBFA97CFB590B2093
+                model: { refId: A, instant: true, editorMode: code, intervalMs: 1000, maxDataPoints: 43200, expr: 'up{job=~"blackbox-icmp|topolvm|traefik|kubernetes-service-endpoints"}' }
+              - refId: C
+                relativeTimeRange: { from: 0, to: 0 }
+                datasourceUid: __expr__
+                model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: lt, params: [1] } } ], datasource: { type: __expr__, uid: __expr__ } }
+
+    deleteRules:
+      - orgId: 1
+        uid: uslab-pod-crashloop
+      - orgId: 1
+        uid: uslab-failed-pods

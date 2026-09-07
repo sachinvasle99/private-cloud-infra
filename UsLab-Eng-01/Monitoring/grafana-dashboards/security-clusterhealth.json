@@ -1,0 +1,105 @@
+{
+  "title": "Security & Cluster Health",
+  "uid": "uslab-security",
+  "tags": ["uslab-eng-01", "security", "health"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "templating": { "list": [] },
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Nodes Ready",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "green" } } },
+      "targets": [ { "refId": "A", "expr": "sum(kube_node_status_condition{condition=\"Ready\",status=\"true\"})" } ]
+    },
+    {
+      "id": 2, "type": "stat", "title": "Nodes NotReady",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+      "fieldConfig": { "defaults": { "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] } } },
+      "targets": [ { "refId": "A", "expr": "sum(kube_node_status_condition{condition=\"Ready\",status=\"false\"})" } ]
+    },
+    {
+      "id": 3, "type": "stat", "title": "Failed Pods",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
+      "fieldConfig": { "defaults": { "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] } } },
+      "targets": [ { "refId": "A", "expr": "sum(kube_pod_status_phase{phase=\"Failed\"})" } ]
+    },
+    {
+      "id": 4, "type": "stat", "title": "Evicted Pods",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 0 },
+      "fieldConfig": { "defaults": { "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 10 } ] } } },
+      "targets": [ { "refId": "A", "expr": "count(kube_pod_status_reason{reason=\"Evicted\"} == 1) or vector(0)" } ]
+    },
+    {
+      "id": 5, "type": "gauge", "title": "NetworkPolicy Coverage %",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "thresholds": { "steps": [ { "color": "red", "value": null }, { "color": "yellow", "value": 50 }, { "color": "green", "value": 80 } ] } } },
+      "targets": [ { "refId": "A", "expr": "count(count by(namespace)(kube_networkpolicy_created)) / count(kube_namespace_created) * 100" } ]
+    },
+    {
+      "id": 6, "type": "stat", "title": "Containers w/o CPU limit",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 0 },
+      "fieldConfig": { "defaults": { "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 50 } ] } } },
+      "targets": [ { "refId": "A", "expr": "count(kube_pod_container_info) - count(kube_pod_container_resource_limits{resource=\"cpu\"})" } ]
+    },
+    {
+      "id": 7, "type": "timeseries", "title": "API server request latency p99 (by verb)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [ { "refId": "A", "expr": "histogram_quantile(0.99, sum by(le,verb)(rate(apiserver_request_duration_seconds_bucket{verb!~\"WATCH|CONNECT\"}[5m])))", "legendFormat": "{{verb}}" } ]
+    },
+    {
+      "id": 8, "type": "timeseries", "title": "API server 4xx/5xx rate",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "fieldConfig": { "defaults": { "unit": "reqps" } },
+      "targets": [
+        { "refId": "S", "expr": "sum(rate(apiserver_request_total{code=~\"5..\"}[5m]))", "legendFormat": "5xx" },
+        { "refId": "C", "expr": "sum(rate(apiserver_request_total{code=~\"4..\"}[5m]))", "legendFormat": "4xx" }
+      ]
+    },
+    {
+      "id": 9, "type": "table", "title": "Failed / Pending pods",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [ { "refId": "A", "format": "table", "instant": true, "expr": "kube_pod_status_phase{phase=~\"Failed|Pending\"} == 1" } ],
+      "transformations": [ { "id": "organize", "options": { "excludeByName": { "Time": true, "__name__": true, "job": true, "instance": true, "uid": true, "container": true, "endpoint": true, "service": true, "Value": true }, "renameByName": { "namespace": "Namespace", "pod": "Pod", "phase": "Phase" } } } ]
+    },
+    {
+      "id": 10, "type": "table", "title": "Active node pressure (empty = healthy)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "targets": [ { "refId": "A", "format": "table", "instant": true, "expr": "kube_node_status_condition{condition=~\"MemoryPressure|DiskPressure|PIDPressure\",status=\"true\"} == 1" } ],
+      "transformations": [ { "id": "organize", "options": { "excludeByName": { "Time": true, "__name__": true, "job": true, "instance": true, "status": true, "Value": true }, "renameByName": { "node": "Node", "condition": "Pressure" } } } ]
+    },
+    {
+      "id": 11, "type": "table", "title": "Namespaces WITHOUT a NetworkPolicy",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "targets": [ { "refId": "A", "format": "table", "instant": true, "expr": "group by(namespace)(kube_namespace_created) unless group by(namespace)(kube_networkpolicy_created)" } ],
+      "transformations": [ { "id": "organize", "options": { "excludeByName": { "Time": true, "Value": true }, "renameByName": { "namespace": "Namespace (open by default)" } } } ]
+    },
+    {
+      "id": 12, "type": "table", "title": "PodDisruptionBudgets (healthy / desired)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+      "targets": [
+        { "refId": "H", "format": "table", "instant": true, "expr": "kube_poddisruptionbudget_status_current_healthy" },
+        { "refId": "D", "format": "table", "instant": true, "expr": "kube_poddisruptionbudget_status_desired_healthy" }
+      ],
+      "transformations": [
+        { "id": "joinByField", "options": { "byField": "poddisruptionbudget", "mode": "outer" } },
+        { "id": "organize", "options": { "excludeByName": { "Time": true, "Time 1": true, "Time 2": true, "__name__": true, "__name__ 1": true, "__name__ 2": true, "job": true, "job 1": true, "job 2": true, "instance": true, "instance 1": true, "instance 2": true, "namespace 2": true }, "renameByName": { "poddisruptionbudget": "PDB", "namespace 1": "Namespace", "Value #H": "Healthy", "Value #D": "Desired" } } }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+# =============================================================================
+# Smoke test — provision a THICK TopoLVM volume and mount it in a pod.
+#   kubectl create ns demo
+#   kubectl apply -f UsLab-Eng-01/TopoLVM/pvc.yaml
+#
+# Expected: PVC stays Pending until the pod schedules (WaitForFirstConsumer),
+# then both go Bound/Running. Verify the LV landed on the right node:
+#   kubectl -n demo get pvc,pod -o wide
+#   kubectl get pv
+#   # on cheese:  sudo lvs vg-topolvm-cheese   # shows the new linear LV
+# Clean up:  kubectl -n demo delete -f UsLab-Eng-01/TopoLVM/pvc.yaml
+#
+# NOTE: reclaimPolicy: Retain, so deleting the PVC leaves the PV (Released) and
+# the LVM volume on the node intact — data is NOT erased. To free the space:
+# delete the released PV (kubectl delete pv <name>) and remove the LV on the
+# node (sudo lvremove /dev/vg-topolvm-cheese/<lv>).
+# =============================================================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: data, namespace: demo }
+spec:
+  accessModes: ["ReadWriteOnce"]          # TopoLVM is RWO only (node-local)
+  storageClassName: local-ssd-cheese     # pins to cheese; swap for any node SC
+  resources: { requests: { storage: 10Gi } }
+---
+apiVersion: v1
+kind: Pod
+metadata: { name: writer, namespace: demo }
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sh","-c","dd if=/dev/zero of=/data/x bs=1M count=200 && sleep 100000"]
+    volumeMounts: [{ name: vol, mountPath: /data }]
+  volumes:
+  - name: vol
+    persistentVolumeClaim: { claimName: data }

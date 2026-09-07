@@ -1,0 +1,95 @@
+# =============================================================================
+# StorageClasses for TopoLVM — UsLab-Eng-01   [PER-NODE, Lumens-style]
+# PER-NODE classes: each one provisions ONLY on a single named storage node.
+#
+# How node targeting works
+# ------------------------
+# TopoLVM auto-labels every storage node with the topology key:
+#       topology.topolvm.io/node = <node hostname>
+# (the CSI node plugin sets this — you don't). `allowedTopologies` below restricts
+# a StorageClass to one such value, so a PVC using that class can ONLY bind on
+# that node. Confirm the labels exist with:
+#       kubectl get nodes -L topology.topolvm.io/node
+#
+# All classes share device-class `ssd` (configured in topolvm-values.yaml); each
+# node backs it with its own VG (vg-topolvm-<node>). The classes differ ONLY in
+# which node they pin to:
+#       local-ssd-<node>  ->  force the volume onto that node's VG
+#
+# There is NO cluster-default StorageClass. Every PVC MUST set storageClassName
+# explicitly, or it stays Pending. reclaimPolicy: Retain protects data on delete.
+#
+# THICK: no VolumeSnapshotClass here — thick LVM has no CSI snapshots. VolSync
+# uses copyMethod: Direct instead (see VolSync/).
+#
+# Apply:
+#   kubectl apply -f UsLab-Eng-01/TopoLVM/storageclasses.yaml
+# =============================================================================
+---
+# cheese — NVMe Lexar NM790. Requires vg-topolvm-cheese on cheese.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-ssd-cheese
+provisioner: topolvm.io
+parameters:
+  "topolvm.io/device-class": "ssd"
+  "csi.storage.k8s.io/fstype": "xfs"
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+allowedTopologies:
+- matchLabelExpressions:
+  - key: topology.topolvm.io/node
+    values: ["cheese"]
+---
+# dough — NVMe Lexar NM790. Requires vg-topolvm-dough on dough.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-ssd-dough
+provisioner: topolvm.io
+parameters:
+  "topolvm.io/device-class": "ssd"
+  "csi.storage.k8s.io/fstype": "xfs"
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+allowedTopologies:
+- matchLabelExpressions:
+  - key: topology.topolvm.io/node
+    values: ["dough"]
+---
+# nicks — NVMe Lexar NQ780. Requires vg-topolvm-nicks on nicks.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-ssd-nicks
+provisioner: topolvm.io
+parameters:
+  "topolvm.io/device-class": "ssd"
+  "csi.storage.k8s.io/fstype": "xfs"
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+allowedTopologies:
+- matchLabelExpressions:
+  - key: topology.topolvm.io/node
+    values: ["nicks"]
+---
+# rosatini — NVMe Lexar NQ780. Requires vg-topolvm-rosatini on rosatini.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-ssd-rosatini
+provisioner: topolvm.io
+parameters:
+  "topolvm.io/device-class": "ssd"
+  "csi.storage.k8s.io/fstype": "xfs"
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+allowedTopologies:
+- matchLabelExpressions:
+  - key: topology.topolvm.io/node
+    values: ["rosatini"]

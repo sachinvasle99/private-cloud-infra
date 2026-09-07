@@ -1,0 +1,4476 @@
+{
+ "description": "Traefik ingress observability from OTLP traces (uslab-eng-01): KPI header, ingress RED, errors/SLO, latency, routers/services, backends. Scoped to serviceName='traefik'.",
+ "image": "",
+ "layout": [
+  {
+   "h": 2,
+   "i": "281f60bf-e9ba-4143-af72-b701cbba94a9",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 0
+  },
+  {
+   "h": 4,
+   "i": "85ee3d97-44b4-4080-827e-26aa88e91491",
+   "moved": false,
+   "static": false,
+   "w": 2,
+   "x": 0,
+   "y": 2
+  },
+  {
+   "h": 4,
+   "i": "7a2ad047-b590-478b-87ec-f100083c20e3",
+   "moved": false,
+   "static": false,
+   "w": 2,
+   "x": 2,
+   "y": 2
+  },
+  {
+   "h": 4,
+   "i": "1d23d35d-20a0-446a-87e9-3c0effacf895",
+   "moved": false,
+   "static": false,
+   "w": 2,
+   "x": 4,
+   "y": 2
+  },
+  {
+   "h": 4,
+   "i": "04db8249-adbe-4b5c-ab17-2c834a51940e",
+   "moved": false,
+   "static": false,
+   "w": 2,
+   "x": 6,
+   "y": 2
+  },
+  {
+   "h": 4,
+   "i": "c4ffda91-9bed-47f9-96dd-a2ae3671fc9e",
+   "moved": false,
+   "static": false,
+   "w": 2,
+   "x": 8,
+   "y": 2
+  },
+  {
+   "h": 4,
+   "i": "f8fa79ee-b483-40e3-bb4d-772b34b228fb",
+   "moved": false,
+   "static": false,
+   "w": 2,
+   "x": 10,
+   "y": 2
+  },
+  {
+   "h": 1,
+   "i": "c4cbfbb6-23c9-4c3e-9e73-d96b37af6125",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 6
+  },
+  {
+   "h": 6,
+   "i": "6402a32a-65d1-4619-b413-443918b23060",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 0,
+   "y": 7
+  },
+  {
+   "h": 6,
+   "i": "55fa040a-3759-4117-834a-cba8f31c8606",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 6,
+   "y": 7
+  },
+  {
+   "h": 6,
+   "i": "ba5b3215-d1aa-49d4-a583-40728e311798",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 0,
+   "y": 13
+  },
+  {
+   "h": 6,
+   "i": "65bf3f8a-a4c3-47cb-9948-3a062e71c7f3",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 6,
+   "y": 13
+  },
+  {
+   "h": 1,
+   "i": "2cc7baa9-0a65-4a98-9ad8-b9695b1a04ec",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 19
+  },
+  {
+   "h": 7,
+   "i": "907a717c-2f38-4cb6-be1f-985383280167",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 0,
+   "y": 20
+  },
+  {
+   "h": 7,
+   "i": "356a1c55-734a-45e7-a2c6-bd1be4905fac",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 6,
+   "y": 20
+  },
+  {
+   "h": 7,
+   "i": "a1f2913c-4ac8-4367-8d6f-4add716e86b8",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 27
+  },
+  {
+   "h": 1,
+   "i": "6fbc05da-a014-470e-acde-fd0f4a1d68d3",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 34
+  },
+  {
+   "h": 6,
+   "i": "7de18784-29da-4e26-a77f-df04f0359cb2",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 0,
+   "y": 35
+  },
+  {
+   "h": 6,
+   "i": "aa4dc8bf-de4b-40f0-82b7-17137bed4f34",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 6,
+   "y": 35
+  },
+  {
+   "h": 6,
+   "i": "c3fcc25d-8b3b-4169-bc5d-c8554c5722c1",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 41
+  },
+  {
+   "h": 1,
+   "i": "05981770-ac7e-4598-b65b-559d430ec39b",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 47
+  },
+  {
+   "h": 6,
+   "i": "c48eddbd-6048-489d-887e-81cd9d8e6aaf",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 0,
+   "y": 48
+  },
+  {
+   "h": 6,
+   "i": "e81c73e9-560a-4249-b8aa-5738d381da4d",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 6,
+   "y": 48
+  },
+  {
+   "h": 7,
+   "i": "f0381377-4a5d-4a9e-a00f-54c46dd52770",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 54
+  },
+  {
+   "h": 1,
+   "i": "e43abaeb-f239-4b75-b30a-90feabf13029",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 61
+  },
+  {
+   "h": 6,
+   "i": "33d8f79e-8bb6-41ba-ae69-53c84f2907b3",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 0,
+   "y": 62
+  },
+  {
+   "h": 6,
+   "i": "937d36ec-d2b5-4aed-9a3f-15f3fc4c878c",
+   "moved": false,
+   "static": false,
+   "w": 6,
+   "x": 6,
+   "y": 62
+  },
+  {
+   "h": 6,
+   "i": "ae0fa388-9b5f-465a-9d43-c606585ae699",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 68
+  },
+  {
+   "h": 1,
+   "i": "ab3b2c69-3227-4e35-922b-cd0603905271",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 74
+  },
+  {
+   "h": 7,
+   "i": "5c46e150-a799-4767-b518-d6db0fdc3b46",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 75
+  },
+  {
+   "h": 7,
+   "i": "4cf7dd1b-b071-4365-a5ff-fbcd11b3898d",
+   "moved": false,
+   "static": false,
+   "w": 12,
+   "x": 0,
+   "y": 82
+  }
+ ],
+ "panelMap": {},
+ "tags": [
+  "traefik",
+  "ingress",
+  "uslab-eng-01"
+ ],
+ "title": "Traefik Ingress (Traces)",
+ "uploadedGrafana": false,
+ "variables": {},
+ "version": "v5",
+ "widgets": [
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "## Traefik Ingress \u2014 Overview\nRequest health for the cluster edge (`serviceName='traefik'`), built from **OTLP traces**. Tiles below are last-selected-range KPIs; green\u2192red = healthy\u2192degraded. *Infra metrics (connections, TLS, cert expiry, config reloads) live in the Grafana \"Traefik Ingress\" dashboard.*",
+   "fillSpans": false,
+   "id": "281f60bf-e9ba-4143-af72-b701cbba94a9",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "text",
+   "query": {
+    "builder": {
+     "queryData": [],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [],
+    "id": "a0937a18-f9e3-4182-a472-269b2d6006e6",
+    "promql": [],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "text": "## Traefik Ingress \u2014 Overview\nRequest health for the cluster edge (`serviceName='traefik'`), built from **OTLP traces**. Tiles below are last-selected-range KPIs; green\u2192red = healthy\u2192degraded. *Infra metrics (connections, TLS, cert expiry, config reloads) live in the Grafana \"Traefik Ingress\" dashboard.*",
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "Ingress requests/sec",
+   "fillSpans": false,
+   "id": "85ee3d97-44b4-4080-827e-26aa88e91491",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "value",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "rate()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "68797c15-4ce5-4829-ab4d-e826b90944a8",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Request Rate",
+   "yAxisUnit": "reqps"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "Median request duration",
+   "fillSpans": false,
+   "id": "7a2ad047-b590-478b-87ec-f100083c20e3",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "value",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p50(durationNano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "4d2bb07b-4449-4cca-8a65-79c5acee89be",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "p50 Latency",
+   "yAxisUnit": "ns"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "99th pct duration",
+   "fillSpans": false,
+   "id": "1d23d35d-20a0-446a-87e9-3c0effacf895",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "value",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p99(durationNano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "6d532e28-8510-4e5a-bcc1-0c99cf6891be",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [
+    {
+     "thresholdColor": "#FFA500",
+     "thresholdFormat": "value",
+     "thresholdLabel": "Warn",
+     "thresholdOperator": ">",
+     "thresholdValue": 500000000
+    },
+    {
+     "thresholdColor": "#FF0000",
+     "thresholdFormat": "value",
+     "thresholdLabel": "Critical",
+     "thresholdOperator": ">",
+     "thresholdValue": 1000000000
+    }
+   ],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "p99 Latency",
+   "yAxisUnit": "ns"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "Requests in range",
+   "fillSpans": false,
+   "id": "04db8249-adbe-4b5c-ab17-2c834a51940e",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "value",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "c03493b0-0d2f-45f9-a834-f207afa8c05f",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Total Requests",
+   "yAxisUnit": "short"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "Client errors",
+   "fillSpans": false,
+   "id": "c4ffda91-9bed-47f9-96dd-a2ae3671fc9e",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "value",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND http.response.status_code >= 400 AND http.response.status_code < 500"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "6e14185e-0352-4edd-9f95-f9277927dc42",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [
+    {
+     "thresholdColor": "#FFD700",
+     "thresholdFormat": "value",
+     "thresholdLabel": "Watch",
+     "thresholdOperator": ">",
+     "thresholdValue": 50
+    }
+   ],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "4xx Responses",
+   "yAxisUnit": "short"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "Server errors",
+   "fillSpans": false,
+   "id": "f8fa79ee-b483-40e3-bb4d-772b34b228fb",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "value",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND http.response.status_code >= 500"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "dfcc69cb-d0c0-41ce-91ad-01ded539e50c",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [
+    {
+     "thresholdColor": "#FFA500",
+     "thresholdFormat": "value",
+     "thresholdLabel": "Warn",
+     "thresholdOperator": ">",
+     "thresholdValue": 0
+    },
+    {
+     "thresholdColor": "#FF0000",
+     "thresholdFormat": "value",
+     "thresholdLabel": "Critical",
+     "thresholdOperator": ">",
+     "thresholdValue": 10
+    }
+   ],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "5xx Responses",
+   "yAxisUnit": "short"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "### Ingress \u2014 traffic entering Traefik\nEntryPoint (server) spans: one per incoming request. Rate, status mix, methods, and HTTP protocol version (HTTP/1.1 vs 2 vs 3).",
+   "fillSpans": false,
+   "id": "c4cbfbb6-23c9-4c3e-9e73-d96b37af6125",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "text",
+   "query": {
+    "builder": {
+     "queryData": [],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [],
+    "id": "3dd6e4da-a512-49bf-a67b-399d97c42847",
+    "promql": [],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "text": "### Ingress \u2014 traffic entering Traefik\nEntryPoint (server) spans: one per incoming request. Rate, status mix, methods, and HTTP protocol version (HTTP/1.1 vs 2 vs 3).",
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "6402a32a-65d1-4619-b413-443918b23060",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "metricName": "signoz_calls_total",
+         "reduceTo": "sum",
+         "spaceAggregation": "sum",
+         "temporality": null,
+         "timeAggregation": "rate"
+        }
+       ],
+       "dataSource": "metrics",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'traefik' AND operation = 'EntryPoint'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "req/s",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "972a752c-cb2a-46b6-811f-4c007cf6639e",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Request Rate",
+   "yAxisUnit": "reqps"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "55fa040a-3759-4117-834a-cba8f31c8606",
+   "isStacked": true,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "rate()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND http.response.status_code EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "float64",
+         "id": "http.response.status_code--float64--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "http.response.status_code",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "{{http.response.status_code}}",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "4de42f56-2233-426d-85a9-b3ab7be1c2dd",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Status Code Distribution",
+   "yAxisUnit": "reqps"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "ba5b3215-d1aa-49d4-a583-40728e311798",
+   "isStacked": true,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "rate()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND http.request.method EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "http.request.method--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "http.request.method",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "{{http.request.method}}",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "6858a355-6eee-4bc8-9764-65f70f0068f0",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Requests by Method",
+   "yAxisUnit": "reqps"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "HTTP/1.1 vs HTTP/2 vs HTTP/3 adoption",
+   "fillSpans": false,
+   "id": "65bf3f8a-a4c3-47cb-9948-3a062e71c7f3",
+   "isStacked": true,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "rate()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND network.protocol.version EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "network.protocol.version--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "network.protocol.version",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "{{network.protocol.version}}",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "049e2c28-38fc-462d-b391-83b6a812b866",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Requests by HTTP Protocol",
+   "yAxisUnit": "reqps"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "### Errors & SLO\nError rates and the worst-offending endpoints/backends. **Latency (excl. WebSocket)** drops `101 Switching Protocols` upgrades so long-lived streams don't skew percentiles.",
+   "fillSpans": false,
+   "id": "2cc7baa9-0a65-4a98-9ad8-b9695b1a04ec",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "text",
+   "query": {
+    "builder": {
+     "queryData": [],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [],
+    "id": "26b5d912-9fe2-4a15-8d58-67baf352b7b0",
+    "promql": [],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "text": "### Errors & SLO\nError rates and the worst-offending endpoints/backends. **Latency (excl. WebSocket)** drops `101 Switching Protocols` upgrades so long-lived streams don't skew percentiles.",
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "907a717c-2f38-4cb6-be1f-985383280167",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "metricName": "signoz_calls_total",
+         "reduceTo": "sum",
+         "spaceAggregation": "sum",
+         "temporality": null,
+         "timeAggregation": "rate"
+        }
+       ],
+       "dataSource": "metrics",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'traefik' AND operation = 'EntryPoint' AND http.status_code >= 400 AND http.status_code < 500"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "4xx",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "stepInterval": 60
+      },
+      {
+       "aggregations": [
+        {
+         "metricName": "signoz_calls_total",
+         "reduceTo": "sum",
+         "spaceAggregation": "sum",
+         "temporality": null,
+         "timeAggregation": "rate"
+        }
+       ],
+       "dataSource": "metrics",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'traefik' AND operation = 'EntryPoint' AND http.status_code >= 500"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "5xx",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "332b7024-5e0a-4f35-876c-74139030ac86",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Error Rate (4xx / 5xx per sec)",
+   "yAxisUnit": "reqps"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "356a1c55-734a-45e7-a2c6-bd1be4905fac",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "table",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND http.response.status_code >= 400 AND url.path EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "url.path--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "url.path",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "Errors",
+       "limit": null,
+       "orderBy": [
+        {
+         "columnName": "count()",
+         "order": "desc"
+        }
+       ],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "81c29f7d-ef00-4c16-a535-e659707010fe",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Top Failing Endpoints (4xx/5xx)",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "a1f2913c-4ac8-4367-8d6f-4add716e86b8",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "table",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Client' AND http.response.status_code >= 400 AND server.address EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "server.address--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "server.address",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "Errors",
+       "limit": null,
+       "orderBy": [
+        {
+         "columnName": "count()",
+         "order": "desc"
+        }
+       ],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "ff360d8e-4223-49fd-a51b-18193b2a281a",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Top Failing Backends (4xx/5xx)",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "### Latency\nRequest-duration percentiles. Compare raw vs WebSocket-excluded, and see which routers are slow.",
+   "fillSpans": false,
+   "id": "6fbc05da-a014-470e-acde-fd0f4a1d68d3",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "text",
+   "query": {
+    "builder": {
+     "queryData": [],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [],
+    "id": "40c5e665-4932-4e8f-9b07-bc01e1fb9961",
+    "promql": [],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "text": "### Latency\nRequest-duration percentiles. Compare raw vs WebSocket-excluded, and see which routers are slow.",
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "Span-metric percentiles (fast). EntryPoint = ingress.",
+   "fillSpans": false,
+   "id": "7de18784-29da-4e26-a77f-df04f0359cb2",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "metricName": "signoz_latency.bucket",
+         "reduceTo": "avg",
+         "spaceAggregation": "p50",
+         "temporality": null,
+         "timeAggregation": ""
+        }
+       ],
+       "dataSource": "metrics",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "service.name = 'traefik' AND operation = 'EntryPoint'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p50",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "A",
+       "stepInterval": 60
+      },
+      {
+       "aggregations": [
+        {
+         "metricName": "signoz_latency.bucket",
+         "reduceTo": "avg",
+         "spaceAggregation": "p90",
+         "temporality": null,
+         "timeAggregation": ""
+        }
+       ],
+       "dataSource": "metrics",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "service.name = 'traefik' AND operation = 'EntryPoint'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p90",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "B",
+       "stepInterval": 60
+      },
+      {
+       "aggregations": [
+        {
+         "metricName": "signoz_latency.bucket",
+         "reduceTo": "avg",
+         "spaceAggregation": "p99",
+         "temporality": null,
+         "timeAggregation": ""
+        }
+       ],
+       "dataSource": "metrics",
+       "disabled": false,
+       "expression": "C",
+       "filter": {
+        "expression": "service.name = 'traefik' AND operation = 'EntryPoint'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p99",
+       "limit": null,
+       "orderBy": [],
+       "queryName": "C",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "22a61668-4712-4019-b848-31e96684a444",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Latency p50 / p90 / p99 (all)",
+   "yAxisUnit": "ms"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "Excludes 101 upgrade (websocket/streaming)",
+   "fillSpans": false,
+   "id": "aa4dc8bf-de4b-40f0-82b7-17137bed4f34",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p50(durationNano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND http.response.status_code != 101"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p50",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p90(durationNano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND http.response.status_code != 101"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p90",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "B",
+       "stepInterval": 60
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p99(durationNano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "C",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND http.response.status_code != 101"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p99",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "C",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "0d9a9bcc-039d-4b2e-9661-a47da62a4d18",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Latency p50 / p90 / p99 (excl. WebSocket)",
+   "yAxisUnit": "ns"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "c3fcc25d-8b3b-4169-bc5d-c8554c5722c1",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p99(durationNano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND traefik.router.name EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "traefik.router.name--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "traefik.router.name",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "{{traefik.router.name}}",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "5c2627f6-61e4-40e3-b134-df31ad554beb",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "p99 Latency by Router",
+   "yAxisUnit": "ns"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "### Routers & Services\n**Router** = Traefik routing rule (the `Host(...)` match). **Service** = the backend pool it forwards to.",
+   "fillSpans": false,
+   "id": "05981770-ac7e-4598-b65b-559d430ec39b",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "text",
+   "query": {
+    "builder": {
+     "queryData": [],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [],
+    "id": "5803a1a5-f20e-4112-bbdf-3a588a5a2759",
+    "promql": [],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "text": "### Routers & Services\n**Router** = Traefik routing rule (the `Host(...)` match). **Service** = the backend pool it forwards to.",
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "c48eddbd-6048-489d-887e-81cd9d8e6aaf",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "rate()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND traefik.router.name EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "traefik.router.name--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "traefik.router.name",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "{{traefik.router.name}}",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "3bbc8b0c-1f89-4561-9d17-bc68329f536c",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Request Rate by Router",
+   "yAxisUnit": "reqps"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "e81c73e9-560a-4249-b8aa-5738d381da4d",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "rate()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND traefik.service.name EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "traefik.service.name--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "traefik.service.name",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "{{traefik.service.name}}",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "46c5cbc9-c002-4d23-9a71-b8bc2b220cb4",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Request Rate by Backend Service",
+   "yAxisUnit": "reqps"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {
+    "B": "ns"
+   },
+   "description": "",
+   "fillSpans": false,
+   "id": "f0381377-4a5d-4a9e-a00f-54c46dd52770",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "table",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND traefik.router.name EXISTS AND http.route EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "http.route--string--tag--true",
+         "isColumn": true,
+         "isJSON": false,
+         "key": "http.route",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "Count",
+       "limit": null,
+       "orderBy": [
+        {
+         "columnName": "count()",
+         "order": "desc"
+        }
+       ],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p90(durationNano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND traefik.router.name EXISTS AND http.route EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "http.route--string--tag--true",
+         "isColumn": true,
+         "isJSON": false,
+         "key": "http.route",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p90",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "B",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "821b5ea7-bf96-44d1-b191-28dc0a711570",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Top Routes \u2014 Count & p90",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "### Backends \u2014 upstream services\nReverseProxy (client) spans: timing and status of calls Traefik makes to upstream pods (`server.address`).",
+   "fillSpans": false,
+   "id": "e43abaeb-f239-4b75-b30a-90feabf13029",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "text",
+   "query": {
+    "builder": {
+     "queryData": [],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [],
+    "id": "33179b27-539a-4747-a7b8-31eb7704f385",
+    "promql": [],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "text": "### Backends \u2014 upstream services\nReverseProxy (client) spans: timing and status of calls Traefik makes to upstream pods (`server.address`).",
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "33d8f79e-8bb6-41ba-ae69-53c84f2907b3",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "rate()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Client' AND server.address EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "server.address--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "server.address",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "{{server.address}}",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "a1f6625e-d6ea-481f-baa1-3c4e8bb3b511",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Backend Request Rate by Address",
+   "yAxisUnit": "reqps"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "937d36ec-d2b5-4aed-9a3f-15f3fc4c878c",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "p99(durationNano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Client' AND server.address EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "server.address--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "server.address",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "{{server.address}}",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "d9947122-43f0-4dbd-aba3-c826101edde9",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Backend p99 Latency by Address",
+   "yAxisUnit": "ns"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "",
+   "fillSpans": false,
+   "id": "ae0fa388-9b5f-465a-9d43-c606585ae699",
+   "isStacked": true,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "graph",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "rate()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Client' AND http.response.status_code EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "float64",
+         "id": "http.response.status_code--float64--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "http.response.status_code",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "{{http.response.status_code}}",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "bb01eaa3-5140-4bf3-adf0-0f09061ba233",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Backend Status Codes",
+   "yAxisUnit": "reqps"
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "### Detail\nMost-hit URL paths and the slowest individual requests (click a row to open the trace).",
+   "fillSpans": false,
+   "id": "ab3b2c69-3227-4e35-922b-cd0603905271",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "text",
+   "query": {
+    "builder": {
+     "queryData": [],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [],
+    "id": "f815662d-e13f-47df-8a1b-ea67ae9cbc81",
+    "promql": [],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "text": "### Detail\nMost-hit URL paths and the slowest individual requests (click a row to open the trace).",
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {
+    "B": "ns"
+   },
+   "description": "",
+   "fillSpans": false,
+   "id": "5c46e150-a799-4767-b518-d6db0fdc3b46",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "table",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": [
+        {
+         "expression": "count()"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND url.path EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "url.path--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "url.path",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "Count",
+       "limit": null,
+       "orderBy": [
+        {
+         "columnName": "count()",
+         "order": "desc"
+        }
+       ],
+       "pageSize": 10,
+       "queryName": "A",
+       "stepInterval": 60
+      },
+      {
+       "aggregations": [
+        {
+         "expression": "p90(durationNano)"
+        }
+       ],
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "B",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server' AND url.path EXISTS"
+       },
+       "functions": [],
+       "groupBy": [
+        {
+         "dataType": "string",
+         "id": "url.path--string--tag--false",
+         "isColumn": false,
+         "isJSON": false,
+         "key": "url.path",
+         "type": "tag"
+        }
+       ],
+       "having": {
+        "expression": ""
+       },
+       "legend": "p90",
+       "limit": null,
+       "orderBy": [],
+       "pageSize": 10,
+       "queryName": "B",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "77a764d6-4b00-4d34-9077-f1e9e251d89c",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Top URL Paths",
+   "yAxisUnit": ""
+  },
+  {
+   "bucketCount": 30,
+   "bucketWidth": 0,
+   "columnUnits": {},
+   "description": "Slowest ingress requests",
+   "fillSpans": false,
+   "id": "4cf7dd1b-b071-4365-a5ff-fbcd11b3898d",
+   "isStacked": false,
+   "mergeAllActiveQueries": false,
+   "nullZeroValues": "zero",
+   "opacity": "1",
+   "panelTypes": "list",
+   "query": {
+    "builder": {
+     "queryData": [
+      {
+       "aggregations": null,
+       "dataSource": "traces",
+       "disabled": false,
+       "expression": "A",
+       "filter": {
+        "expression": "serviceName = 'traefik' AND spanKind = 'Server'"
+       },
+       "functions": [],
+       "groupBy": [],
+       "having": {
+        "expression": ""
+       },
+       "legend": "",
+       "limit": null,
+       "orderBy": [
+        {
+         "columnName": "durationNano",
+         "order": "desc"
+        }
+       ],
+       "pageSize": 20,
+       "queryName": "A",
+       "stepInterval": 60
+      }
+     ],
+     "queryFormulas": []
+    },
+    "clickhouse_sql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "id": "3621a361-cf28-41b9-8450-9347ed7eb7bf",
+    "promql": [
+     {
+      "disabled": false,
+      "legend": "",
+      "name": "A",
+      "query": ""
+     }
+    ],
+    "queryType": "builder"
+   },
+   "selectedLogFields": [
+    {
+     "dataType": "string",
+     "name": "body",
+     "type": ""
+    },
+    {
+     "dataType": "string",
+     "name": "timestamp",
+     "type": ""
+    }
+   ],
+   "selectedTracesFields": [
+    {
+     "dataType": "string",
+     "id": "serviceName--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "serviceName",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "name--string--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "name",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "durationNano--float64--tag--true",
+     "isColumn": true,
+     "isJSON": false,
+     "key": "durationNano",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "http.request.method--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.request.method",
+     "type": "tag"
+    },
+    {
+     "dataType": "float64",
+     "id": "http.response.status_code--float64--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "http.response.status_code",
+     "type": "tag"
+    },
+    {
+     "dataType": "string",
+     "id": "url.path--string--tag--false",
+     "isColumn": false,
+     "isJSON": false,
+     "key": "url.path",
+     "type": "tag"
+    }
+   ],
+   "softMax": 0,
+   "softMin": 0,
+   "stackedBarChart": false,
+   "thresholds": [],
+   "timePreferance": "GLOBAL_TIME",
+   "title": "Slowest Requests",
+   "yAxisUnit": ""
+  }
+ ]
+}

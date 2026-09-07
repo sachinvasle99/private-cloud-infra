@@ -1,0 +1,33 @@
+# VolSync ReplicationDestination — UsLab-Eng-01 example  [DIRECT mode — thick TopoLVM]
+#
+# Run in the TARGET namespace. Exposes a small rsync-over-TLS endpoint inside the
+# cluster; the source's ReplicationSource connects and pushes incremental data
+# into the destination PVC. Put the destination on a DIFFERENT node's class than
+# the source so the copy survives the source node dying (e.g. source cheese ->
+# dest dough).
+#
+# THICK TopoLVM has no snapshots -> copyMethod: Direct on this side too. VolSync
+# writes straight into the destination PVC.
+#
+# Pre-reqs:
+#   - TopoLVM installed; a per-node class ready (e.g. local-ssd-dough)
+#   - kubectl create ns target-ns
+#
+# Apply:
+#   kubectl apply -f replicationdestination.example.yaml
+#   kubectl -n target-ns get replicationdestination data-dest -o yaml
+#     # copy status.rsyncTLS.address and keySecret into the source manifest
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: data-dest
+  namespace: target-ns
+spec:
+  rsyncTLS:
+    copyMethod: Direct                       # thick = no snapshots
+    # Destination PVC. VolSync creates it if absent; keep size >= source.
+    capacity: 50Gi
+    accessModes: [ReadWriteOnce]
+    storageClassName: local-ssd-dough        # a DIFFERENT node than the source
+    # serviceType: ClusterIP                 # keep replication traffic in-cluster

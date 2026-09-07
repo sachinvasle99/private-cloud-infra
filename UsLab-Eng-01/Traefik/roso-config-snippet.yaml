@@ -1,0 +1,36 @@
+# =============================================================================
+# Pre-flight edit for roso: /etc/rancher/rke2/config.yaml
+#
+# RKE2 BUNDLES Traefik as the `rke2-traefik` addon (chart rke2-traefik-34.2.00x
+# from rke2-charts.rancher.io). To ENABLE it, REMOVE `rke2-traefik` from the
+# `disable:` list. Keep rke2-ingress-nginx disabled (we want Traefik, not nginx)
+# and rke2-canal disabled (we use Calico). Tuning is then layered via a
+# HelmChartConfig (06-rke2-traefik-helmchartconfig.yaml) — NOT a HelmChart.
+#
+# This is the ONLY node-side / control-plane change in the whole rollout.
+# Apply it, then restart RKE2 on roso (control-plane blip — fine, new cluster):
+#
+#   sudo vi /etc/rancher/rke2/config.yaml      # change the disable: block as below
+#   sudo systemctl restart rke2-server
+#   kubectl get nodes                          # wait for the API to come back
+#
+# ⚠️⚠️ INCIDENT / LESSON (2026-06-24) ⚠️⚠️
+#   Do NOT uncomment `ingress-controller: traefik`. That key is a K3s-ism and is
+#   NOT valid in RKE2 — uncommenting it makes `rke2-server` FAIL TO START
+#   (it took roso's control plane down until the line was re-commented).
+#   Leave it commented (or delete it). The ingress is selected ONLY via the
+#   `disable:` list. Removing `- rke2-traefik` is the correct & sufficient toggle.
+#
+# BEFORE:
+#   disable:
+#     - rke2-canal
+#     - rke2-ingress-nginx
+#     - rke2-traefik          # <-- remove ONLY this line
+#   #ingress-controller: traefik   # <-- MUST stay commented (invalid RKE2 key)
+#
+# AFTER:
+disable:
+  - rke2-canal
+  - rke2-ingress-nginx
+# (rke2-traefik intentionally NOT disabled — RKE2 deploys its bundled Traefik)
+# #ingress-controller: traefik   # keep COMMENTED — not a valid RKE2 setting

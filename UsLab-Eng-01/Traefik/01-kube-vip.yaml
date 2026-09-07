@@ -1,0 +1,116 @@
+# =============================================================================
+# kube-vip — service LoadBalancer mode (ARP / L2), APP NODES only.
+#
+# Gives Traefik a dedicated ingress VIP on UsLab-Eng-01, the same mechanism
+# used in Pune. Announces the VIP via ARP from an app node and forwards both
+# TCP (.61) and UDP/HTTP-3 (.62, via the separate QUIC service) to the Traefik
+# pods.
+#
+# Coexists with MetalLB:
+#   - MetalLB owns pool 10.35.0.63-.99 (after 00-metallb-pool.yaml).
+#   - kube-vip is restricted to loadBalancerClass "kube-vip.io/kube-vip-class"
+#     (lb_class_only=true) so it ONLY claims the Traefik services and never
+#     fights MetalLB over the other LB services (.63-.67).
+#   - .61/.62 are OUTSIDE MetalLB's (shrunk) pool → no IP overlap.
+#
+# Control-plane VIP is OFF (cp_enable=false): the API VIP 10.35.0.60 is held by
+# keepalived+HAProxy on roso and is NEVER touched here.
+#
+# PRE-FLIGHT (must do before apply):
+#   1. vip_interface / node label — set eno1 to the app nodes' primary NIC
+#      on the 10.35.0.0/24 L2. Get it from any app node:
+#         ip -o -4 route show to default | awk '{print $5}'
+#      Then label the 4 app nodes (so only they run kube-vip):
+#         kubectl label node cheese dough rosatini nicks kube-vip/iface=eno1
+#   2. image tags below are current stable; bump only if you've vetted a newer one.
+#   3. Apply via kubectl (helm-controller not needed):
+#         kubectl apply -f 01-kube-vip.yaml
+# =============================================================================
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-vip
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: system:kube-vip-role
+rules:
+  - apiGroups: [""]
+    resources: ["services", "services/status", "nodes", "endpoints"]
+    verbs: ["list", "get", "watch", "update"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["list", "get", "watch", "update", "create"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["list", "get", "watch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: system:kube-vip-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:kube-vip-role
+subjects:
+  - kind: ServiceAccount
+    name: kube-vip
+    namespace: kube-system
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kube-vip-ds
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: kube-vip-ds
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kube-vip-ds
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kube-vip-ds
+    spec:
+      # Placement is LABEL-DRIVEN: only nodes labelled `kube-vip/iface=eno1`
+      # run kube-vip. Label ONLY the 4 app nodes (cheese/dough/rosatini/nicks) —
+      # never roso (it holds the API VIP via keepalived).
+      #   kubectl label node cheese dough rosatini nicks kube-vip/iface=eno1
+      nodeSelector:
+        kube-vip/iface: "eno1"
+      serviceAccountName: kube-vip
+      hostNetwork: true
+      containers:
+        - name: kube-vip
+          image: ghcr.io/kube-vip/kube-vip:v1.2.0
+          imagePullPolicy: IfNotPresent
+          args: ["manager"]
+          env:
+            # --- core ---
+            - { name: vip_arp,       value: "true" }          # L2/ARP (matches MetalLB L2 mode)
+            - { name: vip_interface, value: "eno1" }     # app-node NIC on 10.35.0.0/24
+            - { name: vip_cidr,      value: "32" }
+            - { name: dns_mode,      value: "first" }
+            # --- control-plane VIP OFF: API VIP .60 is keepalived's, untouched ---
+            - { name: cp_enable,     value: "false" }
+            # --- service LoadBalancer mode ---
+            - { name: svc_enable,    value: "true" }
+            - { name: svc_election,  value: "true" }          # per-service leader election across app nodes
+            # --- restrict to ONLY our class so MetalLB keeps its services ---
+            - { name: lb_class_only, value: "true" }
+            - { name: lb_class_name, value: "kube-vip.io/kube-vip-class" }
+          securityContext:
+            capabilities:
+              add: ["NET_ADMIN", "NET_RAW"]
+          resources:
+            requests: { cpu: "50m",  memory: "64Mi" }
+            limits:   { cpu: "200m", memory: "128Mi" }
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+  updateStrategy:
+    type: RollingUpdate

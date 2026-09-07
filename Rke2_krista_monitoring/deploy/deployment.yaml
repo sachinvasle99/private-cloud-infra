@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rke2-deep-monitor
+  namespace: rke2-monitor
+  labels:
+    app.kubernetes.io/name: rke2-deep-monitor
+    app.kubernetes.io/component: monitor
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate  # SQLite doesn't support concurrent writers
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rke2-deep-monitor
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rke2-deep-monitor
+    spec:
+      serviceAccountName: rke2-deep-monitor
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: monitor
+          # Build and push: docker build -t <your-registry>/rke2-deep-monitor:latest .
+          image: rke2-deep-monitor:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: rke2-deep-monitor-config
+          env:
+            - name: DB_PATH
+              value: /app/data/metrics.db
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+          # TCP probes — resilient against asyncio loop stalls during
+          # heavy SQLite work. The OS-level accept doesn't go through
+          # Python, so a momentarily blocked event loop won't fail probes.
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: rke2-deep-monitor-data
+---
+# PVC for metrics database persistence (survives pod restarts)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rke2-deep-monitor-data
+  namespace: rke2-monitor
+  labels:
+    app.kubernetes.io/name: rke2-deep-monitor
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  # IMPORTANT: use a fast (local-NVMe / SSD) StorageClass.
+  # The dashboard writes ~370 rows every 30s into a multi-GB SQLite DB;
+  # Ceph RBD or other network volumes can pin the asyncio loop in disk-wait.
+  # storageClassName: postgres-fast-ssd

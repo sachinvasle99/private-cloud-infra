@@ -1,0 +1,75 @@
+# =============================================================================
+# Rancher RoleTemplate — the SAME "developer (deploy & debug, no secret write)"
+# permission set, expressed the way THIS cluster actually enforces RBAC.
+#
+# Why this exists: this is a Rancher-managed cluster. When a developer logs
+# into Rancher and downloads their kubeconfig, Rancher authenticates &
+# impersonates them — their access is governed by Rancher RoleTemplate
+# bindings, NOT by ad-hoc native RoleBindings. So the assignable role a
+# Rancher admin picks in the UI must exist as a RoleTemplate. This is it.
+#
+# context: project  => assignable to a Project (all its namespaces) or to a
+# single namespace, via a ProjectRoleTemplateBinding.
+#
+# After `kubectl apply`, this appears in Rancher UI under
+#   Cluster > <cluster> > ... role dropdowns  as:
+#   "Developer (deploy & debug, no secret write)"
+#
+# Keep rules in sync with developer-clusterrole.yaml.
+# =============================================================================
+apiVersion: management.cattle.io/v3
+kind: RoleTemplate
+metadata:
+  name: developer-deploy-debug
+displayName: "Developer (deploy & debug, no secret write)"
+description: >-
+  Deploy and debug workloads within a namespace: full manage of pods,
+  deployments/statefulsets/daemonsets, jobs/cronjobs, services, ingress,
+  configmaps, PVCs, HPAs and PDBs; logs + exec + port-forward. Secrets,
+  serviceaccounts, networkpolicies and quotas are read-only. No RBAC,
+  namespace or node access.
+context: project
+administrative: false
+external: false
+hidden: false
+rules:
+  # pods keep delete (restart a stuck pod); everything else is no-delete
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["services", "configmaps", "persistentvolumeclaims", "endpoints", "replicationcontrollers"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["pods/log", "pods/status"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["pods/exec", "pods/portforward", "pods/attach"]
+    verbs: ["get", "create"]
+  - apiGroups: [""]
+    resources: ["pods/ephemeralcontainers"]
+    verbs: ["update", "patch"]
+  - apiGroups: [""]
+    resources: ["secrets", "serviceaccounts", "resourcequotas", "limitranges", "events"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "deployments/scale", "replicasets", "statefulsets", "statefulsets/scale", "daemonsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["policy"]
+    resources: ["poddisruptionbudgets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["networkpolicies"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get", "list", "watch"]

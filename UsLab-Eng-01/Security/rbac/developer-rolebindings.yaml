@@ -1,0 +1,114 @@
+# =============================================================================
+# Native RoleBindings — grant the `developer` ClusterRole to the shared
+# `developers` GROUP, one namespace at a time (namespace-scoped: a RoleBinding
+# referencing a ClusterRole applies the rules ONLY within its namespace).
+#
+# IMPORTANT — how the `developers` group becomes real:
+#   These bindings only take effect for a kubeconfig whose identity actually
+#   carries the group "developers". That happens when:
+#     (a) an external IdP (OIDC/GitHub/AD) is wired and maps a "developers"
+#         group  (see ACCESS-STRATEGY.md §2A), OR
+#     (b) I issue per-developer ServiceAccount-token / client-cert kubeconfigs
+#         stamped with that group.
+#   Rancher-issued kubeconfigs do NOT carry this group by default — for those,
+#   use the Rancher RoleTemplate path instead (see this folder's README).
+#
+# Scope below = the Krista APP namespaces only. System namespaces
+# (kube-system, cattle-*, devops-stack, monitor, metallb-system, npm,
+# topolvm-system, cert-manager, volsync-system, …) are intentionally excluded.
+# =============================================================================
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developers-deploy-debug
+  namespace: global-service
+  labels: { rbac.uslab/role: developer }
+subjects:
+  - kind: Group
+    name: developers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developers-deploy-debug
+  namespace: kme-service
+  labels: { rbac.uslab/role: developer }
+subjects:
+  - kind: Group
+    name: developers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developers-deploy-debug
+  namespace: krista-mcp-server
+  labels: { rbac.uslab/role: developer }
+subjects:
+  - kind: Group
+    name: developers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developers-deploy-debug
+  namespace: uslab-eng-01
+  labels: { rbac.uslab/role: developer }
+subjects:
+  - kind: Group
+    name: developers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developers-deploy-debug
+  namespace: smoke-test
+  labels: { rbac.uslab/role: developer }
+subjects:
+  - kind: Group
+    name: developers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
+# ---------------------------------------------------------------------------
+# SENSITIVE — krista-auth-server holds auth/identity material. Even though the
+# developer role is read-only on secrets, READ access to auth secrets may be
+# too much. Left commented; uncomment only if developers genuinely need it.
+# ---------------------------------------------------------------------------
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: RoleBinding
+# metadata:
+#   name: developers-deploy-debug
+#   namespace: krista-auth-server
+#   labels: { rbac.uslab/role: developer }
+# subjects:
+#   - kind: Group
+#     name: developers
+#     apiGroup: rbac.authorization.k8s.io
+# roleRef:
+#   kind: ClusterRole
+#   name: developer
+#   apiGroup: rbac.authorization.k8s.io

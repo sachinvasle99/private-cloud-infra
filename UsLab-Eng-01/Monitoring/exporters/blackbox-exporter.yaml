@@ -1,0 +1,73 @@
+# =============================================================================
+# Blackbox exporter — UsLab-Eng-01 (namespace: devops-stack)
+# Probes node reachability (ICMP) + optional TCP/HTTP. Prometheus drives it via
+# the `blackbox-icmp` job in prometheus-values.yaml.
+#   kubectl apply -f Monitoring/exporters/blackbox-exporter.yaml
+# =============================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: blackbox-exporter-config
+  namespace: devops-stack
+data:
+  blackbox.yml: |
+    modules:
+      tcp_connect:
+        prober: tcp
+        timeout: 5s
+      icmp:
+        prober: icmp
+        timeout: 5s
+      http_2xx:
+        prober: http
+        timeout: 5s
+        http:
+          valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+          valid_status_codes: [200]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blackbox-exporter
+  namespace: devops-stack
+  labels: { app: blackbox-exporter }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: blackbox-exporter }
+  template:
+    metadata:
+      labels: { app: blackbox-exporter }
+    spec:
+      containers:
+        - name: blackbox
+          image: prom/blackbox-exporter:latest   # pin a tag (e.g. v0.27.0) for prod
+          args: ["--config.file=/etc/blackbox_exporter/blackbox.yml"]
+          ports:
+            - { name: http, containerPort: 9115 }
+          securityContext:
+            # ICMP prober needs raw-socket / net_raw capability
+            capabilities:
+              add: ["NET_RAW"]
+          resources:
+            requests: { cpu: 10m, memory: 32Mi }
+            limits:   { cpu: 200m, memory: 128Mi }
+          volumeMounts:
+            - { name: config, mountPath: /etc/blackbox_exporter }
+      volumes:
+        - name: config
+          configMap: { name: blackbox-exporter-config }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blackbox-exporter
+  namespace: devops-stack
+  labels: { app: blackbox-exporter }
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9115"
+spec:
+  ports:
+    - { name: http, port: 9115, targetPort: 9115 }
+  selector: { app: blackbox-exporter }

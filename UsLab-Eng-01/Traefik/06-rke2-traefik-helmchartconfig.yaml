@@ -1,0 +1,105 @@
+# =============================================================================
+# rke2-traefik HelmChartConfig — tune the BUNDLED RKE2 Traefik addon.
+#
+# THIS is the Pune mechanism. RKE2 ships `rke2-traefik` as a bundled HelmChart
+# addon (chart rke2-traefik-34.2.00x, from rke2-charts.rancher.io). You ENABLE
+# it by removing `rke2-traefik` from roso's config.yaml `disable:` list (see
+# roso-config-snippet.yaml), then OVERRIDE its values with this HelmChartConfig
+# (same name + namespace as the bundled HelmChart → helm-controller merges it).
+#
+#   kubectl apply -f 06-rke2-traefik-helmchartconfig.yaml
+#   # helm-controller re-runs helm-install-rke2-traefik with these values merged.
+#   kubectl -n kube-system rollout status ds/rke2-traefik --timeout=300s
+#
+# What this sets vs. the bundled defaults:
+#   - service → LoadBalancer on the kube-vip ingress VIP 10.35.0.61
+#     (loadBalancerClass kube-vip.io/kube-vip-class → MetalLB ignores it).
+#     Stays EXTERNAL-IP <pending> until kube-vip is up AND .61 is freed from NPM.
+#   - nodeSelector role=app → Traefik runs ONLY on the 4 app nodes, not roso.
+#   - HTTP/3 (QUIC) on the same service/VIP; TLS 1.2+ cipher floor; Pune timeouts
+#     and upstream-pool tuning; dashboard API on (exposed separately w/ auth).
+#   NOTE: NO proxyProtocol/forwardedHeaders trustedIPs — there is no HAProxy hop
+#   (kube-vip L2 direct, externalTrafficPolicy Local preserves client IP).
+# =============================================================================
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    # Run ONLY on the 4 app nodes (cheese/dough/rosatini/nicks), never roso.
+    nodeSelector:
+      node.antbrains.com/role: app
+
+    # Expose on the kube-vip ingress VIP .61 (TCP 80/443 + UDP 443/HTTP-3).
+    service:
+      type: LoadBalancer
+      spec:
+        loadBalancerClass: kube-vip.io/kube-vip-class
+        externalTrafficPolicy: Local
+      annotations:
+        kube-vip.io/loadbalancerIPs: "10.35.0.61"
+
+    # HTTP/3 (QUIC) — adds UDP/443 to the same service/VIP.
+    ports:
+      websecure:
+        http3:
+          enabled: true
+
+    # --- Observability --------------------------------------------------------
+    # Prometheus metrics on the bundled `metrics` entrypoint (:9100/metrics).
+    # Scraped by the `traefik` job in Monitoring/prometheus-values.yaml and
+    # rendered by the Grafana "Traefik Ingress" dashboard. Router + service
+    # labels are ON so the dashboard can break traffic down per route/service
+    # (adds a bit of cardinality — fine at this cluster's route count).
+    metrics:
+      prometheus:
+        entryPoint: metrics
+        addEntryPointsLabels: true
+        addRoutersLabels: true
+        addServicesLabels: true
+
+    # Distributed tracing → SigNoz OTLP collector (OTLP/HTTP over TLS:443).
+    # SigNoz's OTLP HTTP receiver expects the `/v1/traces` path; if the collector
+    # ingress fronts it under a path prefix, prepend it here.
+    tracing:
+      addInternals: false           # don't trace Traefik's own internal routers
+      otlp:
+        enabled: true
+        http:
+          enabled: true
+          endpoint: https://collect-eng.antbrains.com/v1/traces
+
+    # TLS 1.2 minimum + modern cipher suites (matches Pune).
+    tlsOptions:
+      default:
+        minVersion: VersionTLS12
+        cipherSuites:
+          - TLS_AES_128_GCM_SHA256
+          - TLS_AES_256_GCM_SHA384
+          - TLS_CHACHA20_POLY1305_SHA256
+          - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+          - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+
+    # Pune tuning (raw CLI flags = version-independent). No proxyProtocol trustedIPs.
+    additionalArguments:
+      # Skip verification of in-cluster backends' self-signed certs (Rancher,
+      # PMM, etc. serve self-signed TLS). Matches Pune. Without this, HTTPS
+      # backends return 500: "x509: certificate signed by unknown authority".
+      - "--serversTransport.insecureSkipVerify=true"
+      - "--entryPoints.websecure.http3.advertisedPort=443"
+      - "--entryPoints.websecure.transport.respondingTimeouts.idleTimeout=180s"
+      - "--entryPoints.websecure.transport.respondingTimeouts.readTimeout=60s"
+      - "--entryPoints.websecure.transport.respondingTimeouts.writeTimeout=60s"
+      - "--serversTransport.maxIdleConnsPerHost=200"
+      - "--serversTransport.forwardingTimeouts.idleConnTimeout=120s"
+      - "--serversTransport.forwardingTimeouts.dialTimeout=2s"
+      - "--serversTransport.forwardingTimeouts.responseHeaderTimeout=30s"
+      - "--ping=true"
+      - "--api.dashboard=true"
+      - "--api.insecure=false"
+
+    resources:
+      requests: { cpu: 200m, memory: 256Mi }
+      limits:   { cpu: "2",  memory: 1Gi }

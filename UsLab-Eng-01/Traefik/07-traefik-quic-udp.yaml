@@ -1,0 +1,39 @@
+# =============================================================================
+# Dedicated UDP/QUIC LoadBalancer for rke2-traefik HTTP/3 — on kube-vip VIP .62.
+#
+# The bundled rke2-traefik chart (34.x) enables QUIC inside the pod (websecure
+# http3 → listens UDP on container port 8443) but does NOT add a UDP port to its
+# Service. So we expose it here as an independent kube-vip UDP LoadBalancer on
+# its OWN VIP 10.35.0.62 — a distinct IP (two kube-vip services can't share one
+# VIP under per-service leader election). Same pattern as Pune (rke2-traefik-quic
+# on .102).
+#
+# Browsers get Alt-Svc h3=":443" (advertisedPort=443 in the HelmChartConfig) and
+# send QUIC to the same hostname:443; point the edge/DNS UDP/443 at .62 (TCP/443
+# stays .61). Public hostname/DNS unchanged.
+#
+#   kubectl apply -f 07-traefik-quic-udp.yaml
+# Rollback (no impact to TCP on .61):  kubectl -n kube-system delete svc rke2-traefik-quic
+# =============================================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: rke2-traefik-quic
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: rke2-traefik
+    kube-vip.io/purpose: http3-quic
+  annotations:
+    kube-vip.io/loadbalancerIPs: "10.35.0.62"
+spec:
+  type: LoadBalancer
+  loadBalancerClass: kube-vip.io/kube-vip-class   # only kube-vip handles it; MetalLB ignores
+  externalTrafficPolicy: Local                    # real client IP; every app node runs a traefik pod
+  selector:
+    app.kubernetes.io/name: rke2-traefik
+    app.kubernetes.io/instance: rke2-traefik-kube-system
+  ports:
+    - name: websecure-quic
+      port: 443
+      targetPort: 8443        # rke2-traefik websecure QUIC listener (UDP)
+      protocol: UDP

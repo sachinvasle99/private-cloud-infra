@@ -1,0 +1,113 @@
+{
+  "title": "Workloads & Pods",
+  "uid": "uslab-workloads",
+  "tags": ["uslab-eng-01", "workloads", "pods"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "namespace", "type": "query",
+        "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+        "query": "label_values(kube_pod_info, namespace)",
+        "refresh": 2, "multi": true, "includeAll": true, "sort": 1,
+        "current": { "text": "All", "value": "$__all" }
+      },
+      {
+        "name": "pod", "type": "query",
+        "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+        "query": "label_values(kube_pod_info{namespace=~\"$namespace\"}, pod)",
+        "refresh": 2, "multi": true, "includeAll": true, "sort": 1,
+        "current": { "text": "All", "value": "$__all" }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Running",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "green" } } },
+      "targets": [ { "refId": "A", "expr": "sum(kube_pod_status_phase{phase=\"Running\"})" } ]
+    },
+    {
+      "id": 2, "type": "stat", "title": "Pending",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "fieldConfig": { "defaults": { "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 1 } ] } } },
+      "targets": [ { "refId": "A", "expr": "sum(kube_pod_status_phase{phase=\"Pending\"})" } ]
+    },
+    {
+      "id": 3, "type": "stat", "title": "Failed",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "fieldConfig": { "defaults": { "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 1 } ] } } },
+      "targets": [ { "refId": "A", "expr": "sum(kube_pod_status_phase{phase=\"Failed\"})" } ]
+    },
+    {
+      "id": 4, "type": "stat", "title": "Containers restarting (>0 in 1h)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "fieldConfig": { "defaults": { "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 5 } ] } } },
+      "targets": [ { "refId": "A", "expr": "count(increase(kube_pod_container_status_restarts_total[1h]) > 0) or vector(0)" } ]
+    },
+    {
+      "id": 5, "type": "timeseries", "title": "Pod Phases over time",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [
+        { "refId": "R", "expr": "sum(kube_pod_status_phase{phase=\"Running\"})", "legendFormat": "Running" },
+        { "refId": "P", "expr": "sum(kube_pod_status_phase{phase=\"Pending\"})", "legendFormat": "Pending" },
+        { "refId": "F", "expr": "sum(kube_pod_status_phase{phase=\"Failed\"})", "legendFormat": "Failed" }
+      ]
+    },
+    {
+      "id": 6, "type": "timeseries", "title": "Deployment availability (available / desired)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "targets": [
+        { "refId": "A", "expr": "sum(kube_deployment_status_replicas_available{namespace=~\"$namespace\"})", "legendFormat": "available" },
+        { "refId": "D", "expr": "sum(kube_deployment_spec_replicas{namespace=~\"$namespace\"})", "legendFormat": "desired" }
+      ]
+    },
+    {
+      "id": 7, "type": "table", "title": "Top Pods by CPU (cores)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 9, "w": 8, "x": 0, "y": 12 },
+      "targets": [ { "refId": "A", "format": "table", "instant": true, "expr": "topk(15, sum by(namespace,pod)(rate(container_cpu_usage_seconds_total{container!=\"\",container!=\"POD\",namespace=~\"$namespace\",pod=~\"$pod\"}[5m])))" } ],
+      "transformations": [ { "id": "organize", "options": { "excludeByName": { "Time": true }, "renameByName": { "namespace": "Namespace", "pod": "Pod", "Value": "CPU cores" } } } ],
+      "fieldConfig": { "defaults": { "decimals": 3 } }
+    },
+    {
+      "id": 8, "type": "table", "title": "Top Pods by Memory (MiB)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 9, "w": 8, "x": 8, "y": 12 },
+      "targets": [ { "refId": "A", "format": "table", "instant": true, "expr": "topk(15, sum by(namespace,pod)(container_memory_working_set_bytes{container!=\"\",container!=\"POD\",namespace=~\"$namespace\",pod=~\"$pod\"}) / 1048576)" } ],
+      "transformations": [ { "id": "organize", "options": { "excludeByName": { "Time": true }, "renameByName": { "namespace": "Namespace", "pod": "Pod", "Value": "Mem MiB" } } } ],
+      "fieldConfig": { "defaults": { "decimals": 0 } }
+    },
+    {
+      "id": 9, "type": "table", "title": "Pod Restarts (top 15)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 9, "w": 8, "x": 16, "y": 12 },
+      "targets": [ { "refId": "A", "format": "table", "instant": true, "expr": "topk(15, sum by(namespace,pod)(kube_pod_container_status_restarts_total{namespace=~\"$namespace\",pod=~\"$pod\"}) > 0)" } ],
+      "transformations": [ { "id": "organize", "options": { "excludeByName": { "Time": true }, "renameByName": { "namespace": "Namespace", "pod": "Pod", "Value": "Restarts" } } } ]
+    },
+    {
+      "id": 10, "type": "timeseries", "title": "Selected pod(s) — CPU (cores)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 21 },
+      "fieldConfig": { "defaults": { "unit": "none", "decimals": 3 } },
+      "targets": [ { "refId": "A", "expr": "sum by(pod)(rate(container_cpu_usage_seconds_total{container!=\"\",container!=\"POD\",namespace=~\"$namespace\",pod=~\"$pod\"}[5m]))", "legendFormat": "{{pod}}" } ]
+    },
+    {
+      "id": 11, "type": "timeseries", "title": "Selected pod(s) — Memory (MiB)",
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 21 },
+      "fieldConfig": { "defaults": { "unit": "decmbytes" } },
+      "targets": [ { "refId": "A", "expr": "sum by(pod)(container_memory_working_set_bytes{container!=\"\",container!=\"POD\",namespace=~\"$namespace\",pod=~\"$pod\"}) / 1048576", "legendFormat": "{{pod}}" } ]
+    }
+  ]
+}

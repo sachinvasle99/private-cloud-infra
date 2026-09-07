@@ -1,0 +1,82 @@
+# =============================================================================
+# kube-vip-cloud-provider — IPAM + populates service .status.loadBalancer.ingress.
+#
+# Restricts kube-vip's assignable range to .61-.62: .61 for the Traefik TCP
+# LoadBalancer, .62 for the HTTP/3 QUIC UDP LoadBalancer (07-...yaml). Each
+# service also carries an explicit `kube-vip.io/loadbalancerIPs` annotation so
+# the binding is deterministic; the cloud-provider keeps EXTERNAL-IP status
+# clean and refuses any other IP.
+#
+# The configmap MUST be named "kubevip" in namespace "kube-system".
+#
+#   kubectl apply -f 02-kube-vip-cloud-provider.yaml
+# =============================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubevip
+  namespace: kube-system
+data:
+  # Dedicated ingress VIPs (.61 TCP, .62 QUIC), OUTSIDE MetalLB's (shrunk)
+  # .63-.99 pool. MUST NOT include 10.35.0.60 (API VIP) or 10.35.0.30 (roso).
+  range-global: "10.35.0.61-10.35.0.62"
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-vip-cloud-controller
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: system:kube-vip-cloud-controller-role
+rules:
+  - apiGroups: [""]
+    resources: ["services", "services/status", "configmaps", "endpoints"]
+    verbs: ["list", "get", "watch", "update", "create"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["list", "get", "watch", "update", "create"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["list", "get", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: system:kube-vip-cloud-controller-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:kube-vip-cloud-controller-role
+subjects:
+  - kind: ServiceAccount
+    name: kube-vip-cloud-controller
+    namespace: kube-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-vip-cloud-provider
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-vip-cloud-provider
+  template:
+    metadata:
+      labels:
+        app: kube-vip-cloud-provider
+    spec:
+      serviceAccountName: kube-vip-cloud-controller
+      containers:
+        - name: kube-vip-cloud-provider
+          image: ghcr.io/kube-vip/kube-vip-cloud-provider:v0.0.12
+          imagePullPolicy: IfNotPresent
+          command: ["/kube-vip-cloud-provider"]
+          args: ["--leader-elect-resource-name=kube-vip-cloud-controller"]
+          resources:
+            requests: { cpu: "50m",  memory: "64Mi" }
+            limits:   { cpu: "200m", memory: "128Mi" }

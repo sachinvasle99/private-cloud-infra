@@ -1,0 +1,103 @@
+# =============================================================================
+# Default-deny NetworkPolicies — UsLab-Eng-01  (Calico CNI)
+#
+# Apply this set PER application namespace to move from "open by default" to
+# "deny by default, allow what's needed". This is the biggest lever on the
+# dashboard's "Pod Security Posture" CRITICAL (NetworkPolicy coverage).
+#
+# Pattern per namespace (5 policies):
+#   1. default-deny-all       — deny ALL ingress + egress (baseline)
+#   2. allow-dns              — egress to CoreDNS (53 udp/tcp) so name resolution works
+#   3. allow-same-namespace   — pods in this ns may talk to each other
+#   4. allow-from-npm         — ingress from the npm namespace (for apps NPM proxies)
+#   5. allow-egress-apiserver — egress to kube-API (10.35.0.30:6443) for SDKs/clients
+#
+# HOW TO USE:
+#   1. Pick a target namespace, e.g. `myteam`.
+#   2. Replace every <NS> below with that namespace name.
+#   3. kubectl apply -f networkpolicies.yaml
+#   Repeat per app namespace. (Do NOT apply default-deny to kube-system,
+#   calico-system, topolvm-system, metallb-system, cattle-system, npm,
+#   devops-stack, monitor unless you've tested those flows — system namespaces
+#   need their own allow-rules.)
+#
+# Test in ONE non-critical namespace first; watch for broken traffic, then roll out.
+# =============================================================================
+---
+# 1. Deny ALL ingress + egress in the namespace (the baseline).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: <NS>
+spec:
+  podSelector: {}                 # all pods in <NS>
+  policyTypes: [Ingress, Egress]
+  # no ingress/egress rules => everything denied
+---
+# 2. Allow egress to cluster DNS (CoreDNS in kube-system) — required or DNS breaks.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: <NS>
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - { protocol: UDP, port: 53 }
+        - { protocol: TCP, port: 53 }
+---
+# 3. Allow pods within this namespace to talk to each other (both directions).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-same-namespace
+  namespace: <NS>
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: {}         # any pod in the same namespace
+  egress:
+    - to:
+        - podSelector: {}
+---
+# 4. Allow ingress from Nginx Proxy Manager (so NPM-proxied apps are reachable).
+#    Requires the npm namespace to carry the label kubernetes.io/metadata.name=npm
+#    (auto-set by Kubernetes on every namespace).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-npm
+  namespace: <NS>
+spec:
+  podSelector: {}                 # tighten to your app's pods if you prefer
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: npm
+---
+# 5. Allow egress to the kube-API server (for in-cluster SDK/clients).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-apiserver
+  namespace: <NS>
+spec:
+  podSelector: {}
+  policyTypes: [Egress]
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 10.35.0.30/32   # roso (API server). Add other CP nodes if added.
+      ports:
+        - { protocol: TCP, port: 6443 }

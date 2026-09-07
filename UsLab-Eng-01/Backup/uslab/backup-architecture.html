@@ -1,0 +1,355 @@
+<title>UsLab-Eng-01 · Backup Architecture</title>
+<style>
+  :root{
+    --ground:#0E1A2B;        /* blueprint navy */
+    --panel:#13243A;         /* raised panel */
+    --panel-2:#0B1422;       /* sunken code */
+    --line:#244465;          /* hairline */
+    --text:#C9D6E4;          /* blueprint white-blue */
+    --muted:#7C93AC;         /* dim label */
+    --accent:#F0B340;        /* amber — storage / "kept" */
+    --cyan:#5FC6D4;          /* schematic line / data flow */
+    --ok:#6FCF97;
+    --mono: ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans: system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--ground);color:var(--text);font-family:var(--sans);
+    line-height:1.6;font-size:16px;overflow-x:hidden;
+    background-image:
+      linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:34px 34px;background-position:center top;
+  }
+  body::before{ /* fade the grid so it reads as faint blueprint paper */
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(120% 80% at 50% 0%,transparent 30%,var(--ground) 78%);
+  }
+  .wrap{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:0 24px}
+  a{color:var(--cyan)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan)}
+  h1,h2,h3{font-family:var(--mono);font-weight:600;letter-spacing:-.01em;margin:0}
+
+  /* ---------- hero ---------- */
+  header{padding:74px 0 30px}
+  header .eyebrow{color:var(--accent)}
+  h1{font-size:clamp(30px,5.5vw,52px);line-height:1.05;margin:14px 0 16px}
+  h1 .dim{color:var(--muted)}
+  .lede{max-width:64ch;color:var(--text);font-size:17px}
+  .facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .fact{font-family:var(--mono);font-size:12.5px;border:1px solid var(--line);
+    border-radius:7px;padding:8px 12px;background:var(--panel);white-space:nowrap}
+  .fact b{color:var(--accent);font-weight:600}
+
+  /* ---------- schematic diagram ---------- */
+  .fig{margin:40px 0 8px;border:1px solid var(--line);border-radius:14px;
+    background:linear-gradient(180deg,rgba(19,36,58,.6),rgba(11,20,34,.6));padding:26px 22px 30px}
+  .fig-cap{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:22px}
+  .fig-cap span{color:var(--muted);font-family:var(--mono);font-size:11.5px;letter-spacing:.14em}
+  .stage{border:1px solid var(--line);border-radius:11px;background:var(--panel);
+    padding:16px 18px;position:relative}
+  .stage .tag{position:absolute;top:-9px;left:16px;background:var(--ground);
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--cyan);padding:0 8px}
+  .stage h3{font-size:15px;margin-bottom:3px}
+  .stage p{margin:0;color:var(--muted);font-size:13px}
+  .cluster .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+  .node{border:1px dashed var(--line);border-radius:9px;padding:12px 14px;background:rgba(95,198,212,.04)}
+  .node .k{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}
+  .node .v{font-size:13.5px;color:var(--text)}
+  .node .v b{font-family:var(--mono);font-weight:600}
+  .node small{display:block;color:var(--muted);font-size:11.5px;margin-top:6px;font-family:var(--mono)}
+
+  /* connector with travelling data pulse */
+  .flow{height:54px;display:flex;align-items:center;justify-content:center;position:relative}
+  .flow .rail{width:2px;height:100%;background:linear-gradient(var(--cyan),rgba(95,198,212,.25));position:relative;overflow:hidden;border-radius:2px}
+  .flow .rail::after{content:"";position:absolute;left:-3px;width:8px;height:18px;border-radius:8px;
+    background:radial-gradient(circle,var(--cyan),transparent 70%);animation:drop 2.6s linear infinite}
+  .flow.amber .rail{background:linear-gradient(var(--cyan),var(--accent))}
+  .flow .lbl{position:absolute;left:calc(50% + 16px);font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+  @keyframes drop{0%{top:-20px;opacity:0}15%{opacity:1}85%{opacity:1}100%{top:100%;opacity:0}}
+
+  .store{border-color:var(--accent);background:linear-gradient(180deg,rgba(240,179,64,.10),rgba(240,179,64,.03))}
+  .store .tag{color:var(--accent)}
+  .store h3{color:var(--accent)}
+  .paths{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .paths code{font-family:var(--mono);font-size:11.5px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:6px;padding:5px 9px;color:var(--text)}
+  .planned{border-style:dashed;opacity:.62}
+  .planned .tag{color:var(--muted)}
+  .planned h3{color:var(--muted)}
+
+  /* ---------- generic sections ---------- */
+  section{padding:46px 0;border-top:1px solid var(--line)}
+  section > .eyebrow{display:block;margin-bottom:10px}
+  h2{font-size:clamp(20px,3vw,26px);margin-bottom:6px}
+  .sub{color:var(--muted);max-width:66ch;margin-bottom:26px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .card{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:20px}
+  .card h3{font-size:15px;color:var(--cyan);margin-bottom:4px}
+  .card .meth{font-family:var(--mono);font-size:11.5px;color:var(--accent);letter-spacing:.04em}
+  .card ul{margin:12px 0 0;padding-left:18px;color:var(--text);font-size:14px}
+  .card li{margin:6px 0}
+  .card li b{font-family:var(--mono);font-weight:600;font-size:13px}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  .tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--panel-2)}
+  tbody tr:last-child td{border-bottom:none}
+  td b{font-family:var(--mono);font-weight:600}
+  .pill{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid currentColor}
+  .pill.db{color:var(--accent)} .pill.fs{color:var(--cyan)} .pill.no{color:var(--muted)}
+
+  .vcmp{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .vcmp .card h3{color:var(--text)}
+  .vcmp .card .meth{color:var(--muted)}
+  dl{margin:14px 0 0;display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font-size:13.5px}
+  dl dt{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan)}
+  .vcmp .card:first-child dl dt{color:var(--accent)}
+  dl dd{margin:0;color:var(--text)}
+
+  /* ---------- command blocks ---------- */
+  ol.steps{counter-reset:s;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:18px}
+  ol.steps > li{counter-increment:s;position:relative;padding-left:46px}
+  ol.steps > li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:-2px;
+    font-family:var(--mono);font-size:13px;color:var(--accent);border:1px solid var(--line);
+    border-radius:7px;width:32px;height:32px;display:grid;place-items:center;background:var(--panel)}
+  ol.steps h3{font-size:14.5px;margin-bottom:8px}
+  pre{margin:0;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;overflow-x:auto}
+  pre code{font-family:var(--mono);font-size:12.5px;color:var(--text);line-height:1.7;white-space:pre}
+  .cmt{color:var(--muted)} .tok{color:var(--cyan)} .amb{color:var(--accent)}
+  .note{border-left:3px solid var(--accent);background:rgba(240,179,64,.07);padding:12px 16px;
+    border-radius:0 8px 8px 0;font-size:13.5px;margin:0 0 22px}
+  .note b{color:var(--accent);font-family:var(--mono);font-weight:600}
+
+  footer{border-top:1px solid var(--line);padding:34px 0 70px;color:var(--muted);font-size:13px}
+  footer .eyebrow{margin-bottom:12px}
+  .files{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px 18px;font-family:var(--mono);font-size:12px}
+  .files div b{color:var(--text);font-weight:600}
+
+  @media(max-width:720px){
+    .cluster .cols,.grid2,.vcmp{grid-template-columns:1fr}
+    dl{grid-template-columns:1fr}
+    dl dt{margin-top:8px}
+    header{padding:54px 0 20px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .flow .rail::after{animation:none;display:none}
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">UsLab-Eng-01 · Platform Operations</span>
+    <h1>Backup<br><span class="dim">architecture &amp; runbook</span></h1>
+    <p class="lede">Every stateful service in the <code>uslab-eng-01</code> namespace is
+    copied nightly to an off-cluster MinIO store — databases as consistent logical dumps,
+    file volumes as incremental, deduplicated, encrypted snapshots. This is how the data
+    flows, how versions are kept, and how to run a backup by hand.</p>
+    <div class="facts">
+      <span class="fact">Target&nbsp; <b>MinIO 10.35.0.36:9000</b></span>
+      <span class="fact">Bucket&nbsp; <b>uslab-eng-01-backup</b></span>
+      <span class="fact">Schedule&nbsp; <b>23:00 IST</b> daily</span>
+      <span class="fact">Mover&nbsp; <b>VolSync · restic</b></span>
+      <span class="fact">Storage&nbsp; <b>thick TopoLVM</b> (no snapshots)</span>
+    </div>
+  </header>
+
+  <!-- ============ HERO: SCHEMATIC ============ -->
+  <div class="fig" role="img" aria-label="Data preservation path from the RKE2 cluster to MinIO and a planned S3 archive tier">
+    <div class="fig-cap">
+      <span class="eyebrow">Fig. 01 — Data preservation path</span>
+      <span>read → dump/snapshot → object store</span>
+    </div>
+
+    <div class="stage cluster">
+      <span class="tag">Source · RKE2 cluster</span>
+      <h3>namespace: uslab-eng-01</h3>
+      <p>Live workloads on node-local TopoLVM volumes (RWO). No CSI snapshots — data is read at the file level.</p>
+      <div class="cols">
+        <div class="node">
+          <div class="k">Databases</div>
+          <div class="v"><b>postgres</b> · global / node1 / node2</div>
+          <small>CronJob → pg_dumpall | gzip | mc pipe<br>FULL dump, one dated file / run</small>
+        </div>
+        <div class="node">
+          <div class="k">File volumes</div>
+          <div class="v"><b>mediadb · elasticsearch · krista-ai · accesspoints</b></div>
+          <small>VolSync ReplicationSource → restic (Direct)<br>INCREMENTAL snapshot, dedup + encrypt</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow"><div class="rail"></div><span class="lbl">trigger · 23:00 IST (17:30 UTC)</span></div>
+
+    <div class="stage store">
+      <span class="tag">Sink · object store</span>
+      <h3>MinIO · 10.35.0.36 · HTTPS (self-signed CA)</h3>
+      <p>One bucket, two layouts + a daily catalog.</p>
+      <div class="paths">
+        <code>pgdump/&lt;inst&gt;/YYYY/MM/DD/…sql.gz</code>
+        <code>restic/uslab-eng-01/&lt;pvc&gt;/</code>
+        <code>reports/YYYY/MM/DD/inventory.txt</code>
+      </div>
+    </div>
+
+    <div class="flow amber"><div class="rail"></div><span class="lbl">planned · restic copy / ILM</span></div>
+
+    <div class="stage planned">
+      <span class="tag">Archive · planned</span>
+      <h3>AWS S3 — long-term offsite tier</h3>
+      <p>Not yet configured. MinIO holds the hot tier; S3 will hold the cold archive.</p>
+    </div>
+  </div>
+
+  <!-- ============ WHAT WE BACK UP ============ -->
+  <section>
+    <span class="eyebrow">Coverage</span>
+    <h2>What gets backed up</h2>
+    <p class="sub">Seven services across the namespace. Caches and regenerable data are
+    deliberately excluded — they cost storage and add nothing a redeploy can't rebuild.</p>
+    <div class="tscroll">
+      <table>
+        <thead><tr><th>Service</th><th>Source</th><th>Size</th><th>Method</th></tr></thead>
+        <tbody>
+          <tr><td><b>postgres-node1</b></td><td>StatefulSet</td><td>250 Gi</td><td><span class="pill db">pg_dump</span></td></tr>
+          <tr><td><b>postgres-node2</b></td><td>StatefulSet</td><td>100 Gi</td><td><span class="pill db">pg_dump</span></td></tr>
+          <tr><td><b>postgres-global</b></td><td>StatefulSet</td><td>50 Gi</td><td><span class="pill db">pg_dump</span></td></tr>
+          <tr><td><b>shared-mediadb</b></td><td>PVC</td><td>281 GB → 63 GB stored</td><td><span class="pill fs">restic</span></td></tr>
+          <tr><td><b>elasticsearch</b></td><td>PVC</td><td>162 GB</td><td><span class="pill fs">restic</span></td></tr>
+          <tr><td><b>krista-ai-server</b></td><td>PVC</td><td>16 GB</td><td><span class="pill fs">restic</span></td></tr>
+          <tr><td><b>node1/2-accesspoint</b></td><td>PVC ×2</td><td>~6 GB ea</td><td><span class="pill fs">restic</span></td></tr>
+          <tr><td>redis · activemq · infinispan · prometheus · gc-logs</td><td>—</td><td>—</td><td><span class="pill no">excluded</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section>
+    <span class="eyebrow">Mechanics</span>
+    <h2>Two methods, by data type</h2>
+    <p class="sub">A raw file-copy of a running database can restore into a broken state,
+    so databases get a logical dump. Everything else is plain files — perfect for restic.</p>
+    <div class="grid2">
+      <div class="card">
+        <h3>Databases</h3>
+        <div class="meth">CronJob · pg_dumpall → MinIO</div>
+        <ul>
+          <li>An init container drops the <b>mc</b> client into the dump pod.</li>
+          <li><b>pg_dumpall | gzip | mc pipe</b> streams straight to MinIO — no temp disk.</li>
+          <li>Lands as a date-stamped <b>.sql.gz</b> object you can browse in the console.</li>
+          <li>Full dump every run (not incremental) — simplest, always-restorable.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>File volumes</h3>
+        <div class="meth">VolSync · restic · copyMethod Direct</div>
+        <ul>
+          <li>A mover reads the live PVC on its own node (<b>Direct</b> — TopoLVM can't snapshot).</li>
+          <li>restic uploads <b>only changed blocks</b>, deduplicated and encrypted.</li>
+          <li>Runs as <b>root</b> so every file is readable; trusts MinIO via a custom CA.</li>
+          <li>Each run writes one dated <b>snapshot</b> — a complete restore point.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VERSIONS ============ -->
+  <section>
+    <span class="eyebrow">Version management</span>
+    <h2>How restore points are kept</h2>
+    <p class="sub">One restore point accumulates per service per day. Where the date lives —
+    and how old copies expire — differs between the two methods.</p>
+    <div class="vcmp">
+      <div class="card">
+        <h3>Postgres dumps</h3>
+        <div class="meth">dated files</div>
+        <dl>
+          <dt>A version</dt><dd>one <code>.sql.gz</code> file</dd>
+          <dt>Date</dt><dd>in the path — <code>…/YYYY/MM/DD/</code>, browsable</dd>
+          <dt>Storage</dt><dd>full copy each run</dd>
+          <dt>Retention</dt><dd>none yet — add a MinIO lifecycle rule</dd>
+        </dl>
+      </div>
+      <div class="card">
+        <h3>File backups (restic)</h3>
+        <div class="meth">dated snapshots</div>
+        <dl>
+          <dt>A version</dt><dd>one restic snapshot (ID + time)</dd>
+          <dt>Date</dt><dd>inside the snapshot — list with <code>restic snapshots</code></dd>
+          <dt>Storage</dt><dd>incremental + dedup (one repo)</dd>
+          <dt>Retention</dt><dd>7 daily · 4 weekly · 3 monthly (auto-prune)</dd>
+        </dl>
+      </div>
+    </div>
+    <p class="sub" style="margin-top:22px;margin-bottom:0">See every restore point in one place with
+    <code>./list-backups.sh</code>, or open the daily
+    <code>reports/YYYY/MM/DD/backup-inventory.txt</code> in the MinIO console.</p>
+  </section>
+
+  <!-- ============ MANUAL TRIGGER ============ -->
+  <section>
+    <span class="eyebrow">On demand</span>
+    <h2>Trigger a backup manually, any time</h2>
+    <p class="sub">The nightly schedule runs itself — but you can fire a backup whenever you need one.</p>
+    <p class="note"><b>One rule:</b> never manually trigger a backup that's already running.
+    restic allows a single writer per repo, so overlapping runs cause a stale-lock retry loop.</p>
+    <ol class="steps">
+      <li>
+        <h3>A single file backup — incremental</h3>
+        <pre><code><span class="cmt"># names: krista-ai-server-backup | shared-mediadb-backup | elasticsearch-backup</span>
+<span class="cmt">#        node1-accesspoint3-backup | node2-accesspoint3-backup</span>
+kubectl -n uslab-eng-01 patch replicationsource <span class="tok">&lt;name&gt;</span> \
+  --type merge -p "{\"spec\":{\"trigger\":{\"manual\":\"run-$(date +%s)\"}}}"</code></pre>
+      </li>
+      <li>
+        <h3>Restore its daily schedule afterward</h3>
+        <pre><code><span class="cmt"># the manual trigger replaces the schedule until you remove it</span>
+kubectl -n uslab-eng-01 patch replicationsource <span class="tok">&lt;name&gt;</span> \
+  --type json -p '[{"op":"remove","path":"/spec/trigger/manual"}]'</code></pre>
+      </li>
+      <li>
+        <h3>A single Postgres dump — full, dated, no cleanup</h3>
+        <pre><code><span class="cmt"># inst: global | node1 | node2</span>
+kubectl -n uslab-eng-01 create job --from=cronjob/<span class="amb">pgdump-&lt;inst&gt;</span> pgdump-&lt;inst&gt;-now-$(date +%s)</code></pre>
+      </li>
+      <li>
+        <h3>Everything at once</h3>
+        <pre><code>TS=$(date +%s)
+<span class="cmt"># 5 file backups</span>
+for rs in krista-ai-server-backup shared-mediadb-backup elasticsearch-backup \
+          node1-accesspoint3-backup node2-accesspoint3-backup; do
+  kubectl -n uslab-eng-01 patch replicationsource "$rs" \
+    --type merge -p "{\"spec\":{\"trigger\":{\"manual\":\"all-$TS\"}}}"
+done
+<span class="cmt"># 3 database dumps</span>
+for i in global node1 node2; do
+  kubectl -n uslab-eng-01 create job --from=cronjob/pgdump-$i pgdump-$i-now-$TS
+done
+<span class="cmt"># then run step 02 on the 5 sources to restore their schedules</span></code></pre>
+      </li>
+    </ol>
+  </section>
+
+  <footer>
+    <span class="eyebrow">Reference</span>
+    <div class="files">
+      <div><b>BACKUP-GUIDE.md</b> — full written runbook</div>
+      <div><b>list-backups.sh</b> — list all versions</div>
+      <div><b>setup-secrets.sh</b> — MinIO + restic secrets</div>
+      <div><b>10-pgdump-cronjobs.yaml</b> — database dumps</div>
+      <div><b>20 / 30 / 40-volsync*.yaml</b> — file backups</div>
+      <div><b>00-minio-ca.yaml</b> — MinIO trust anchor</div>
+    </div>
+    <p style="margin-top:22px">Restore a chosen version: VolSync <code>ReplicationDestination</code> with
+    <code>restic.restoreAsOf:"&lt;date&gt;"</code> for files (scale the app to 0 first), or
+    <code>mc cp</code> the dated <code>.sql.gz</code> + <code>psql -f</code> for Postgres.
+    Pending: S3 offsite tier · backup-failure alerts · a tested restore · ES native snapshots.</p>
+  </footer>
+</div>
